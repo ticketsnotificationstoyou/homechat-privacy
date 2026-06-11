@@ -198,7 +198,7 @@ All media files are automatically and permanently deleted from the server after 
 
 В большинстве случаев соединение устанавливается напрямую между устройствами (P2P). Если прямое соединение невозможно из-за сетевых ограничений — трафик проходит через два независимых резервных TURN-сервера, каждый с собственным уникальным секретом. Компрометация одного сервера не затрагивает другой. TURN-серверы видят только зашифрованный DTLS/SRTP поток и не могут его расшифровать — ключи сессии известны только устройствам участников звонка. Доступ к каждому серверу защищён одноразовыми HMAC-SHA1 токенами с временем жизни 1 час — перехваченные credentials невозможно использовать повторно.
 
-Инфраструктура разнесена: звонки обслуживаются отдельными TURN-серверами, медиафайлы и сообщения — основным сервером, по разным каналам (медиа через HTTPS, сообщения через WSS). Сервер никогда не имеет одновременно и зашифрованный медиафайл, и ключ для его расшифровки. Даже при полной компрометации сервера расшифровать перехваченные звонки или сообщения невозможно.</p>
+Инфраструктура разнесена: звонки обслуживаются отдельными TURN-серверами, медиафайлы и сообщения — основным сервером, по разным каналам (медиа через HTTPS, сообщения через WSS). Сервер никогда не имеет одновременно и зашифрованный медиафайл, и ключ для его расшифровки. Даже при полной компрометации сервера расшифровать перехваченные звонки невозможно.</p>
         </div>
         <div data-lang="en">
             <h2>Voice Calls</h2>
@@ -206,7 +206,7 @@ All media files are automatically and permanently deleted from the server after 
 
 In most cases a direct peer-to-peer connection is established between devices. If a direct connection is not possible due to network restrictions, traffic is relayed through two independent fallback TURN servers, each with its own unique secret. Compromise of one server does not affect the other. The TURN servers see only the encrypted DTLS/SRTP stream and cannot decrypt it — the session keys are known only to the call participants' devices. Access to each server is protected by one-time HMAC-SHA1 tokens with a 1-hour lifetime — intercepted credentials cannot be reused.
 
-The infrastructure is separated: calls are handled by dedicated TURN servers, while media files and messages are handled by the main server over distinct channels — media via HTTPS, messages via WSS. The server never simultaneously holds both an encrypted media file and the key to decrypt it. Even with full server compromise, decrypting intercepted calls or messages is impossible.</p>
+The infrastructure is separated: calls are handled by dedicated TURN servers, while media files and messages are handled by the main server over distinct channels — media via HTTPS, messages via WSS. The server never simultaneously holds both an encrypted media file and the key to decrypt it. Even with full server compromise, decrypting intercepted calls is impossible.</p>
         </div>
     </div>
 
@@ -265,7 +265,7 @@ The infrastructure is separated: calls are handled by dedicated TURN servers, wh
 
 <strong>Certificate Pinning:</strong> приложение принимает TLS-соединение только с сервером, чей ключ заранее известен. Даже доверенный центр сертификации не может выдать поддельный сертификат незаметно.
 
-<strong>Отпечаток безопасности (Safety Number):</strong> уникальный код, который можно сверить с собеседником вне приложения. Если коды совпадают — никто, включая сервер, не подменял ключи шифрования.
+<strong>Отпечаток безопасности (Safety Number):</strong> уникальный код, который можно сверить с собеседником вне приложения. Найти его можно в каждом чате в разделе информации о чате. Если коды совпадают — никто, включая сервер, не подменял ключи шифрования.
 
 Сервер видит только зашифрованные данные и метаданные соединения. Содержимое сообщений недоступно никому кроме участников переписки.
 
@@ -281,7 +281,7 @@ The infrastructure is separated: calls are handled by dedicated TURN servers, wh
 
 <strong>Certificate Pinning:</strong> the app only accepts a TLS connection from a server whose key is known in advance. Even a trusted certificate authority cannot issue a fraudulent certificate without detection.
 
-<strong>Safety Number:</strong> a unique fingerprint that can be verified with your contact out of band. If the codes match, no one — including the server — has substituted encryption keys.
+<strong>Safety Number:</strong> a unique fingerprint that can be verified with your contact out of band. It can be found in every chat under the chat info screen. If the codes match, no one — including the server — has substituted encryption keys.
 
 The server sees only encrypted data and connection metadata. Message content is inaccessible to anyone except the conversation participants.
 
