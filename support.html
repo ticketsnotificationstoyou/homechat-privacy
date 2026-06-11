@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeChat — Поддержка</title>
+    <title>HomeChat — Поддержка / Support</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,6 +18,40 @@
             max-width: 720px;
             margin: 0 auto;
             padding: 48px 24px 80px;
+        }
+
+        /* Language switcher */
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+
+        .lang-switcher-inner {
+            display: inline-flex;
+            background: #e5e5ea;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 7px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6e6e73;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            font-family: inherit;
+        }
+
+        .lang-btn.active {
+            background: #ffffff;
+            color: #1c1c1e;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
 
         header {
@@ -72,17 +106,6 @@
             text-decoration: underline;
         }
 
-        .card ul {
-            font-size: 15px;
-            color: #48484a;
-            padding-left: 20px;
-            margin-top: 4px;
-        }
-
-        .card ul li {
-            margin-bottom: 6px;
-        }
-
         .contact-btn {
             display: inline-block;
             margin-top: 14px;
@@ -112,84 +135,171 @@
             color: #007aff;
             text-decoration: none;
         }
+
+        /* Language visibility */
+        [data-lang] { display: none; }
+        .lang-ru [data-lang="ru"] { display: block; }
+        .lang-en [data-lang="en"] { display: block; }
+
+        /* For inline spans inside shared elements */
+        span[data-lang] { display: none; }
+        .lang-ru span[data-lang="ru"] { display: inline; }
+        .lang-en span[data-lang="en"] { display: inline; }
     </style>
 </head>
-<body>
+<body class="lang-ru">
 <div class="container">
+
+    <div class="lang-switcher">
+        <div class="lang-switcher-inner">
+            <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+    </div>
 
     <header>
         <img class="icon" src="icon.png" alt="HomeChat">
         <h1>HomeChat</h1>
-        <p>Поддержка</p>
+        <p>
+            <span data-lang="ru">Поддержка</span>
+            <span data-lang="en">Support</span>
+        </p>
     </header>
 
     <div class="card">
-        <h2>Связаться с разработчиком</h2>
-        <p>Если у вас возникли вопросы, проблемы с приложением или предложения — напишите нам. Мы постараемся ответить в течение 1–2 рабочих дней.</p>
-        <a class="contact-btn" href="mailto:tunnelletter@gmail.com">Написать на email</a>
+        <div data-lang="ru">
+            <h2>Связаться с разработчиком</h2>
+            <p>Если у вас возникли вопросы, проблемы с приложением или предложения — напишите нам. Мы постараемся ответить в течение 1–2 рабочих дней.</p>
+            <a class="contact-btn" href="mailto:tunnelletter@gmail.com">Написать на email</a>
+        </div>
+        <div data-lang="en">
+            <h2>Contact the Developer</h2>
+            <p>If you have questions, issues with the app, or suggestions — feel free to reach out. We'll do our best to reply within 1–2 business days.</p>
+            <a class="contact-btn" href="mailto:tunnelletter@gmail.com">Send an email</a>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Для кого предназначен HomeChat</h2>
-        <p>HomeChat — приватный мессенджер для общения один на один между лично знакомыми людьми: семьёй, близкими друзьями. Приложение не поддерживает групповые чаты, публичные каналы или общение с незнакомцами. Все контакты добавляются только вручную по уникальному ID или QR-коду.</p>
+        <div data-lang="ru">
+            <h2>Для кого предназначен HomeChat</h2>
+            <p>HomeChat — приватный мессенджер для общения один на один между лично знакомыми людьми: семьёй, близкими друзьями. Приложение не поддерживает групповые чаты, публичные каналы или общение с незнакомцами. Все контакты добавляются только вручную по уникальному ID или QR-коду.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Who HomeChat Is For</h2>
+            <p>HomeChat is a private messenger for one-on-one conversations between people who know each other personally — family and close friends. The app does not support group chats, public channels, or communication with strangers. All contacts are added manually using a unique ID or QR code.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Как начать пользоваться</h2>
-
-        <p><strong>1. Регистрация</strong>
+        <div data-lang="ru">
+            <h2>Как начать пользоваться</h2>
+            <p><strong>1. Регистрация</strong>
 Загрузите приложение и предоставьте разрешения на доступ к микрофону, камере и фото. Введите любое имя на ваш выбор и нажмите «Зарегистрироваться». Номер телефона и email не требуются.</p>
-
-        <p style="margin-top: 14px;"><strong>2. Ваш уникальный ID и QR-код</strong>
+            <p style="margin-top: 14px;"><strong>2. Ваш уникальный ID и QR-код</strong>
 После регистрации в вашем профиле появится уникальный ID и QR-код. Передайте их человеку, которого хотите добавить в контакты — лично, по телефону или любым удобным способом. Здесь же вы можете установить аватарку профиля — она шифруется перед отправкой на сервер и видна только вашим контактам.</p>
-
-        <p style="margin-top: 14px;"><strong>3. Добавление контакта</strong>
+            <p style="margin-top: 14px;"><strong>3. Добавление контакта</strong>
 Нажмите кнопку «Добавить контакт» — откроется окно где можно вставить ID собеседника или отсканировать его QR-код. После того как вы добавите человека, а он добавит вас — вы сможете общаться.</p>
-
-        <p style="margin-top: 14px;"><strong>4. Удаление контакта</strong>
+            <p style="margin-top: 14px;"><strong>4. Удаление контакта</strong>
 Сделайте долгое нажатие на чат нужного контакта — появится предложение удалить контакт.</p>
-
-        <p style="margin-top: 14px;"><strong>5. Удаление аккаунта</strong>
+            <p style="margin-top: 14px;"><strong>5. Удаление аккаунта</strong>
 Войдите в свой профиль и нажмите «Удалить аккаунт». Действие необратимо — удалятся все чаты, контакты и данные. Для продолжения использования приложения нужно будет заново пройти регистрацию и добавить контакты.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Getting Started</h2>
+            <p><strong>1. Registration</strong>
+Download the app and grant permissions for microphone, camera, and photos. Enter any name you like and tap "Register." No phone number or email is required.</p>
+            <p style="margin-top: 14px;"><strong>2. Your Unique ID and QR Code</strong>
+After registration, your profile will show a unique ID and QR code. Share them with the person you want to add — in person, by phone, or any way you prefer. You can also set a profile avatar here — it's encrypted before being sent to the server and is only visible to your contacts.</p>
+            <p style="margin-top: 14px;"><strong>3. Adding a Contact</strong>
+Tap the "Add Contact" button to open a window where you can paste the other person's ID or scan their QR code. Once you've added each other, you can start messaging.</p>
+            <p style="margin-top: 14px;"><strong>4. Removing a Contact</strong>
+Long-press on a chat in your contact list — you'll see the option to remove that contact.</p>
+            <p style="margin-top: 14px;"><strong>5. Deleting Your Account</strong>
+Go to your profile and tap "Delete Account." This action is irreversible — all chats, contacts, and data will be permanently deleted. To use the app again, you'll need to register anew and re-add your contacts.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Медиафайлы</h2>
-        <p><strong>Максимальный размер файла:</strong> 100 МБ на одно вложение (фото, видео, аудио).
+        <div data-lang="ru">
+            <h2>Медиафайлы</h2>
+            <p><strong>Максимальный размер файла:</strong> 100 МБ на одно вложение (фото, видео, аудио).
 
 <strong>Срок хранения:</strong> медиафайлы автоматически удаляются из чата через 7 дней. Чтобы сохранить файл — нажмите кнопку сохранения прямо в чате, после чего на файле появится зелёная галочка. Сохранённый файл остаётся в чате постоянно и не удаляется по истечении 7 дней.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Media Files</h2>
+            <p><strong>Maximum file size:</strong> 100 MB per attachment (photo, video, audio).
+
+<strong>Storage duration:</strong> media files are automatically deleted from the chat after 7 days. To keep a file, tap the save button directly in the chat — a green checkmark will appear on the file. Saved files remain in the chat permanently and are not deleted after 7 days.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Часто задаваемые вопросы</h2>
-
-        <p><strong>Почему сообщения не доставляются?</strong>
+        <div data-lang="ru">
+            <h2>Часто задаваемые вопросы</h2>
+            <p><strong>Почему сообщения не доставляются?</strong>
 Проверьте интернет-соединение. Если проблема сохраняется — напишите нам на email с описанием ситуации.</p>
-
-        <p style="margin-top: 14px;"><strong>Как работают звонки?</strong>
+            <p style="margin-top: 14px;"><strong>Как работают звонки?</strong>
 HomeChat использует зашифрованные VoIP-звонки через интернет. Для входящих звонков приложение не должно быть открыто — уведомление придёт даже когда телефон заблокирован.</p>
-
-        <p style="margin-top: 14px;"><strong>Можно ли создать групповой чат?</strong>
+            <p style="margin-top: 14px;"><strong>Можно ли создать групповой чат?</strong>
 Нет. HomeChat поддерживает только переписку один на один. Групповые чаты, каналы и публичные пространства не предусмотрены.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Frequently Asked Questions</h2>
+            <p><strong>Why aren't messages being delivered?</strong>
+Check your internet connection. If the problem persists, email us with a description of the issue.</p>
+            <p style="margin-top: 14px;"><strong>How do calls work?</strong>
+HomeChat uses encrypted VoIP calls over the internet. For incoming calls, the app doesn't need to be open — you'll receive a notification even when your phone is locked.</p>
+            <p style="margin-top: 14px;"><strong>Can I create a group chat?</strong>
+No. HomeChat supports only one-on-one conversations. Group chats, channels, and public spaces are not available.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Безопасность и конфиденциальность</h2>
-        <p>Все сообщения, медиафайлы и звонки защищены сквозным шифрованием. Разработчик не имеет доступа к содержимому ваших переписок.
+        <div data-lang="ru">
+            <h2>Безопасность и конфиденциальность</h2>
+            <p>Все сообщения, медиафайлы и звонки защищены сквозным шифрованием. Разработчик не имеет доступа к содержимому ваших переписок.
 
 Подробнее — в нашей <a href="https://ticketsnotificationstoyou.github.io/homechat-privacy/privacy-policy.html">Политике конфиденциальности</a>.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Security and Privacy</h2>
+            <p>All messages, media files, and calls are protected by end-to-end encryption. The developer has no access to the content of your conversations.
+
+Learn more in our <a href="https://ticketsnotificationstoyou.github.io/homechat-privacy/privacy-policy.html">Privacy Policy</a>.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Контакт</h2>
-        <p>По всем вопросам обращайтесь к разработчику:
+        <div data-lang="ru">
+            <h2>Контакт</h2>
+            <p>По всем вопросам обращайтесь к разработчику:
 <a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
+        </div>
+        <div data-lang="en">
+            <h2>Contact</h2>
+            <p>For any inquiries, reach out to the developer:
+<a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
+        </div>
     </div>
 
     <footer>
-        <p>HomeChat · <a href="https://ticketsnotificationstoyou.github.io/homechat-privacy/privacy-policy.html">Политика конфиденциальности</a></p>
+        <p>HomeChat · <a href="https://ticketsnotificationstoyou.github.io/homechat-privacy/privacy-policy.html">
+            <span data-lang="ru">Политика конфиденциальности</span>
+            <span data-lang="en">Privacy Policy</span>
+        </a></p>
     </footer>
 
 </div>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+        });
+        document.documentElement.lang = lang;
+    }
+</script>
 </body>
 </html>
