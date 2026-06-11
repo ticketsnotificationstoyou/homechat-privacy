@@ -183,7 +183,7 @@ All media files are automatically and permanently deleted from the server after 
     <div class="card">
         <div data-lang="ru">
             <h2>Реакции на сообщения</h2>
-            <p>Реакции (emoji-отклики на сообщения) — функция, недоступная в секретных чатах Telegram — реализована в HomeChat и шифруются по тому же механизму, что и текстовые сообщения: AES-256-GCM с одноразовым ключом из цепочки Double Ratchet. Сервер видит только зашифрованный blob — ни emoji, ни ID сообщения, на которое поставлена реакция, ни действие (добавление или удаление) серверу недоступны.</p>
+            <p>Реакции (emoji-отклики на сообщения) — функция, недоступная в секретных чатах Telegram — реализованы в HomeChat и шифруются по тому же механизму, что и текстовые сообщения: AES-256-GCM с одноразовым ключом из цепочки Double Ratchet. Сервер видит только зашифрованный blob — ни emoji, ни ID сообщения, на которое поставлена реакция, ни действие (добавление или удаление) серверу недоступны.</p>
         </div>
         <div data-lang="en">
             <h2>Message Reactions</h2>
@@ -194,11 +194,19 @@ All media files are automatically and permanently deleted from the server after 
     <div class="card">
         <div data-lang="ru">
             <h2>Голосовые звонки</h2>
-            <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудиопоток защищён DTLS/SRTP. Разговор не проходит через сервер и не записывается.</p>
+            <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудиопоток защищён DTLS/SRTP. Разговор не записывается.
+
+В большинстве случаев соединение устанавливается напрямую между устройствами (P2P). Если прямое соединение невозможно из-за сетевых ограничений — трафик проходит через два независимых резервных TURN-сервера, каждый с собственным уникальным секретом. Компрометация одного сервера не затрагивает другой. TURN-серверы видят только зашифрованный DTLS/SRTP поток и не могут его расшифровать — ключи сессии известны только устройствам участников звонка. Доступ к каждому серверу защищён одноразовыми HMAC-SHA1 токенами с временем жизни 1 час — перехваченные credentials невозможно использовать повторно.
+
+Инфраструктура разнесена: звонки обслуживаются отдельными TURN-серверами, медиафайлы и сообщения — основным сервером, по разным каналам (медиа через HTTPS, сообщения через WSS). Сервер никогда не имеет одновременно и зашифрованный медиафайл, и ключ для его расшифровки. Даже при полной компрометации сервера расшифровать перехваченные звонки или сообщения невозможно.</p>
         </div>
         <div data-lang="en">
             <h2>Voice Calls</h2>
-            <p>Calls are protected by double encryption. Connection setup signals (offer, answer, ICE candidates) are encrypted with AES-GCM using a key derived from the Double Ratchet — the server cannot see IP addresses, SDP, or signal type. The audio stream is protected by DTLS/SRTP. Conversations do not pass through the server and are never recorded.</p>
+            <p>Calls are protected by double encryption. Connection setup signals (offer, answer, ICE candidates) are encrypted with AES-GCM using a key derived from the Double Ratchet — the server cannot see IP addresses, SDP, or signal type. The audio stream is protected by DTLS/SRTP. Conversations are never recorded.
+
+In most cases a direct peer-to-peer connection is established between devices. If a direct connection is not possible due to network restrictions, traffic is relayed through two independent fallback TURN servers, each with its own unique secret. Compromise of one server does not affect the other. The TURN servers see only the encrypted DTLS/SRTP stream and cannot decrypt it — the session keys are known only to the call participants' devices. Access to each server is protected by one-time HMAC-SHA1 tokens with a 1-hour lifetime — intercepted credentials cannot be reused.
+
+The infrastructure is separated: calls are handled by dedicated TURN servers, while media files and messages are handled by the main server over distinct channels — media via HTTPS, messages via WSS. The server never simultaneously holds both an encrypted media file and the key to decrypt it. Even with full server compromise, decrypting intercepted calls or messages is impossible.</p>
         </div>
     </div>
 
