@@ -182,11 +182,11 @@
     <div class="card">
         <div data-lang="ru">
             <h2>Для кого предназначен HomeChat</h2>
-            <p>HomeChat — приватный мессенджер для общения один на один между лично знакомыми людьми: семьёй, близкими друзьями. Приложение поддерживает текстовые и аудиосообщения, отправку фото, видео, видео-кружков, документов, аудиофайлов, кастомных стикеров, а также голосовые звонки. Групповые чаты, публичные каналы и общение с незнакомцами НЕ поддерживаются. Все контакты добавляются только вручную по уникальному ID или QR-коду.</p>
+            <p>HomeChat — приватный мессенджер для общения один на один между лично знакомыми людьми: семьёй, близкими друзьями. Приложение поддерживает текстовые и аудиосообщения, отправку фото, видео, видео-кружков, документов, аудиофайлов, кастомных стикеров, а также голосовые и видеозвонки. Групповые чаты, публичные каналы и общение с незнакомцами не поддерживаются. Все контакты добавляются только вручную по уникальному ID или QR-коду.</p>
         </div>
         <div data-lang="en">
             <h2>Who HomeChat Is For</h2>
-            <p>HomeChat is a private messenger for one-on-one conversations between people who know each other personally — family and close friends. The app supports text and voice messages, photo, video, video circles, document, and audio file sharing, custom stickers, and voice and calls. Group chats, public channels, and communication with strangers are NOT supported. All contacts are added manually using a unique ID or QR code.</p>
+            <p>HomeChat is a private messenger for one-on-one conversations between people who know each other personally — family and close friends. The app supports text and voice messages, photo, video, video circles, document, and audio file sharing, custom stickers, and voice and video calls. Group chats, public channels, and communication with strangers are not supported. All contacts are added manually using a unique ID or QR code.</p>
         </div>
     </div>
 
@@ -243,6 +243,15 @@ Go to your profile and tap "Delete Account." This action is irreversible — all
 HomeChat использует зашифрованные VoIP-звонки через интернет. Для входящих звонков приложение не должно быть открыто — уведомление придёт даже когда телефон заблокирован.</p>
             <p style="margin-top: 14px;"><strong>Можно ли создать групповой чат?</strong>
 Нет. HomeChat поддерживает только переписку один на один. Групповые чаты, каналы и публичные пространства не предусмотрены.</p>
+
+            <p style="margin-top: 14px;"><strong>Что будет, если выйти из аккаунта?</strong>
+Вы можете выйти из аккаунта через кнопку «Выйти из аккаунта» в профиле. Важно: заранее сохраните ваш уникальный ID — без него вернуться в свой аккаунт на этом же устройстве не получится.</p>
+
+            <p style="margin-top: 14px;"><strong>Можно ли перенести аккаунт на другое устройство?</strong>
+К сожалению, перенос на другое устройство пока не предусмотрен по соображениям безопасности. Ваш аккаунт привязан к одному физическому устройству.</p>
+
+            <p style="margin-top: 14px;"><strong>Может ли кто-то, зная мой ID, войти в мой аккаунт?</strong>
+Нет. ID — это просто адрес, по которому вас можно найти, но не ключ для входа. При каждом входе сервер отправляет приложению случайный одноразовый код, и приложение подписывает его криптографическим ключом, который был сгенерирован прямо на вашем устройстве при регистрации и хранится исключительно в защищённом хранилище (Keychain). Этот ключ никогда не покидает устройство — ни сервер, ни разработчик, никто другой не имеет к нему доступа. Человек без вашего физического устройства не сможет пройти эту проверку, даже зная ваш ID.</p>
         </div>
         <div data-lang="en">
             <h2>Frequently Asked Questions</h2>
@@ -252,6 +261,15 @@ Check your internet connection. If the problem persists, email us with a descrip
 HomeChat uses encrypted VoIP calls over the internet. For incoming calls, the app doesn't need to be open — you'll receive a notification even when your phone is locked.</p>
             <p style="margin-top: 14px;"><strong>Can I create a group chat?</strong>
 No. HomeChat supports only one-on-one conversations. Group chats, channels, and public spaces are not available.</p>
+
+            <p style="margin-top: 14px;"><strong>What happens if I sign out of my account?</strong>
+You can sign out using the "Sign Out" button in your profile. Important: make sure to save your unique ID beforehand — without it, you won't be able to return to your account on this device.</p>
+
+            <p style="margin-top: 14px;"><strong>Can I transfer my account to another device?</strong>
+Unfortunately, transferring your account to another device is not currently supported for security reasons. Your account is tied to a single physical device.</p>
+
+            <p style="margin-top: 14px;"><strong>Can someone access my account just by knowing my ID?</strong>
+No. Your ID is simply an address others can use to find you — it is not a login credential. Every time you sign in, the server sends the app a random one-time challenge, and the app signs it using a cryptographic key that was generated directly on your device at registration and stored exclusively in the secure system keychain. This key never leaves your device — the server, the developer, and anyone else has no access to it. Without your physical device, no one can pass this verification, even if they know your ID.</p>
         </div>
     </div>
 
