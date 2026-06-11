@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeChat — Политика конфиденциальности</title>
+    <title>HomeChat — Privacy Policy / Политика конфиденциальности</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,6 +18,40 @@
             max-width: 720px;
             margin: 0 auto;
             padding: 48px 24px 80px;
+        }
+
+        /* Language switcher */
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+
+        .lang-switcher-inner {
+            display: inline-flex;
+            background: #e5e5ea;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 7px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6e6e73;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            font-family: inherit;
+        }
+
+        .lang-btn.active {
+            background: #ffffff;
+            color: #1c1c1e;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
 
         header {
@@ -78,60 +112,128 @@
             font-size: 13px;
             color: #aeaeb2;
         }
+
+        /* Language visibility */
+        [data-lang] { display: none; }
+        .lang-ru [data-lang="ru"] { display: block; }
+        .lang-en [data-lang="en"] { display: block; }
+
+        span[data-lang] { display: none; }
+        .lang-ru span[data-lang="ru"] { display: inline; }
+        .lang-en span[data-lang="en"] { display: inline; }
     </style>
 </head>
-<body>
+<body class="lang-ru">
 <div class="container">
+
+    <div class="lang-switcher">
+        <div class="lang-switcher-inner">
+            <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+    </div>
 
     <header>
         <img class="icon" src="icon.png" alt="HomeChat">
         <h1>HomeChat</h1>
-        <p>Политика конфиденциальности</p>
+        <p>
+            <span data-lang="ru">Политика конфиденциальности</span>
+            <span data-lang="en">Privacy Policy</span>
+        </p>
     </header>
 
     <div class="card">
-        <h2>Что мы собираем</h2>
-        <p>Ничего, что вас идентифицирует. HomeChat требует только имя пользователя на ваш выбор. Номер телефона, email, дата рождения и любые другие персональные данные не запрашиваются и не собираются.</p>
+        <div data-lang="ru">
+            <h2>Что мы собираем</h2>
+            <p>Ничего, что вас идентифицирует. HomeChat требует только имя пользователя на ваш выбор. Номер телефона, email, дата рождения и любые другие персональные данные не запрашиваются и не собираются.</p>
+        </div>
+        <div data-lang="en">
+            <h2>What We Collect</h2>
+            <p>Nothing that identifies you. HomeChat only requires a username of your choosing. Phone number, email, date of birth, and any other personal data are neither requested nor collected.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Как хранятся сообщения</h2>
-        <p>Все сообщения шифруются на вашем устройстве до отправки с использованием протокола Signal (Double Ratchet + X3DH). Сервер никогда не имеет доступа к содержимому ваших сообщений, звонков или медиафайлов. Ключи шифрования никогда не покидают ваше устройство.</p>
+        <div data-lang="ru">
+            <h2>Как хранятся сообщения</h2>
+            <p>Все сообщения шифруются на вашем устройстве до отправки с использованием протокола Signal (Double Ratchet + X3DH). Сервер никогда не имеет доступа к содержимому ваших сообщений, звонков или медиафайлов. Ключи шифрования никогда не покидают ваше устройство.</p>
+        </div>
+        <div data-lang="en">
+            <h2>How Messages Are Stored</h2>
+            <p>All messages are encrypted on your device before sending, using the Signal protocol (Double Ratchet + X3DH). The server never has access to the content of your messages, calls, or media files. Encryption keys never leave your device.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Медиафайлы</h2>
-        <p>Фото, видео, аудио и голосовые сообщения загружаются на сервер в зашифрованном виде и хранятся как непрозрачные блобы со случайным идентификатором. Расшифровать их без доступа к устройствам участников переписки невозможно. Все медиафайлы автоматически и безвозвратно удаляются из сервера через 7 дней — независимо от того, были ли они скачаны.</p>
+        <div data-lang="ru">
+            <h2>Медиафайлы</h2>
+            <p>Фото, видео, аудио и голосовые сообщения загружаются на сервер в зашифрованном виде и хранятся как непрозрачные блобы со случайным идентификатором. Расшифровать их без доступа к устройствам участников переписки невозможно. Все медиафайлы автоматически и безвозвратно удаляются из сервера через 7 дней — независимо от того, были ли они скачаны.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Media Files</h2>
+            <p>Photos, videos, audio, and voice messages are uploaded to the server in encrypted form and stored as opaque blobs with a random identifier. They cannot be decrypted without access to the participants' devices. All media files are automatically and permanently deleted from the server after 7 days — regardless of whether they were downloaded.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Голосовые звонки</h2>
-        <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудиопоток защищён DTLS/SRTP. Разговор не проходит через сервер и не записывается.</p>
+        <div data-lang="ru">
+            <h2>Голосовые звонки</h2>
+            <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудиопоток защищён DTLS/SRTP. Разговор не проходит через сервер и не записывается.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Voice Calls</h2>
+            <p>Calls are protected by double encryption. Connection setup signals (offer, answer, ICE candidates) are encrypted with AES-GCM using a key derived from the Double Ratchet — the server cannot see IP addresses, SDP, or signal type. The audio stream is protected by DTLS/SRTP. Conversations do not pass through the server and are never recorded.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Токены уведомлений</h2>
-        <p>Push-токены и VoIP-токены хранятся на сервере исключительно для доставки уведомлений. Они удаляются немедленно при удалении аккаунта.</p>
+        <div data-lang="ru">
+            <h2>Токены уведомлений</h2>
+            <p>Push-токены и VoIP-токены хранятся на сервере исключительно для доставки уведомлений. Они удаляются немедленно при удалении аккаунта.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Notification Tokens</h2>
+            <p>Push tokens and VoIP tokens are stored on the server solely for delivering notifications. They are deleted immediately when an account is removed.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Содержимое push-уведомлений</h2>
-        <p>Многие мессенджеры отображают текст сообщения в push-уведомлении — он сохраняется в системном хранилище iOS и может быть извлечён без взлома самого приложения. HomeChat не раскрывает содержимое сообщений в уведомлениях. Push содержит только имя отправителя и строку «🔒 Зашифрованное сообщение» — без текста, без медиа, без каких-либо данных переписки.</p>
+        <div data-lang="ru">
+            <h2>Содержимое push-уведомлений</h2>
+            <p>Многие мессенджеры отображают текст сообщения в push-уведомлении — он сохраняется в системном хранилище iOS и может быть извлечён без взлома самого приложения. HomeChat не раскрывает содержимое сообщений в уведомлениях. Push содержит только имя отправителя и строку «🔒 Зашифрованное сообщение» — без текста, без медиа, без каких-либо данных переписки.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Push Notification Content</h2>
+            <p>Many messaging apps display message text in push notifications — this text is stored in the iOS system and can be extracted without breaking the app itself. HomeChat does not expose message content in notifications. A push contains only the sender's name and the string "🔒 Encrypted message" — no text, no media, no conversation data of any kind.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Удаление аккаунта</h2>
-        <p>При удалении аккаунта все данные уничтожаются безвозвратно — на сервере и на устройстве. Это включает сообщения, медиафайлы, ключи шифрования, данные сессий и токены уведомлений. Действие необратимо.</p>
+        <div data-lang="ru">
+            <h2>Удаление аккаунта</h2>
+            <p>При удалении аккаунта все данные уничтожаются безвозвратно — на сервере и на устройстве. Это включает сообщения, медиафайлы, ключи шифрования, данные сессий и токены уведомлений. Действие необратимо.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Account Deletion</h2>
+            <p>When an account is deleted, all data is permanently destroyed — on the server and on the device. This includes messages, media files, encryption keys, session data, and notification tokens. The action is irreversible.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Передача данных третьим лицам</h2>
-        <p>Мы не продаём, не передаём и не раскрываем никакие данные третьим лицам. В приложении нет рекламы, аналитики и трекинга.</p>
+        <div data-lang="ru">
+            <h2>Передача данных третьим лицам</h2>
+            <p>Мы не продаём, не передаём и не раскрываем никакие данные третьим лицам. В приложении нет рекламы, аналитики и трекинга.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Third-Party Data Sharing</h2>
+            <p>We do not sell, share, or disclose any data to third parties. The app contains no advertising, analytics, or tracking of any kind.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Безопасность данных</h2>
-        <p>HomeChat использует четыре независимых слоя защиты.
+        <div data-lang="ru">
+            <h2>Безопасность данных</h2>
+            <p>HomeChat использует четыре независимых слоя защиты.
 
 <strong>Double Ratchet + X3DH (протокол Signal):</strong> каждое сообщение шифруется уникальным ключом, который удаляется сразу после использования. Компрометация одного сообщения не раскрывает остальные — это называется forward secrecy.
 
@@ -144,18 +246,55 @@
 Сервер видит только зашифрованные данные и метаданные соединения. Содержимое сообщений недоступно никому кроме участников переписки.
 
 <strong>Защита от несанкционированного доступа:</strong> все операции с сообщениями (доставка, прочтение, статусы) проверяются на уровне сервера — пользователь не может взаимодействовать с данными диалога, в котором не является участником.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Data Security</h2>
+            <p>HomeChat uses four independent layers of protection.
+
+<strong>Double Ratchet + X3DH (Signal protocol):</strong> every message is encrypted with a unique key that is deleted immediately after use. Compromising one message does not expose any others — this is known as forward secrecy.
+
+<strong>AAD authentication:</strong> the metadata of each message (protocol version, sequence number, and DH ratchet key) is cryptographically bound to its content. Any tampering with these fields in transit is detected immediately — this prevents an attacker from desynchronising the Double Ratchet state at the recipient's end.
+
+<strong>Certificate Pinning:</strong> the app only accepts a TLS connection from a server whose key is known in advance. Even a trusted certificate authority cannot issue a fraudulent certificate without detection.
+
+<strong>Safety Number:</strong> a unique fingerprint that can be verified with your contact out of band. If the codes match, no one — including the server — has substituted encryption keys.
+
+The server sees only encrypted data and connection metadata. Message content is inaccessible to anyone except the conversation participants.
+
+<strong>Authorisation enforcement:</strong> all message operations (delivery, read receipts, status updates) are verified at the server level — a user cannot interact with data from a conversation they are not part of.</p>
+        </div>
     </div>
 
     <div class="card">
-        <h2>Контакт</h2>
-        <p>По вопросам, связанным с настоящей политикой, обращайтесь к разработчику:
+        <div data-lang="ru">
+            <h2>Контакт</h2>
+            <p>По вопросам, связанным с настоящей политикой, обращайтесь к разработчику:
 <a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
+        </div>
+        <div data-lang="en">
+            <h2>Contact</h2>
+            <p>For questions related to this policy, please contact the developer:
+<a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
+        </div>
     </div>
 
     <footer>
-        <p>Дата вступления в силу: 29 марта 2026 г.</p>
+        <p>
+            <span data-lang="ru">Дата вступления в силу: 29 марта 2026 г.</span>
+            <span data-lang="en">Effective date: March 29, 2026</span>
+        </p>
     </footer>
 
 </div>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+        });
+        document.documentElement.lang = lang;
+    }
+</script>
 </body>
 </html>
