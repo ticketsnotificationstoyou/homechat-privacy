@@ -95,6 +95,7 @@
             font-size: 15px;
             color: #48484a;
             white-space: pre-line;
+            text-align: justify;
         }
 
         .card a {
@@ -166,18 +167,31 @@
 
     <div class="card">
         <div data-lang="ru">
-            <h2>Медиафайлы</h2>
-            <p>Фото, видео, аудио и голосовые сообщения загружаются на сервер в зашифрованном виде и хранятся как непрозрачные блобы со случайным идентификатором. Расшифровать их без доступа к устройствам участников переписки невозможно. Все медиафайлы автоматически и безвозвратно удаляются из сервера через 7 дней — независимо от того, были ли они скачаны.</p>
+            <h2>Медиафайлы, стикеры и документы</h2>
+            <p>Фото, видео, аудио, голосовые сообщения, документы и стикеры шифруются отдельным случайным ключом (AES-256-GCM) непосредственно на устройстве до отправки. Сервер получает только непрозрачный зашифрованный blob со случайным идентификатором — ни содержимое, ни ключ расшифровки ему недоступны. Ключ, вектор инициализации и хэш целостности файла передаются получателю исключительно внутри E2E-зашифрованного сообщения Double Ratchet. Расшифровать медиафайл без доступа к устройствам участников переписки невозможно.
+
+Все медиафайлы автоматически и безвозвратно удаляются с сервера через 7 дней — независимо от того, были ли они скачаны.</p>
         </div>
         <div data-lang="en">
-            <h2>Media Files</h2>
-            <p>Photos, videos, audio, and voice messages are uploaded to the server in encrypted form and stored as opaque blobs with a random identifier. They cannot be decrypted without access to the participants' devices. All media files are automatically and permanently deleted from the server after 7 days — regardless of whether they were downloaded.</p>
+            <h2>Media Files, Stickers, and Documents</h2>
+            <p>Photos, videos, audio, voice messages, documents, and stickers are each encrypted with a separate random key (AES-256-GCM) on the device before being sent. The server receives only an opaque encrypted blob with a random identifier — neither the content nor the decryption key is accessible to it. The key, initialisation vector, and integrity hash are delivered to the recipient exclusively inside an E2E-encrypted Double Ratchet message. Decrypting a media file without access to the participants' devices is impossible.
+
+All media files are automatically and permanently deleted from the server after 7 days — regardless of whether they were downloaded.</p>
         </div>
     </div>
 
     <div class="card">
         <div data-lang="ru">
-            <h2>Голосовые звонки</h2>
+            <h2>Реакции на сообщения</h2>
+            <p>Реакции (emoji-отклики на сообщения) — функция, недоступная в секретных чатах Telegram — реализованы в HomeChat и шифруются по тому же механизму, что и текстовые сообщения: AES-256-GCM с одноразовым ключом из цепочки Double Ratchet. Сервер видит только зашифрованный blob — ни emoji, ни ID сообщения, на которое поставлена реакция, ни действие (добавление или удаление) серверу недоступны.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Message Reactions</h2>
+            <p>Emoji reactions to messages — a feature unavailable in Telegram's secret chats — are supported in HomeChat and encrypted using the same mechanism as text messages: AES-256-GCM with a one-time key derived from the Double Ratchet chain. The server sees only an encrypted blob — the emoji itself, the ID of the message being reacted to, and the action (add or remove) are all inaccessible to it.</p>
+        </div>
+    </div>
+
+    <div class="card">
             <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудиопоток защищён DTLS/SRTP. Разговор не проходит через сервер и не записывается.</p>
         </div>
         <div data-lang="en">
