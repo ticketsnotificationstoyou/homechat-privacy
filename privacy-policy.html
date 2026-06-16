@@ -157,11 +157,27 @@
     <div class="card">
         <div data-lang="ru">
             <h2>Как хранятся сообщения</h2>
-            <p>Все сообщения шифруются на вашем устройстве до отправки с использованием протокола Signal (Double Ratchet + X3DH). Сервер никогда не имеет доступа к содержимому ваших сообщений, звонков или медиафайлов. Ключи шифрования никогда не покидают ваше устройство.</p>
+            <p>Все сообщения шифруются на вашем устройстве до отправки с использованием протокола Signal (Double Ratchet + X3DH). Сервер никогда не имеет доступа к содержимому ваших сообщений, звонков или медиафайлов. Ключи шифрования никогда не покидают ваше устройство.
+
+На сервере сообщения хранятся в зашифрованном виде. Сервер видит только техническую информацию: кто отправил, кому и когда. Содержимое сообщений, вложения и любые данные переписки недоступны серверу — они остаются зашифрованными и могут быть расшифрованы только на устройствах участников диалога.
+
+На вашем устройстве сообщения хранятся в локальной базе данных в зашифрованном виде. Расшифровка происходит только в момент, когда вы открываете чат.
+
+<strong>Текстовые сообщения</strong> сохраняются на вашем устройстве навсегда, пока вы не удалите чат или аккаунт. Они не удаляются автоматически.
+
+<strong>Медиафайлы</strong> (фото, видео, аудио, документы) автоматически удаляются с сервера через 7 дней. Если вы не скачали файл на устройство в течение этого времени — он будет безвозвратно утерян. Чтобы сохранить важный файл, нажмите кнопку сохранения в чате — после этого файл останется на вашем устройстве навсегда.</p>
         </div>
         <div data-lang="en">
             <h2>How Messages Are Stored</h2>
-            <p>All messages are encrypted on your device before sending, using the Signal protocol (Double Ratchet + X3DH). The server never has access to the content of your messages, calls, or media files. Encryption keys never leave your device.</p>
+            <p>All messages are encrypted on your device before sending, using the Signal protocol (Double Ratchet + X3DH). The server never has access to the content of your messages, calls, or media files. Encryption keys never leave your device.
+
+On the server, messages are stored in encrypted form. The server sees only technical information: who sent it, to whom, and when. The content of messages, attachments, and any conversation data are inaccessible to the server — they remain encrypted and can only be decrypted on the devices of the conversation participants.
+
+On your device, messages are stored in a local encrypted database. Decryption happens only when you open the chat.
+
+<strong>Text messages</strong> are stored on your device permanently, until you delete the chat or your account. They are never automatically deleted.
+
+<strong>Media files</strong> (photos, videos, audio, documents) are automatically deleted from the server after 7 days. If you haven't downloaded a file to your device within that time — it will be permanently lost. To keep an important file, tap the save button in the chat — the file will then remain on your device forever.</p>
         </div>
     </div>
 
@@ -267,6 +283,8 @@ The infrastructure is separated: calls are handled by dedicated TURN servers, wh
 
 <strong>Отпечаток безопасности (Safety Number):</strong> уникальный код, который можно сверить с собеседником вне приложения. Найти его можно в каждом чате в разделе информации о чате. Если коды совпадают — никто, включая сервер, не подменял ключи шифрования.
 
+<strong>IP-адреса:</strong> сервер технически видит IP-адрес для установки соединения, но не сохраняет его, не записывает в логи и не связывает с вашим аккаунтом или перепиской.
+
 Сервер видит только зашифрованные данные и метаданные соединения. Содержимое сообщений недоступно никому кроме участников переписки.
 
 <strong>Защита от несанкционированного доступа:</strong> все операции с сообщениями (доставка, прочтение, статусы) проверяются на уровне сервера — пользователь не может взаимодействовать с данными диалога, в котором не является участником.</p>
@@ -282,6 +300,8 @@ The infrastructure is separated: calls are handled by dedicated TURN servers, wh
 <strong>Certificate Pinning:</strong> the app only accepts a TLS connection from a server whose key is known in advance. Even a trusted certificate authority cannot issue a fraudulent certificate without detection.
 
 <strong>Safety Number:</strong> a unique fingerprint that can be verified with your contact out of band. It can be found in every chat under the chat info screen. If the codes match, no one — including the server — has substituted encryption keys.
+
+<strong>IP addresses:</strong> the server technically sees your IP address to establish a connection, but does not store it, does not log it, and does not associate it with your account or conversations.
 
 The server sees only encrypted data and connection metadata. Message content is inaccessible to anyone except the conversation participants.
 
