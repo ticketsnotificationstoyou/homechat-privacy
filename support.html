@@ -170,6 +170,26 @@
         span[data-lang] { display: none; }
         .lang-ru span[data-lang="ru"] { display: inline; }
         .lang-en span[data-lang="en"] { display: inline; }
+
+        /* Checkmark and badge styling */
+        .check { color: #34c759; font-weight: 600; }
+        .badge {
+            display: inline-block;
+            background: #e5e5ea;
+            color: #6e6e73;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 6px;
+        }
+        .badge-done {
+            background: #e8f9ed;
+            color: #1a8a3e;
+        }
+        .feature-item {
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body class="lang-ru">
@@ -344,17 +364,15 @@ Learn more in <a href="https://ticketsnotificationstoyou.github.io/homechat-priv
     <div class="card">
         <div data-lang="ru">
             <h2>Что планируется в следующих версиях</h2>
-            <p>• Поддержка разных языков в интерфейсе
-• Реализация видеозвонков
-• Улучшение обработки статусов аккаунтов и добавление алертов
-</p>
+            <p class="feature-item">✅ Поддержка английского языка <span class="badge badge-done">уже в версии 1.5</span></p>
+            <p class="feature-item">✅ Улучшение обработки статусов аккаунтов и добавление алертов <span class="badge badge-done">уже реализовано в версии 1.4</span></p>
+            <p class="feature-item">📹 Видеозвонки <span class="badge">будет в релизе 1.6</span></p>
         </div>
         <div data-lang="en">
             <h2>Coming in Future Versions</h2>
-            <p>• Support for multiple interface languages
-• Video calling
-• Improved account status handling and additional alerts
-</p>
+            <p class="feature-item">✅ English language support <span class="badge badge-done">already in version 1.5</span></p>
+            <p class="feature-item">✅ Improved account status handling and additional alerts <span class="badge badge-done">already implemented in version 1.4</span></p>
+            <p class="feature-item">📹 Video calls <span class="badge">coming in release 1.6</span></p>
         </div>
     </div>
 
