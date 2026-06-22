@@ -217,16 +217,16 @@ On your device, messages are stored in a local encrypted database. Decryption ha
 
     <div class="card">
         <div data-lang="ru">
-            <h2>Голосовые звонки</h2>
-            <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудиопоток защищён DTLS/SRTP. Разговор не записывается.
+            <h2>Голосовые и видеозвонки</h2>
+            <p>Звонки защищены двойным шифрованием. Сигналы установки соединения (offer, answer, ICE-кандидаты) шифруются AES-GCM с ключом, производным от Double Ratchet — сервер не может видеть IP-адреса, SDP или тип сигнала. Аудио- и видеопоток защищён DTLS/SRTP. Разговор не записывается.
 
 В большинстве случаев соединение устанавливается напрямую между устройствами (P2P). Если прямое соединение невозможно из-за сетевых ограничений — трафик проходит через два независимых резервных TURN-сервера, каждый с собственным уникальным секретом. Компрометация одного сервера не затрагивает другой. TURN-серверы видят только зашифрованный DTLS/SRTP поток и не могут его расшифровать — ключи сессии известны только устройствам участников звонка. Доступ к каждому серверу защищён одноразовыми HMAC-SHA1 токенами с временем жизни 1 час — перехваченные credentials невозможно использовать повторно.
 
 Инфраструктура разнесена: звонки обслуживаются отдельными TURN-серверами, медиафайлы и сообщения — основным сервером, по разным каналам (медиа через HTTPS, сообщения через WSS). Даже при полной компрометации сервера расшифровать перехваченные звонки невозможно.</p>
         </div>
         <div data-lang="en">
-            <h2>Voice Calls</h2>
-            <p>Calls are protected by double encryption. Connection setup signals (offer, answer, ICE candidates) are encrypted with AES-GCM using a key derived from the Double Ratchet — the server cannot see IP addresses, SDP, or signal type. The audio stream is protected by DTLS/SRTP. Conversations are never recorded.
+            <h2>Voice and Video Calls</h2>
+            <p>Calls are protected by double encryption. Connection setup signals (offer, answer, ICE candidates) are encrypted with AES-GCM using a key derived from the Double Ratchet — the server cannot see IP addresses, SDP, or signal type. The audio and video stream is protected by DTLS/SRTP. Conversations are never recorded.
 
 In most cases a direct peer-to-peer connection is established between devices. If a direct connection is not possible due to network restrictions, traffic is relayed through two independent fallback TURN servers, each with its own unique secret. Compromise of one server does not affect the other. The TURN servers see only the encrypted DTLS/SRTP stream and cannot decrypt it — the session keys are known only to the call participants' devices. Access to each server is protected by one-time HMAC-SHA1 tokens with a 1-hour lifetime — intercepted credentials cannot be reused.
 
@@ -253,6 +253,59 @@ The infrastructure is separated: calls are handled by dedicated TURN servers, wh
         <div data-lang="en">
             <h2>Push Notification Content</h2>
             <p>Many messaging apps display message text in push notifications — this text is stored in the iOS system and can be extracted without breaking the app itself. HomeChat does not expose message content in notifications. A push contains only the sender's name and the string "🔒 Encrypted message" — no text, no media, no conversation data of any kind.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Хранение ключей на устройстве</h2>
+            <p>Все приватные криптографические ключи хранятся исключительно в системном хранилище iOS Keychain с атрибутом <strong>ThisDeviceOnly</strong> — они физически не могут быть перенесены на другое устройство, извлечены при резервном копировании iCloud или получены через iTunes Backup. Это означает, что даже при наличии полного доступа к резервной копии телефона прочитать вашу переписку невозможно.
+
+Локальная база сообщений, файлы криптографических сессий и кэш медиафайлов также исключены из iCloud Backup — они существуют только на вашем устройстве.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Key Storage on Device</h2>
+            <p>All private cryptographic keys are stored exclusively in the iOS system Keychain with the <strong>ThisDeviceOnly</strong> attribute — they physically cannot be transferred to another device, extracted via iCloud Backup, or obtained through iTunes Backup. This means that even with full access to a phone backup, reading your messages is impossible.
+
+The local message database, cryptographic session files, and media cache are also excluded from iCloud Backup — they exist only on your device.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Защита от повторного воспроизведения сообщений</h2>
+            <p>HomeChat использует три независимых уровня защиты от replay-атак — попыток повторно доставить перехваченное сообщение.
+
+Первый уровень — сам протокол Double Ratchet: каждый ключ шифрования одноразовый и уничтожается сразу после использования. Физически невозможно расшифровать перехваченное сообщение повторно.
+
+Второй уровень — клиентская дедупликация: приложение запоминает идентификаторы уже обработанных сообщений и отклоняет любые дубликаты ещё до попытки расшифровки.
+
+Третий уровень — серверная проверка: сервер хранит в Redis идентификаторы доставленных сообщений и отклоняет повторные попытки доставки с тем же ID.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Replay Attack Protection</h2>
+            <p>HomeChat uses three independent layers of protection against replay attacks — attempts to re-deliver an intercepted message.
+
+The first layer is the Double Ratchet protocol itself: every encryption key is one-time-use and destroyed immediately after use. It is physically impossible to decrypt an intercepted message a second time.
+
+The second layer is client-side deduplication: the app remembers the identifiers of already-processed messages and rejects any duplicates before even attempting decryption.
+
+The third layer is server-side verification: the server stores delivered message identifiers in Redis and rejects repeated delivery attempts with the same ID.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Переустановка и смена устройства</h2>
+            <p>Если вы удалите приложение, HomeChat автоматически обнаружит переустановку при следующем запуске. Сервер уведомит ваши контакты об удалении аккаунта, все локальные данные и ключи шифрования будут безвозвратно очищены. Вход по старому идентификатору станет невозможным — потребуется новая регистрация.
+
+История переписки не синхронизируется между устройствами и не восстанавливается при переустановке. Это сознательное архитектурное решение: ключи шифрования не покидают устройство, поэтому перенос истории технически невозможен без компрометации модели безопасности.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Reinstallation and Device Change</h2>
+            <p>If you delete the app, HomeChat will automatically detect the reinstallation on the next launch. The server will notify your contacts of the account deletion, and all local data and encryption keys will be permanently wiped. Signing in with the old identifier becomes impossible — a new registration is required.
+
+Message history is not synchronised between devices and is not restored upon reinstallation. This is a deliberate architectural decision: since encryption keys never leave the device, transferring history is technically impossible without compromising the security model.</p>
         </div>
     </div>
 
@@ -332,8 +385,8 @@ The server sees only encrypted data and connection metadata. Message content is 
 
     <footer>
         <p>
-            <span data-lang="ru">Дата вступления в силу: 29 марта 2026 г.</span>
-            <span data-lang="en">Effective date: March 29, 2026</span>
+            <span data-lang="ru">Дата вступления в силу: 29 марта 2026 г. · Обновлено: июнь 2026 г.</span>
+            <span data-lang="en">Effective date: March 29, 2026 · Updated: June 2026</span>
         </p>
     </footer>
 
