@@ -59,11 +59,27 @@
             margin-bottom: 48px;
         }
 
+        .icon-link {
+            display: inline-block;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            border-radius: 18px;
+        }
+
+        .icon-link:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .icon-link:active {
+            transform: scale(0.95);
+        }
+
         .icon {
             width: 80px;
             height: 80px;
             border-radius: 18px;
             margin-bottom: 16px;
+            display: block;
         }
 
         header h1 {
@@ -157,7 +173,10 @@
     </div>
 
     <header>
-        <img class="icon" src="icon.png" alt="HomeChat">
+        <!-- Иконка теперь обёрнута в ссылку на App Store -->
+        <a href="https://apps.apple.com/ru/app/homechat/id6761311344?l=en-GB" class="icon-link" target="_blank" rel="noopener noreferrer" aria-label="Скачать HomeChat в App Store">
+            <img class="icon" src="icon.png" alt="HomeChat">
+        </a>
         <h1>HomeChat</h1>
         <p>
             <span data-lang="ru">Политика конфиденциальности</span>
