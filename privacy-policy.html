@@ -122,6 +122,28 @@
         span[data-lang] { display: none; }
         .lang-ru span[data-lang="ru"] { display: inline; }
         .lang-en span[data-lang="en"] { display: inline; }
+
+        /* Orange frame for the security checklist link */
+        .orange-frame {
+            display: inline-block;
+            border: 2px solid #ff9500;
+            border-radius: 12px;
+            padding: 10px 18px;
+            background: #fff6e8;
+            transition: background 0.2s, border-color 0.2s;
+            text-align: center;
+        }
+
+        .orange-frame a {
+            color: #1c1c1e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .orange-frame a:hover {
+            text-decoration: underline;
+            background: #fff0d6;
+        }
     </style>
 </head>
 <body class="lang-ru">
@@ -380,6 +402,24 @@ The server sees only encrypted data and connection metadata. Message content is 
             <h2>Contact</h2>
             <p>For questions related to this policy, please contact the developer:
 <a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
+        </div>
+    </div>
+
+    <!-- Security audit card with updated text and orange frame -->
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Аудит безопасности</h2>
+            <p>Аудит безопасности июнь 2026. Результаты: <strong>32 из 32 пунктов выполнено</strong>, 0 критических проблем.</p>
+            <div class="orange-frame">
+                <a href="security.html">Посмотреть полный чеклист безопасности →</a>
+            </div>
+        </div>
+        <div data-lang="en">
+            <h2>Security Audit</h2>
+            <p>Security audit June 2026. Results: <strong>32 out of 32 items passed</strong>, 0 critical issues.</p>
+            <div class="orange-frame">
+                <a href="security.html">View full security checklist →</a>
+            </div>
         </div>
     </div>
 
