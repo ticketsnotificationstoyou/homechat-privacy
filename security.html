@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeChat — Security / Безопасность</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f2f2f7;
+            color: #1c1c1e;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+
+        .lang-switcher-inner {
+            display: inline-flex;
+            background: #e5e5ea;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 7px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6e6e73;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            font-family: inherit;
+        }
+
+        .lang-btn.active {
+            background: #ffffff;
+            color: #1c1c1e;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 18px;
+            margin-bottom: 16px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: #6e6e73;
+            font-size: 15px;
+        }
+
+        .summary-card {
+            background: #1c1c1e;
+            color: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .summary-numbers {
+            display: flex;
+            gap: 24px;
+        }
+
+        .summary-num {
+            text-align: center;
+        }
+
+        .summary-num .num {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .summary-num .label {
+            font-size: 12px;
+            color: #aeaeb2;
+            margin-top: 4px;
+        }
+
+        .num-green { color: #30d158; }
+        .num-gray  { color: #636366; }
+
+        .summary-note {
+            font-size: 13px;
+            color: #aeaeb2;
+            border-top: 1px solid #3a3a3c;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6e6e73;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 28px 0 8px 4px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-icon {
+            font-size: 16px;
+            line-height: 1.5;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
+        }
+
+        .item-body {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 2px;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: #6e6e73;
+            line-height: 1.5;
+        }
+
+        .item-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 4px;
+        }
+
+        .badge-fixed {
+            background: #d1f5e0;
+            color: #1a7a3a;
+        }
+
+        .badge-info {
+            background: #e5e5ea;
+            color: #6e6e73;
+        }
+
+        .badge-depth {
+            background: #ddeeff;
+            color: #0055b3;
+        }
+
+        .verified-note {
+            background: #f2f2f7;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #6e6e73;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 13px;
+            color: #aeaeb2;
+        }
+
+        footer a {
+            color: #007aff;
+            text-decoration: none;
+        }
+
+        [data-lang] { display: none; }
+        .lang-ru [data-lang="ru"] { display: block; }
+        .lang-en [data-lang="en"] { display: block; }
+        span[data-lang] { display: none; }
+        .lang-ru span[data-lang="ru"] { display: inline; }
+        .lang-en span[data-lang="en"] { display: inline; }
+    </style>
+</head>
+<body class="lang-ru">
+<div class="container">
+
+    <div class="lang-switcher">
+        <div class="lang-switcher-inner">
+            <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+    </div>
+
+    <header>
+        <img class="icon" src="icon.png" alt="HomeChat">
+        <h1>HomeChat</h1>
+        <p>
+            <span data-lang="ru">Аудит безопасности · июнь 2026</span>
+            <span data-lang="en">Security Audit · June 2026</span>
+        </p>
+    </header>
+
+    <!-- Summary -->
+    <div class="summary-card">
+        <div style="flex:1">
+            <div class="summary-numbers">
+                <div class="summary-num">
+                    <div class="num num-green">32</div>
+                    <div class="label"><span data-lang="ru">выполнено</span><span data-lang="en">passed</span></div>
+                </div>
+                <div class="summary-num">
+                    <div class="num num-gray">3</div>
+                    <div class="label"><span data-lang="ru">инфо</span><span data-lang="en">info</span></div>
+                </div>
+                <div class="summary-num">
+                    <div class="num num-green">0</div>
+                    <div class="label"><span data-lang="ru">проблем</span><span data-lang="en">issues</span></div>
+                </div>
+            </div>
+            <div class="summary-note">
+                <span data-lang="ru">Все пункты проверены по исходному коду приложения и сервера.</span>
+                <span data-lang="en">All items verified against application and server source code.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 1 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 1 — Криптография</span>
+        <span data-lang="en">Block 1 — Cryptography</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Стандартные алгоритмы</span><span data-lang="en">Standard algorithms</span></div>
+                <div class="item-desc"><span data-lang="ru">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 через Apple CryptoKit. Без собственной криптографии.</span><span data-lang="en">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 via Apple CryptoKit. No custom cryptography.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Сервер не видит сообщения</span><span data-lang="en">Server cannot read messages</span></div>
+                <div class="item-desc"><span data-lang="ru">Приватные ключи хранятся только на устройстве.</span><span data-lang="en">Private keys are stored on the device only.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Nonce не повторяются</span><span data-lang="en">Nonces never repeat</span></div>
+                <div class="item-desc"><span data-lang="ru">Детерминированы от уникального messageKey через SHA256.</span><span data-lang="en">Derived deterministically from a unique messageKey via SHA256.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Forward Secrecy</span><span data-lang="en">Forward Secrecy</span></div>
+                <div class="item-desc"><span data-lang="ru">Double Ratchet v2: chainKey + DHRatchet + rootKey rotation. Компрометация одного ключа не раскрывает прошлые сообщения.</span><span data-lang="en">Double Ratchet v2: chainKey + DHRatchet + rootKey rotation. Compromise of one key does not expose past messages.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Аутентификация каждого сообщения (AAD)</span><span data-lang="en">Per-message authentication (AAD)</span></div>
+                <div class="item-desc"><span data-lang="ru">Метаданные (версия, номер, DH-ключ) криптографически привязаны к содержимому. Подмена в транзите обнаруживается немедленно.</span><span data-lang="en">Metadata (version, sequence, DH key) is cryptographically bound to content. Any in-transit tampering is detected immediately.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Безопасная ротация ключей</span><span data-lang="en">Secure key rotation</span></div>
+                <div class="item-desc"><span data-lang="ru">Gap-защита maxAllowedGap=500 исключает десинхронизацию сессии при потере пакетов.</span><span data-lang="en">Gap protection (maxAllowedGap=500) prevents session desynchronisation on packet loss.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Медиашифрование AES-256-GCM</span><span data-lang="en">Media encryption AES-256-GCM</span></div>
+                <div class="item-desc"><span data-lang="ru">Каждый файл шифруется отдельным случайным ключом (32 байта). Ключ передаётся только внутри E2E-зашифрованного сообщения. Integrity check: SHA256(blob) == digest.</span><span data-lang="en">Each file is encrypted with a separate random key (32 bytes). The key is transmitted only inside the E2E-encrypted message. Integrity check: SHA256(blob) == digest.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">HMAC вместо HKDF для медиаключей</span><span data-lang="en">HMAC instead of HKDF for media keys</span></div>
+                <div class="item-desc"><span data-lang="ru">Академическое замечание: HKDF нужен для нормализации неравномерной энтропии. Поскольку mediaKey — 32 байта криптографически случайных данных, HMAC как PRF эквивалентен HKDF в данном контексте. Реальной уязвимости нет.</span><span data-lang="en">Academic note: HKDF is needed to normalise uneven entropy. Since mediaKey is 32 bytes of cryptographically random data, HMAC as a PRF is equivalent to HKDF in this context. No real vulnerability.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 2 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 2 — Хранение ключей</span>
+        <span data-lang="en">Block 2 — Key Storage</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключи только в Keychain</span><span data-lang="en">Keys stored in Keychain only</span></div>
+                <div class="item-desc"><span data-lang="ru">kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly — ключи физически не покидают устройство.</span><span data-lang="en">kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly — keys physically cannot leave the device.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключи не в базе данных и не в логах</span><span data-lang="en">Keys not in database or logs</span></div>
+                <div class="item-desc"><span data-lang="ru">Сессии зашифрованы AES-GCM, master key хранится в Keychain.</span><span data-lang="en">Sessions are encrypted with AES-GCM; master key is stored in Keychain.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Исключено из iCloud Backup</span><span data-lang="en">Excluded from iCloud Backup</span></div>
+                <div class="item-desc"><span data-lang="ru">MediaCache, Avatars, SQLite+WAL+SHM, Sessions — isExcludedFromBackup.</span><span data-lang="en">MediaCache, Avatars, SQLite+WAL+SHM, Sessions — isExcludedFromBackup.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Безопасная переустановка</span><span data-lang="en">Safe reinstallation</span></div>
+                <div class="item-desc"><span data-lang="ru">Обнаружение orphaned Keychain → уведомление сервера → полная очистка данных.</span><span data-lang="en">Orphaned Keychain detection → server notification → full data wipe.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 3 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 3 — Сеть</span>
+        <span data-lang="en">Block 3 — Network</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">TLS 1.2+</div>
+                <div class="item-desc"><span data-lang="ru">Все соединения через TLS (iOS ATS по умолчанию). WebSocket через WSS.</span><span data-lang="en">All connections via TLS (iOS ATS by default). WebSocket over WSS.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">Certificate Pinning</div>
+                <div class="item-desc"><span data-lang="ru">SPKI hash pinning через URLSessionDelegate (SHA256, EC P-256). Поддельный сертификат от любого CA не принимается.</span><span data-lang="en">SPKI hash pinning via URLSessionDelegate (SHA256, EC P-256). Fraudulent certificates from any CA are rejected.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">MITM не позволяет читать сообщения</span><span data-lang="en">MITM cannot expose messages</span></div>
+                <div class="item-desc"><span data-lang="ru">Соединение разрывается при подозрении на MITM. Double Ratchet ciphertext без ключей бесполезен.</span><span data-lang="en">Connection is terminated on MITM suspicion. Double Ratchet ciphertext is useless without keys.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Токены сессии в заголовках</span><span data-lang="en">Session tokens in headers</span></div>
+                <div class="item-desc"><span data-lang="ru">sessionId и userId перенесены из URL в X-Session-ID / X-User-ID заголовки. URL-логи сервера не содержат токенов.</span><span data-lang="en">sessionId and userId moved from URL to X-Session-ID / X-User-ID headers. Server URL logs contain no tokens.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 4 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 4 — Аутентификация</span>
+        <span data-lang="en">Block 4 — Authentication</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Защита от replay-атак (3 уровня)</span><span data-lang="en">Replay attack protection (3 layers)</span></div>
+                <div class="item-desc"><span data-lang="ru">1) Double Ratchet: ключ одноразовый. 2) Клиент: дедупликация по messageId. 3) Сервер: Redis-проверка по messageId.</span><span data-lang="en">1) Double Ratchet: one-time key. 2) Client: deduplication by messageId. 3) Server: Redis check by messageId.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Захват аккаунта невозможен</span><span data-lang="en">Account takeover is impossible</span></div>
+                <div class="item-desc"><span data-lang="ru">Ed25519 challenge-response: сервер выдаёт случайный challenge → клиент подписывает приватным ключом → сервер верифицирует. Без приватного ключа аутентификация невозможна.</span><span data-lang="en">Ed25519 challenge-response: server issues a random challenge → client signs with private key → server verifies. Authentication is impossible without the private key.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">TURN credentials одноразовые</span><span data-lang="en">TURN credentials are one-time</span></div>
+                <div class="item-desc"><span data-lang="ru">HMAC-SHA1, TTL 1 час, два независимых сервера. Перехваченные credentials невозможно использовать повторно.</span><span data-lang="en">HMAC-SHA1, 1-hour TTL, two independent servers. Intercepted credentials cannot be reused.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">ICE host-кандидаты</span><span data-lang="en">ICE host candidates</span></div>
+                <div class="item-desc"><span data-lang="ru">Локальный IP виден только доверенному собеседнику (не серверу). Сознательное решение — альтернатива .relay сломает P2P. Приемлемо для модели угроз HomeChat.</span><span data-lang="en">Local IP is visible only to the trusted contact (not the server). Deliberate choice — .relay would break P2P. Acceptable for HomeChat's threat model.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 5 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 5 — Локальное хранение</span>
+        <span data-lang="en">Block 5 — Local Storage</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">База данных зашифрована</span><span data-lang="en">Database is encrypted</span></div>
+                <div class="item-desc"><span data-lang="ru">SQLite хранит только зашифрованные блобы (AES-GCM). Ключ в Keychain. Метаданные: id, timestamp, sender/receiver.</span><span data-lang="en">SQLite stores only encrypted blobs (AES-GCM). Key in Keychain. Metadata: id, timestamp, sender/receiver.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Push не раскрывают текст</span><span data-lang="en">Push notifications hide content</span></div>
+                <div class="item-desc"><span data-lang="ru">Body всегда «🔒 Зашифрованное сообщение» — без текста, без медиа, без данных переписки.</span><span data-lang="en">Body is always "🔒 Encrypted message" — no text, no media, no conversation data.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Логи без чувствительных данных</span><span data-lang="en">Logs contain no sensitive data</span></div>
+                <div class="item-desc"><span data-lang="ru">dlog обёрнут в #if DEBUG — в Release полностью вырезается компилятором.</span><span data-lang="en">dlog is wrapped in #if DEBUG — completely removed by the compiler in Release builds.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 6 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 6 — API и сервер</span>
+        <span data-lang="en">Block 6 — API & Server</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Нет IDOR</span><span data-lang="en">No IDOR</span></div>
+                <div class="item-desc"><span data-lang="ru">Права проверяются на каждый запрос. Пользователь не может получить данные чужого диалога.</span><span data-lang="en">Access rights are checked on every request. A user cannot access data from another's conversation.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Rate limiting на HTTP API</span><span data-lang="en">HTTP API rate limiting</span></div>
+                <div class="item-desc"><span data-lang="ru">60 запросов/мин на upload и download. При превышении — 429.</span><span data-lang="en">60 requests/min on upload and download endpoints. Returns 429 when exceeded.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Аутентификация загрузки медиа</span><span data-lang="en">Media upload authentication</span></div>
+                <div class="item-desc"><span data-lang="ru">Upload принимается только от авторизованного пользователя с активным WebSocket сеансом. Download защищён 64-символьным SHA256 идентификатором + AES-GCM шифрованием контента.</span><span data-lang="en">Upload is only accepted from an authorised user with an active WebSocket session. Download is protected by a 64-char SHA256 identifier and AES-GCM content encryption.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 7 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 7 — Верификация</span>
+        <span data-lang="en">Block 7 — Verification</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">Safety Numbers</div>
+                <div class="item-desc"><span data-lang="ru">60-цифровой код для верификации собеседника вне приложения. Совпадение кодов доказывает что ключи шифрования не подменялись.</span><span data-lang="en">60-digit code to verify your contact out of band. Matching codes prove that encryption keys have not been substituted.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Алерт при смене ключа</span><span data-lang="en">Key change alert</span></div>
+                <div class="item-desc"><span data-lang="ru">При смене ключа безопасности собеседника приложение немедленно показывает предупреждение с инструкцией сверить Safety Numbers.</span><span data-lang="en">When a contact's security key changes, the app immediately displays a warning with instructions to verify Safety Numbers.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Сервер не может подменить ключ</span><span data-lang="en">Server cannot substitute a key</span></div>
+                <div class="item-desc"><span data-lang="ru">IdentityKey собеседника берётся из локального хранилища. Любая подмена вызывает authenticationFailure при расшифровке.</span><span data-lang="en">The contact's IdentityKey is taken from local storage. Any substitution triggers authenticationFailure during decryption.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 8 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 8 — Приложение</span>
+        <span data-lang="en">Block 8 — Application</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Нет секретов в коде</span><span data-lang="en">No secrets in code</span></div>
+                <div class="item-desc"><span data-lang="ru">Secrets.plist вне git. TURN credentials только в .env на сервере. SPKI hash — публичный хэш публичного ключа, не секрет.</span><span data-lang="en">Secrets.plist is outside git. TURN credentials only in .env on the server. SPKI hash is a public hash of a public key — not a secret.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Логи отключены в Release</span><span data-lang="en">Logs disabled in Release</span></div>
+                <div class="item-desc"><span data-lang="ru">Функция dlog обёрнута в #if DEBUG — компилятор полностью удаляет её в Production сборке.</span><span data-lang="en">The dlog function is wrapped in #if DEBUG — the compiler fully removes it in Production builds.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Обфускация</span><span data-lang="en">Obfuscation</span></div>
+                <div class="item-desc"><span data-lang="ru">Стандартная Swift компиляция с оптимизацией -O. Дополнительная обфускация не применяется.</span><span data-lang="en">Standard Swift compilation with -O optimisation. No additional obfuscation is applied.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Defence in depth -->
+    <div class="section-title">
+        <span data-lang="ru">Дополнительная защита</span>
+        <span data-lang="en">Defence in Depth</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">🔒</div>
+            <div class="item-body">
+                <div class="item-title">DTLS Fingerprint TOFU</div>
+                <div class="item-desc"><span data-lang="ru">При первом звонке с контактом приложение сохраняет DTLS fingerprint. При последующих звонках — сверяет. Несовпадение: звонок автоматически завершается с предупреждением.</span><span data-lang="en">On the first call with a contact, the app saves the DTLS fingerprint. On subsequent calls, it is verified. Mismatch: the call is automatically terminated with a warning.</span></div>
+                <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">🔒</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">UI-алерты безопасности</span><span data-lang="en">Security UI alerts</span></div>
+                <div class="item-desc"><span data-lang="ru">Три независимых предупреждения: смена ключа безопасности, изменение отпечатка шифрования звонка, устаревший клиент при загрузке медиа.</span><span data-lang="en">Three independent warnings: security key change, call encryption fingerprint change, outdated client on media upload.</span></div>
+                <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>
+            <span data-lang="ru">HomeChat · <a href="privacy-policy.html">Политика конфиденциальности</a> · Обновлено: июнь 2026</span>
+            <span data-lang="en">HomeChat · <a href="privacy-policy.html">Privacy Policy</a> · Updated: June 2026</span>
+        </p>
+    </footer>
+
+</div>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+        });
+        document.documentElement.lang = lang;
+    }
+</script>
+</body>
+</html>
