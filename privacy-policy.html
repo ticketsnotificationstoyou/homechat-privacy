@@ -20,7 +20,6 @@
             padding: 48px 24px 80px;
         }
 
-        /* Language switcher */
         .lang-switcher {
             display: flex;
             justify-content: center;
@@ -54,25 +53,15 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 48px;
-        }
+        header { text-align: center; margin-bottom: 48px; }
 
         .icon-link {
             display: inline-block;
             transition: transform 0.2s ease, opacity 0.2s ease;
             border-radius: 18px;
         }
-
-        .icon-link:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        .icon-link:active {
-            transform: scale(0.95);
-        }
+        .icon-link:hover { transform: scale(1.05); opacity: 0.9; }
+        .icon-link:active { transform: scale(0.95); }
 
         .icon {
             width: 80px;
@@ -82,16 +71,8 @@
             display: block;
         }
 
-        header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        header p {
-            color: #6e6e73;
-            font-size: 15px;
-        }
+        header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        header p { color: #6e6e73; font-size: 15px; }
 
         .card {
             background: #ffffff;
@@ -100,37 +81,13 @@
             margin-bottom: 12px;
         }
 
-        .card h2 {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #1c1c1e;
-        }
+        .card h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: #1c1c1e; }
+        .card p { font-size: 15px; color: #48484a; white-space: pre-line; text-align: justify; }
+        .card a { color: #007aff; text-decoration: none; }
+        .card a:hover { text-decoration: underline; }
 
-        .card p {
-            font-size: 15px;
-            color: #48484a;
-            white-space: pre-line;
-            text-align: justify;
-        }
+        footer { text-align: center; margin-top: 32px; font-size: 13px; color: #aeaeb2; }
 
-        .card a {
-            color: #007aff;
-            text-decoration: none;
-        }
-
-        .card a:hover {
-            text-decoration: underline;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 32px;
-            font-size: 13px;
-            color: #aeaeb2;
-        }
-
-        /* Language visibility */
         [data-lang] { display: none; }
         .lang-ru [data-lang="ru"] { display: block; }
         .lang-en [data-lang="en"] { display: block; }
@@ -139,7 +96,6 @@
         .lang-ru span[data-lang="ru"] { display: inline; }
         .lang-en span[data-lang="en"] { display: inline; }
 
-        /* Orange frame for the security checklist link */
         .orange-frame {
             display: inline-block;
             border: 2px solid #ff9500;
@@ -149,17 +105,20 @@
             transition: background 0.2s, border-color 0.2s;
             text-align: center;
         }
+        .orange-frame a { color: #1c1c1e; text-decoration: none; font-weight: 600; }
+        .orange-frame a:hover { text-decoration: underline; background: #fff0d6; }
 
-        .orange-frame a {
-            color: #1c1c1e;
-            text-decoration: none;
-            font-weight: 600;
+        /* ⚠️ Красный блок для предупреждения об удалении */
+        .warning-card {
+            background: #fff5f5;
+            border: 2px solid #ff3b30;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(255, 59, 48, 0.15);
         }
-
-        .orange-frame a:hover {
-            text-decoration: underline;
-            background: #fff0d6;
-        }
+        .warning-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: #c0392b; }
+        .warning-card p { font-size: 15px; color: #4a1a1a; white-space: pre-line; text-align: justify; }
     </style>
 </head>
 <body class="lang-ru">
@@ -173,7 +132,6 @@
     </div>
 
     <header>
-        <!-- Иконка теперь обёрнута в ссылку на App Store -->
         <a href="https://apps.apple.com/ru/app/homechat/id6761311344?l=en-GB" class="icon-link" target="_blank" rel="noopener noreferrer" aria-label="Скачать HomeChat в App Store">
             <img class="icon" src="icon.png" alt="HomeChat">
         </a>
@@ -335,6 +293,30 @@ The third layer is server-side verification: the server stores delivered message
         </div>
     </div>
 
+    <!-- ⚠️ Красный блок — предупреждение об удалении приложения -->
+    <div class="warning-card">
+        <div data-lang="ru">
+            <h2>⚠️ Перед удалением приложения</h2>
+            <p><strong>Сначала удалите аккаунт — потом приложение.</strong>
+
+Если вы удалите HomeChat через меню iOS без предварительного удаления аккаунта — ваши контакты не получат уведомление. Они узнают об этом только при следующей попытке написать или позвонить вам: сообщение не будет доставлено, звонок не пройдёт.
+
+Чтобы контакты узнали сразу: откройте профиль в приложении и нажмите «Удалить аккаунт» — и только потом удаляйте приложение.
+
+Это техническое ограничение iOS — при удалении приложения система не запускает никакой код, поэтому уведомить контакты автоматически невозможно.</p>
+        </div>
+        <div data-lang="en">
+            <h2>⚠️ Before Deleting the App</h2>
+            <p><strong>Delete your account first — then delete the app.</strong>
+
+If you delete HomeChat through the iOS menu without first deleting your account, your contacts will not be notified. They will only find out the next time they try to message or call you: the message won't be delivered, the call won't go through.
+
+To notify your contacts immediately: open your profile in the app and tap "Delete Account" — and only then delete the app.
+
+This is a technical iOS limitation — when an app is deleted, the system runs no code at all, so automatically notifying contacts is not possible.</p>
+        </div>
+    </div>
+
     <div class="card">
         <div data-lang="ru">
             <h2>Переустановка и смена устройства</h2>
@@ -424,7 +406,6 @@ The server sees only encrypted data and connection metadata. Message content is 
         </div>
     </div>
 
-    <!-- Security audit card with updated text and orange frame -->
     <div class="card">
         <div data-lang="ru">
             <h2>Аудит безопасности</h2>
