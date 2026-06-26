@@ -20,7 +20,6 @@
             padding: 48px 24px 80px;
         }
 
-        /* Language switcher */
         .lang-switcher {
             display: flex;
             justify-content: center;
@@ -65,14 +64,8 @@
             border-radius: 18px;
         }
 
-        .icon-link:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        .icon-link:active {
-            transform: scale(0.95);
-        }
+        .icon-link:hover { transform: scale(1.05); opacity: 0.9; }
+        .icon-link:active { transform: scale(0.95); }
 
         .icon {
             width: 80px;
@@ -82,16 +75,8 @@
             display: block;
         }
 
-        header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        header p {
-            color: #6e6e73;
-            font-size: 15px;
-        }
+        header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        header p { color: #6e6e73; font-size: 15px; }
 
         .card {
             background: #ffffff;
@@ -100,28 +85,10 @@
             margin-bottom: 12px;
         }
 
-        .card h2 {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #1c1c1e;
-        }
-
-        .card p {
-            font-size: 15px;
-            color: #48484a;
-            white-space: pre-line;
-            text-align: justify;
-        }
-
-        .card a {
-            color: #007aff;
-            text-decoration: none;
-        }
-
-        .card a:hover {
-            text-decoration: underline;
-        }
+        .card h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: #1c1c1e; }
+        .card p { font-size: 15px; color: #48484a; white-space: pre-line; text-align: justify; }
+        .card a { color: #007aff; text-decoration: none; }
+        .card a:hover { text-decoration: underline; }
 
         .contact-btn {
             display: inline-block;
@@ -134,14 +101,8 @@
             font-weight: 600;
             text-decoration: none !important;
         }
+        .contact-btn:hover { background: #0066d6; color: #ffffff !important; text-decoration: none !important; }
 
-        .contact-btn:hover {
-            background: #0066d6;
-            color: #ffffff !important;
-            text-decoration: none !important;
-        }
-
-        /* Highlighted legal card */
         .legal-card {
             background: #fffdf5;
             border: 2px solid #f5c542;
@@ -151,33 +112,25 @@
             box-shadow: 0 2px 12px rgba(245, 197, 66, 0.2);
         }
 
-        .legal-card h2 {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #b8860b;
+        .legal-card h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: #b8860b; }
+        .legal-card p { font-size: 15px; color: #5a4a1a; white-space: pre-line; text-align: justify; }
+
+        /* ⚠️ Красный блок — важное предупреждение об удалении */
+        .warning-card {
+            background: #fff5f5;
+            border: 2px solid #ff3b30;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 12px rgba(255, 59, 48, 0.15);
         }
 
-        .legal-card p {
-            font-size: 15px;
-            color: #5a4a1a;
-            white-space: pre-line;
-            text-align: justify;
-        }
+        .warning-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: #c0392b; }
+        .warning-card p { font-size: 15px; color: #4a1a1a; white-space: pre-line; text-align: justify; }
 
-        footer {
-            text-align: center;
-            margin-top: 32px;
-            font-size: 13px;
-            color: #aeaeb2;
-        }
+        footer { text-align: center; margin-top: 32px; font-size: 13px; color: #aeaeb2; }
+        footer a { color: #007aff; text-decoration: none; }
 
-        footer a {
-            color: #007aff;
-            text-decoration: none;
-        }
-
-        /* Language visibility */
         [data-lang] { display: none; }
         .lang-ru [data-lang="ru"] { display: block; }
         .lang-en [data-lang="en"] { display: block; }
@@ -197,13 +150,8 @@
             border-radius: 12px;
             margin-left: 6px;
         }
-        .badge-done {
-            background: #e8f9ed;
-            color: #1a8a3e;
-        }
-        .feature-item {
-            margin-bottom: 4px;
-        }
+        .badge-done { background: #e8f9ed; color: #1a8a3e; }
+        .feature-item { margin-bottom: 4px; }
     </style>
 </head>
 <body class="lang-ru">
@@ -217,7 +165,6 @@
     </div>
 
     <header>
-        <!-- Иконка теперь обёрнута в ссылку на App Store -->
         <a href="https://apps.apple.com/ru/app/homechat/id6761311344?l=en-GB" class="icon-link" target="_blank" rel="noopener noreferrer" aria-label="Скачать HomeChat в App Store">
             <img class="icon" src="icon.png" alt="HomeChat">
         </a>
@@ -296,15 +243,36 @@ Go to your profile and tap "Delete Account." This action is irreversible — all
         </div>
     </div>
 
+    <!-- ⚠️ ВАЖНОЕ ПРЕДУПРЕЖДЕНИЕ — выделено красным -->
+    <div class="warning-card">
+        <div data-lang="ru">
+            <h2>⚠️ Перед удалением приложения</h2>
+            <p><strong>Сначала удалите аккаунт — потом приложение.</strong>
+
+Если вы хотите удалить HomeChat, откройте профиль и нажмите «Удалить аккаунт». Только после этого удаляйте приложение. В этом случае ваши контакты мгновенно узнают об удалении аккаунта.
+
+Если удалить приложение без предварительного удаления аккаунта — контакты не получат уведомление. Они узнают об этом только при следующей попытке написать или позвонить вам: сообщение не будет доставлено, звонок не пройдёт.
+
+Это техническое ограничение iOS — при удалении приложения система не запускает никакой код, поэтому уведомить контакты автоматически невозможно.</p>
+        </div>
+        <div data-lang="en">
+            <h2>⚠️ Before Deleting the App</h2>
+            <p><strong>Delete your account first — then delete the app.</strong>
+
+If you want to remove HomeChat, open your profile and tap "Delete Account." Only after that should you delete the app. This way your contacts will be instantly notified of the account deletion.
+
+If you delete the app without deleting your account first, your contacts will not receive a notification. They will only find out the next time they try to message or call you: the message won't be delivered, the call won't go through.
+
+This is a technical iOS limitation — when an app is deleted, the system runs no code at all, so automatically notifying contacts is not possible.</p>
+        </div>
+    </div>
+
     <div class="card">
         <div data-lang="ru">
             <h2>Важная информация</h2>
 
             <p><strong>Проблемы с доставкой сообщений?</strong>
 Проверьте интернет-соединение. Попробуйте закрыть и открыть приложение с помощью килл-свайпа (смахните приложение вверх в списке запущенных). Если проблема сохраняется — напишите нам на email с подробным описанием ситуации.</p>
-
-            <p style="margin-top: 14px;"><strong>Удаление приложения = удаление аккаунта</strong>
-При удалении приложения ваш аккаунт и все ваши контакты удаляются полностью. Это действие необратимо. После новой установки приложения вам придётся заново пройти регистрацию и добавлять контакты.</p>
 
             <p style="margin-top: 14px;"><strong>Как работают звонки?</strong>
 HomeChat использует зашифрованные VoIP-звонки через интернет. Доступны аудио- и видеозвонки. Для входящих звонков приложение не должно быть открыто — уведомление придёт даже когда телефон заблокирован. Во время разговора нельзя отправить видео-кружок.</p>
@@ -327,9 +295,6 @@ HomeChat использует зашифрованные VoIP-звонки че�
             <p><strong>Messages not being delivered?</strong>
 Check your internet connection. Try force-closing the app (swipe it up from the app switcher) and opening it again. If the problem persists, email us with a detailed description of the situation.</p>
 
-            <p style="margin-top: 14px;"><strong>Deleting the app deletes your account</strong>
-Deleting the app permanently removes your account and all your contacts. This action is irreversible. After a fresh install, you will need to register again and re-add all your contacts.</p>
-
             <p style="margin-top: 14px;"><strong>How do calls work?</strong>
 HomeChat uses encrypted VoIP calls over the internet. Both audio and video calls are supported. For incoming calls, the app doesn't need to be open — you'll receive a notification even when your phone is locked. Sending a video circle during a call is not supported.</p>
 
@@ -347,7 +312,6 @@ No. Your ID is simply an address others can use to find you — it is not a logi
         </div>
     </div>
 
-    <!-- Выделенный блок о законном использовании -->
     <div class="legal-card">
         <div data-lang="ru">
             <h2>⚖️ Законное использование</h2>
@@ -393,12 +357,12 @@ Learn more in <a href="https://ticketsnotificationstoyou.github.io/homechat-priv
         <div data-lang="ru">
             <h2>Контакт</h2>
             <p>По всем вопросам, жалобам и предложениям обращайтесь к разработчику:
-<a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a> </p>
+<a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
         </div>
         <div data-lang="en">
             <h2>Contact</h2>
             <p>For any questions, complaints, and suggestions, reach out to the developer:
-<a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a> </p>
+<a href="mailto:tunnelletter@gmail.com">tunnelletter@gmail.com</a></p>
         </div>
     </div>
 
