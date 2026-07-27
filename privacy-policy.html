@@ -6,26 +6,22 @@
     <title>HomeChat — Privacy Policy / Политика конфиденциальности</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f2f2f7;
             color: #1c1c1e;
             line-height: 1.6;
         }
-
         .container {
             max-width: 720px;
             margin: 0 auto;
             padding: 48px 24px 80px;
         }
-
         .lang-switcher {
             display: flex;
             justify-content: center;
             margin-bottom: 36px;
         }
-
         .lang-switcher-inner {
             display: inline-flex;
             background: #e5e5ea;
@@ -33,7 +29,6 @@
             padding: 3px;
             gap: 2px;
         }
-
         .lang-btn {
             background: none;
             border: none;
@@ -46,15 +41,12 @@
             transition: background 0.18s, color 0.18s;
             font-family: inherit;
         }
-
         .lang-btn.active {
             background: #ffffff;
             color: #1c1c1e;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
-
         header { text-align: center; margin-bottom: 48px; }
-
         .icon-link {
             display: inline-block;
             transition: transform 0.2s ease, opacity 0.2s ease;
@@ -62,7 +54,6 @@
         }
         .icon-link:hover { transform: scale(1.05); opacity: 0.9; }
         .icon-link:active { transform: scale(0.95); }
-
         .icon {
             width: 80px;
             height: 80px;
@@ -70,32 +61,25 @@
             margin-bottom: 16px;
             display: block;
         }
-
         header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
         header p { color: #6e6e73; font-size: 15px; }
-
         .card {
             background: #ffffff;
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 12px;
         }
-
         .card h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: #1c1c1e; }
         .card p { font-size: 15px; color: #48484a; white-space: pre-line; text-align: justify; }
         .card a { color: #007aff; text-decoration: none; }
         .card a:hover { text-decoration: underline; }
-
         footer { text-align: center; margin-top: 32px; font-size: 13px; color: #aeaeb2; }
-
         [data-lang] { display: none; }
         .lang-ru [data-lang="ru"] { display: block; }
         .lang-en [data-lang="en"] { display: block; }
-
         span[data-lang] { display: none; }
         .lang-ru span[data-lang="ru"] { display: inline; }
         .lang-en span[data-lang="en"] { display: inline; }
-
         .orange-frame {
             display: inline-block;
             border: 2px solid #ff9500;
@@ -107,8 +91,6 @@
         }
         .orange-frame a { color: #1c1c1e; text-decoration: none; font-weight: 600; }
         .orange-frame a:hover { text-decoration: underline; background: #fff0d6; }
-
-        /* ⚠️ Красный блок для предупреждения об удалении */
         .warning-card {
             background: #fff5f5;
             border: 2px solid #ff3b30;
@@ -144,6 +126,17 @@
 
     <div class="card">
         <div data-lang="ru">
+            <h2>Модель безопасности</h2>
+            <p>HomeChat построен на принципе «недоверенного сервера»: даже при полной компрометации сервера содержимое сообщений, звонков, файлов и т. д. остаётся недоступным.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Security Model</h2>
+            <p>HomeChat is built on the "untrusted server" principle: even if the server is fully compromised, the content of messages, calls, files, and more remains inaccessible.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
             <h2>Что мы собираем</h2>
             <p>Ничего, что вас идентифицирует. HomeChat требует только имя пользователя на ваш выбор. Номер телефона, email, дата рождения и любые другие персональные данные не запрашиваются и не собираются.</p>
         </div>
@@ -160,7 +153,7 @@
 
 На сервере сообщения хранятся в зашифрованном виде. Сервер видит только техническую информацию. Содержимое сообщений, вложения и любые данные переписки недоступны серверу — они остаются зашифрованными и могут быть расшифрованы только на устройствах участников диалога.
 
-На вашем устройстве сообщения хранятся в локальной базе данных в зашифрованном виде. Расшифровка происходит только в момент, когда вы открываете чат.
+На вашем устройстве сообщения хранятся в локальной базе данных в зашифрованном виде. Расшифровка происходит только в момент, когда вы открываете чат. Если вы включили блокировку приложения собственным PIN-кодом (см. раздел «Блокировка приложения» ниже), ключ расшифровки этой базы производится из PIN и не существует, пока PIN не введён.
 
 <strong>Текстовые сообщения</strong> сохраняются на вашем устройстве навсегда, пока вы не удалите чат или аккаунт. Они не удаляются автоматически.</p>
         </div>
@@ -170,7 +163,7 @@
 
 On the server, messages are stored in encrypted form. The server sees only technical information. The content of messages, attachments, and any conversation data are inaccessible to the server — they remain encrypted and can only be decrypted on the devices of the conversation participants.
 
-On your device, messages are stored in a local encrypted database. Decryption happens only when you open the chat.
+On your device, messages are stored in a local encrypted database. Decryption happens only when you open the chat. If you have enabled the app's own PIN lock (see "App Lock" below), the key used to decrypt this database is derived from the PIN and does not exist until the PIN is entered.
 
 <strong>Text messages</strong> are stored on your device permanently, until you delete the chat or your account. They are never automatically deleted.</p>
         </div>
@@ -187,7 +180,9 @@ On your device, messages are stored in a local encrypted database. Decryption ha
 
 <strong>Из чата на устройстве</strong> — если вы не скачали файл на устройство в течение 7 дней, он также удаляется из чата и становится недоступным.
 
-<strong>Как сохранить файл навсегда:</strong> нажмите кнопку сохранения в чате, пока файл ещё доступен. После этого файл сохраняется в локальном хранилище вашего устройства, остаётся в чате навсегда и не удаляется автоматически. Зелёная галочка на файле подтверждает, что он сохранён.</p>
+<strong>Как сохранить файл навсегда:</strong> нажмите кнопку сохранения в чате, пока файл ещё доступен. После этого файл сохраняется в локальном хранилище вашего устройства, остаётся в чате навсегда и не удаляется автоматически. Зелёная галочка на файле подтверждает, что он сохранён.
+
+<strong>Хранение на устройстве:</strong> помимо шифрования при передаче, полученные и отправленные медиафайлы также хранятся зашифрованными на диске вашего устройства. Если включена блокировка приложения PIN-кодом, тот же самый PIN-производный ключ защищает и их — без верного PIN эти файлы физически не расшифровываются.</p>
         </div>
         <div data-lang="en">
             <h2>Media Files, Stickers, and Documents</h2>
@@ -199,7 +194,20 @@ On your device, messages are stored in a local encrypted database. Decryption ha
 
 <strong>From the chat on your device</strong> — if you haven't downloaded a file to your device within 7 days, it is also removed from the chat and becomes unavailable.
 
-<strong>How to keep a file forever:</strong> tap the save button in the chat while the file is still available. The file will then be saved to your device's local storage, remain in the chat permanently, and will not be automatically deleted. A green checkmark on the file confirms that it has been saved.</p>
+<strong>How to keep a file forever:</strong> tap the save button in the chat while the file is still available. The file will then be saved to your device's local storage, remain in the chat permanently, and will not be automatically deleted. A green checkmark on the file confirms that it has been saved.
+
+<strong>On-device storage:</strong> in addition to transit encryption, received and sent media files are also stored encrypted on your device's disk. If the app's PIN lock is enabled, the same PIN-derived key protects them too — without the correct PIN these files cannot be decrypted.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Аватары</h2>
+            <p>Изображение профиля шифруется отдельным случайным ключом (AES-256-GCM), уникальным для каждого пользователя, и хранится на сервере только в зашифрованном виде. Ключ аватара передаётся исключительно пользователям, которые добавили вас в контакты, — так же, как и сам зашифрованный файл. На устройстве полученные аватары также хранятся зашифрованными на диске и, при включённой блокировке приложения, защищены тем же PIN-производным ключом, что и остальные данные.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Avatars</h2>
+            <p>Your profile picture is encrypted with a separate random key (AES-256-GCM), unique to each user, and stored on the server only in encrypted form. The avatar key is shared exclusively with users who have added you as a contact — just like the encrypted file itself. On your device, received avatars are also stored encrypted on disk and, when app lock is enabled, are protected by the same PIN-derived key as the rest of your data.</p>
         </div>
     </div>
 
@@ -260,13 +268,48 @@ The infrastructure is separated: calls are handled by dedicated TURN servers, wh
             <h2>Хранение ключей на устройстве</h2>
             <p>Все приватные криптографические ключи хранятся исключительно в системном хранилище iOS Keychain с атрибутом <strong>ThisDeviceOnly</strong> — они физически не могут быть перенесены на другое устройство, извлечены при резервном копировании iCloud или получены через iTunes Backup. Это означает, что даже при наличии полного доступа к резервной копии телефона прочитать вашу переписку невозможно.
 
+Ключ идентификации дополнительно защищён аппаратным модулем <strong>Secure Enclave</strong> — изолированным защищённым чипом устройства, физически отделённым от основного процессора. Приватный ключ никогда не покидает этот чип и не может быть извлечён из него ни приложением, ни операционной системой, ни при полном физическом доступе к устройству — все криптографические операции выполняются внутри чипа.
+
 Локальная база сообщений, файлы криптографических сессий и кэш медиафайлов также исключены из iCloud Backup — они существуют только на вашем устройстве.</p>
         </div>
         <div data-lang="en">
             <h2>Key Storage on Device</h2>
             <p>All private cryptographic keys are stored exclusively in the iOS system Keychain with the <strong>ThisDeviceOnly</strong> attribute — they physically cannot be transferred to another device, extracted via iCloud Backup, or obtained through iTunes Backup. This means that even with full access to a phone backup, reading your messages is impossible.
 
+The identity key is additionally protected by the <strong>Secure Enclave</strong> — an isolated, physically separate secure chip on the device. The private key never leaves this chip and cannot be extracted from it by the app, the operating system, or even with full physical access to the device — all cryptographic operations are performed inside the chip.
+
 The local message database, cryptographic session files, and media cache are also excluded from iCloud Backup — they exist only on your device.</p>
+        </div>
+    </div>
+
+    <div class="warning-card">
+        <div data-lang="ru">
+            <h2>⚠️ Блокировка приложения</h2>
+            <p>HomeChat поддерживает дополнительную блокировку доступа собственным PIN-кодом, независимым от системного пароля iOS.
+
+<strong>Это не просто экран поверх приложения.</strong> Пока PIN не введён, ключ шифрования вашей локальной базы чатов, медиафайлов, аватаров и данных криптографических сессий физически не существует нигде в памяти приложения — он производится из PIN-кода в момент ввода (через PBKDF2, 200 000 итераций) и никогда не сохраняется сам по себе, даже в зашифрованном виде. При уходе приложения в фон этот ключ немедленно стирается из памяти. Это значит, что даже при физическом доступе к разблокированному телефону без ввода вашего PIN содержимое переписки, файлов и криптографических сессий остаётся недоступным.
+
+PIN-код хранится в Keychain с атрибутом, при котором он существует только пока на устройстве установлен системный пароль, — при отключении пароля PIN автоматически и безвозвратно удаляется.
+
+Отдельно можно задать тревожный код, отличный от обычного PIN.
+
+<strong>Введение тревожного кода повлечёт за собой безвозвратное удаление всей информации из приложения, включая все чаты, контакты, медиа, переписку и т.д.</strong>
+
+Ваш аккаунт при этом останется зарегистрированным, повторная регистрация не потребуется.</p>
+        </div>
+        <div data-lang="en">
+            <h2>⚠️ App Lock</h2>
+            <p>HomeChat supports an additional access lock using its own PIN code, independent of the iOS system passcode.
+
+<strong>This is not just a screen placed over the app.</strong> Until the PIN is entered, the encryption key for your local chat database, media files, avatars, and cryptographic session data does not exist anywhere in the app's memory — it is derived from the PIN at the moment of entry (via PBKDF2, 200,000 iterations) and is never stored anywhere, not even in encrypted form. The key is immediately wiped from memory when the app moves to the background. This means that even with physical access to an unlocked phone, without entering your PIN the content of your chats, files, and cryptographic sessions remains inaccessible.
+
+The PIN is stored in the Keychain with an attribute that makes it exist only while the device has a system passcode set — if the passcode is removed, the PIN is automatically and permanently deleted.
+
+You can also set a separate panic code, different from your regular PIN.
+
+<strong>Entering the panic code will permanently delete all information from the app, including all chats, contacts, media, message history, and more.</strong>
+
+Your account will remain registered — no new registration will be required.</p>
         </div>
     </div>
 
@@ -290,30 +333,6 @@ The first layer is the Double Ratchet protocol itself: every encryption key is o
 The second layer is client-side deduplication: the app remembers the identifiers of already-processed messages and rejects any duplicates before even attempting decryption.
 
 The third layer is server-side verification: the server stores delivered message identifiers in Redis and rejects repeated delivery attempts with the same ID.</p>
-        </div>
-    </div>
-
-    <!-- ⚠️ Красный блок — предупреждение об удалении приложения -->
-    <div class="warning-card">
-        <div data-lang="ru">
-            <h2>⚠️ Перед удалением приложения</h2>
-            <p><strong>Сначала удалите аккаунт — потом приложение.</strong>
-
-Если вы удалите HomeChat через меню iOS без предварительного удаления аккаунта — ваши контакты не получат уведомление. Они узнают об этом только при следующей попытке написать или позвонить вам: сообщение не будет доставлено, звонок не пройдёт.
-
-Чтобы контакты узнали сразу: откройте профиль в приложении и нажмите «Удалить аккаунт» — и только потом удаляйте приложение.
-
-Это техническое ограничение iOS — при удалении приложения система не запускает никакой код, поэтому уведомить контакты автоматически невозможно.</p>
-        </div>
-        <div data-lang="en">
-            <h2>⚠️ Before Deleting the App</h2>
-            <p><strong>Delete your account first — then delete the app.</strong>
-
-If you delete HomeChat through the iOS menu without first deleting your account, your contacts will not be notified. They will only find out the next time they try to message or call you: the message won't be delivered, the call won't go through.
-
-To notify your contacts immediately: open your profile in the app and tap "Delete Account" — and only then delete the app.
-
-This is a technical iOS limitation — when an app is deleted, the system runs no code at all, so automatically notifying contacts is not possible.</p>
         </div>
     </div>
 
@@ -409,14 +428,14 @@ The server sees only encrypted data and connection metadata. Message content is 
     <div class="card">
         <div data-lang="ru">
             <h2>Аудит безопасности</h2>
-            <p>Аудит безопасности июнь 2026. Результаты: <strong>32 из 32 пунктов выполнено</strong>, 0 критических проблем.</p>
+            <p>Аудит безопасности июль 2026. Результаты: <strong>35 из 35 пунктов выполнено</strong>, 0 критических проблем.</p>
             <div class="orange-frame">
                 <a href="security.html">Посмотреть полный чеклист безопасности →</a>
             </div>
         </div>
         <div data-lang="en">
             <h2>Security Audit</h2>
-            <p>Security audit June 2026. Results: <strong>32 out of 32 items passed</strong>, 0 critical issues.</p>
+            <p>Security audit July 2026. Results: <strong>35 out of 35 items passed</strong>, 0 critical issues.</p>
             <div class="orange-frame">
                 <a href="security.html">View full security checklist →</a>
             </div>
@@ -425,8 +444,8 @@ The server sees only encrypted data and connection metadata. Message content is 
 
     <footer>
         <p>
-            <span data-lang="ru">Дата вступления в силу: 29 марта 2026 г. · Обновлено: июнь 2026 г.</span>
-            <span data-lang="en">Effective date: March 29, 2026 · Updated: June 2026</span>
+            <span data-lang="ru">Дата вступления в силу: 29 марта 2026 г. · Обновлено: июль 2026 г.</span>
+            <span data-lang="en">Effective date: March 29, 2026 · Updated: July 2026</span>
         </p>
     </footer>
 
