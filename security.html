@@ -6,26 +6,22 @@
     <title>HomeChat — Security / Безопасность</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f2f2f7;
             color: #1c1c1e;
             line-height: 1.6;
         }
-
         .container {
             max-width: 720px;
             margin: 0 auto;
             padding: 48px 24px 80px;
         }
-
         .lang-switcher {
             display: flex;
             justify-content: center;
             margin-bottom: 36px;
         }
-
         .lang-switcher-inner {
             display: inline-flex;
             background: #e5e5ea;
@@ -33,7 +29,6 @@
             padding: 3px;
             gap: 2px;
         }
-
         .lang-btn {
             background: none;
             border: none;
@@ -46,33 +41,22 @@
             transition: background 0.18s, color 0.18s;
             font-family: inherit;
         }
-
         .lang-btn.active {
             background: #ffffff;
             color: #1c1c1e;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
-
         header {
             text-align: center;
             margin-bottom: 48px;
         }
-
         .icon-link {
             display: inline-block;
             transition: transform 0.2s ease, opacity 0.2s ease;
             border-radius: 18px;
         }
-
-        .icon-link:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        .icon-link:active {
-            transform: scale(0.95);
-        }
-
+        .icon-link:hover { transform: scale(1.05); opacity: 0.9; }
+        .icon-link:active { transform: scale(0.95); }
         .icon {
             width: 80px;
             height: 80px;
@@ -80,18 +64,8 @@
             margin-bottom: 16px;
             display: block;
         }
-
-        header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        header p {
-            color: #6e6e73;
-            font-size: 15px;
-        }
-
+        header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+        header p { color: #6e6e73; font-size: 15px; }
         .summary-card {
             background: #1c1c1e;
             color: #fff;
@@ -102,31 +76,25 @@
             gap: 16px;
             align-items: center;
         }
-
         .summary-numbers {
             display: flex;
             gap: 24px;
         }
-
         .summary-num {
             text-align: center;
         }
-
         .summary-num .num {
             font-size: 36px;
             font-weight: 700;
             line-height: 1;
         }
-
         .summary-num .label {
             font-size: 12px;
             color: #aeaeb2;
             margin-top: 4px;
         }
-
         .num-green { color: #30d158; }
         .num-gray  { color: #636366; }
-
         .summary-note {
             font-size: 13px;
             color: #aeaeb2;
@@ -134,7 +102,6 @@
             padding-top: 12px;
             margin-top: 12px;
         }
-
         .section-title {
             font-size: 13px;
             font-weight: 600;
@@ -143,7 +110,6 @@
             letter-spacing: 0.5px;
             margin: 28px 0 8px 4px;
         }
-
         .card {
             background: #ffffff;
             border-radius: 16px;
@@ -151,7 +117,6 @@
             margin-bottom: 12px;
             overflow: hidden;
         }
-
         .item {
             display: flex;
             align-items: flex-start;
@@ -159,36 +124,11 @@
             padding: 14px 18px;
             border-bottom: 1px solid #f2f2f7;
         }
-
-        .item:last-child {
-            border-bottom: none;
-        }
-
-        .item-icon {
-            font-size: 16px;
-            line-height: 1.5;
-            flex-shrink: 0;
-            width: 20px;
-            text-align: center;
-        }
-
-        .item-body {
-            flex: 1;
-        }
-
-        .item-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: #1c1c1e;
-            margin-bottom: 2px;
-        }
-
-        .item-desc {
-            font-size: 13px;
-            color: #6e6e73;
-            line-height: 1.5;
-        }
-
+        .item:last-child { border-bottom: none; }
+        .item-icon { font-size: 16px; line-height: 1.5; flex-shrink: 0; width: 20px; text-align: center; }
+        .item-body { flex: 1; }
+        .item-title { font-size: 15px; font-weight: 600; color: #1c1c1e; margin-bottom: 2px; }
+        .item-desc { font-size: 13px; color: #6e6e73; line-height: 1.5; }
         .item-badge {
             display: inline-block;
             font-size: 11px;
@@ -197,22 +137,9 @@
             border-radius: 20px;
             margin-top: 4px;
         }
-
-        .badge-fixed {
-            background: #d1f5e0;
-            color: #1a7a3a;
-        }
-
-        .badge-info {
-            background: #e5e5ea;
-            color: #6e6e73;
-        }
-
-        .badge-depth {
-            background: #ddeeff;
-            color: #0055b3;
-        }
-
+        .badge-fixed { background: #d1f5e0; color: #1a7a3a; }
+        .badge-info { background: #e5e5ea; color: #6e6e73; }
+        .badge-depth { background: #ddeeff; color: #0055b3; }
         .verified-note {
             background: #f2f2f7;
             border-radius: 12px;
@@ -222,25 +149,69 @@
             color: #6e6e73;
             text-align: center;
         }
-
         footer {
             text-align: center;
             margin-top: 32px;
             font-size: 13px;
             color: #aeaeb2;
         }
-
-        footer a {
-            color: #007aff;
-            text-decoration: none;
-        }
-
+        footer a { color: #007aff; text-decoration: none; }
         [data-lang] { display: none; }
         .lang-ru [data-lang="ru"] { display: block; }
         .lang-en [data-lang="en"] { display: block; }
         span[data-lang] { display: none; }
         .lang-ru span[data-lang="ru"] { display: inline; }
         .lang-en span[data-lang="en"] { display: inline; }
+        .code-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            background: none;
+            border: 1px solid #c7c7cc;
+            border-radius: 7px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #3c3c43;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .code-toggle:hover { background: #f2f2f7; border-color: #aeaeb2; }
+        .code-toggle .arrow { font-size: 10px; transition: transform 0.2s; display: inline-block; }
+        .code-toggle.open .arrow { transform: rotate(90deg); }
+        .code-block {
+            display: none;
+            margin-top: 10px;
+            background: #1c1c1e;
+            border-radius: 10px;
+            padding: 14px 16px;
+            overflow-x: auto;
+        }
+        .code-block.visible { display: block; }
+        .code-block pre {
+            margin: 0;
+            font-family: "SF Mono", "Fira Code", Menlo, monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #e5e5ea;
+            white-space: pre;
+        }
+        .code-block .lang-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #636366;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .kw  { color: #ff7ab2; }
+        .fn  { color: #67b7a4; }
+        .str { color: #fc6a5d; }
+        .cm  { color: #636366; font-style: italic; }
+        .nm  { color: #d9c97c; }
+        .tp  { color: #dabaff; }
     </style>
 </head>
 <body class="lang-ru">
@@ -254,27 +225,25 @@
     </div>
 
     <header>
-        <!-- Иконка теперь обёрнута в ссылку на App Store -->
         <a href="https://apps.apple.com/ru/app/homechat/id6761311344?l=en-GB" class="icon-link" target="_blank" rel="noopener noreferrer" aria-label="Скачать HomeChat в App Store">
             <img class="icon" src="icon.png" alt="HomeChat">
         </a>
         <h1>HomeChat</h1>
         <p>
-            <span data-lang="ru">Аудит безопасности · июнь 2026</span>
-            <span data-lang="en">Security Audit · June 2026</span>
+            <span data-lang="ru">Аудит безопасности · июль 2026</span>
+            <span data-lang="en">Security Audit · July 2026</span>
         </p>
     </header>
 
-    <!-- Summary -->
     <div class="summary-card">
         <div style="flex:1">
             <div class="summary-numbers">
                 <div class="summary-num">
-                    <div class="num num-green">32</div>
+                    <div class="num num-green">35</div>
                     <div class="label"><span data-lang="ru">выполнено</span><span data-lang="en">passed</span></div>
                 </div>
                 <div class="summary-num">
-                    <div class="num num-gray">3</div>
+                    <div class="num num-gray">4</div>
                     <div class="label"><span data-lang="ru">инфо</span><span data-lang="en">info</span></div>
                 </div>
                 <div class="summary-num">
@@ -299,7 +268,41 @@
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Стандартные алгоритмы</span><span data-lang="en">Standard algorithms</span></div>
-                <div class="item-desc"><span data-lang="ru">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 через Apple CryptoKit. Без собственной криптографии.</span><span data-lang="en">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 via Apple CryptoKit. No custom cryptography.</span></div>
+                <div class="item-desc"><span data-lang="ru">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 — через Apple CryptoKit. Собственная реализация Double Ratchet (вдохновлена Signal Protocol) без сторонних библиотек — только нативные Apple API.</span><span data-lang="en">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 — via Apple CryptoKit. Custom Double Ratchet implementation (inspired by Signal Protocol) with no third-party libraries — native Apple APIs only.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · DH Ratchet + AES-256-GCM + AAD — Apple CryptoKit only</div>
+                    <pre><span class="cm">// Асимметричный ratchet: X25519 ECDH + HKDF-SHA256</span>
+<span class="cm">// Только стандартные Apple CryptoKit API, без сторонних библиотек</span>
+<span class="kw">import</span> CryptoKit
+
+<span class="cm">// X25519 Diffie-Hellman</span>
+<span class="kw">let</span> theirPublic = <span class="kw">try</span> <span class="tp">Curve25519</span>.<span class="tp">KeyAgreement</span>.<span class="tp">PublicKey</span>(rawRepresentation: theirDHKey)
+<span class="kw">let</span> shared = <span class="kw">try</span> myPrivate.<span class="fn">sharedSecretFromKeyAgreement</span>(with: theirPublic)
+
+<span class="cm">// HKDF-SHA256: из общего секрета + rootKey → новый rootKey + chainKey</span>
+<span class="kw">let</span> derived = <span class="tp">HKDF</span>&lt;<span class="tp">SHA256</span>&gt;.<span class="fn">deriveKey</span>(
+    inputKeyMaterial: <span class="tp">SymmetricKey</span>(data: shared.<span class="fn">withUnsafeBytes</span> { <span class="tp">Data</span>($0) }),
+    salt: rootKey,
+    info: <span class="tp">Data</span>(<span class="str">"DoubleRatchet"</span>.utf8),
+    outputByteCount: <span class="nm">64</span>
+)
+<span class="kw">let</span> newEphemeral = <span class="tp">Curve25519</span>.<span class="tp">KeyAgreement</span>.<span class="tp">PrivateKey</span>()
+
+<span class="cm">// AES-256-GCM шифрование с AAD</span>
+<span class="kw">let</span> nonce = <span class="fn">deriveNonce</span>(from: messageKey)
+<span class="kw">let</span> aad   = <span class="fn">buildFramingAAD</span>(ratchetKey: ratchetKey, messageNumber: messageNumber)
+<span class="kw">let</span> sealed = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(
+    plaintext,
+    using: messageKey,
+    nonce: nonce,
+    authenticating: aad
+)</pre>
+                </div>
             </div>
         </div>
         <div class="item">
@@ -345,6 +348,13 @@
             </div>
         </div>
         <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Шифрование аватаров</span><span data-lang="en">Avatar encryption</span></div>
+                <div class="item-desc"><span data-lang="ru">Изображение профиля шифруется отдельным случайным ключом (AES-256-GCM), уникальным для каждого пользователя. Ключ передаётся только контактам, которые добавили пользователя.</span><span data-lang="en">The profile picture is encrypted with a separate random key (AES-256-GCM), unique to each user. The key is shared only with contacts who have added that user.</span></div>
+            </div>
+        </div>
+        <div class="item">
             <div class="item-icon">ℹ️</div>
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">HMAC вместо HKDF для медиаключей</span><span data-lang="en">HMAC instead of HKDF for media keys</span></div>
@@ -370,8 +380,29 @@
         <div class="item">
             <div class="item-icon">✅</div>
             <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключ базы данных, медиа и сессий производится от PIN-кода</span><span data-lang="en">Database, media, and session key is PIN-derived</span></div>
+                <div class="item-desc"><span data-lang="ru">Если включена блокировка приложения, ключ шифрования локальной базы, медиафайлов, аватаров и Signal-сессий не хранится нигде — он производится из PIN (PBKDF2-HMAC-SHA256, 200 000 итераций) в момент разблокировки и стирается из памяти при уходе в фон. Сам PIN нигде не хранится, даже хэшем — проверка происходит через попытку расшифровки.</span><span data-lang="en">When app lock is enabled, the encryption key for the local database, media files, avatars, and Signal sessions is not stored anywhere — it is derived from the PIN (PBKDF2-HMAC-SHA256, 200,000 iterations) at unlock time and wiped from memory when the app backgrounds. The PIN itself is never stored anywhere, not even hashed — verification happens by attempting decryption.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключ идентификации защищён Secure Enclave</span><span data-lang="en">Identity key protected by Secure Enclave</span></div>
+                <div class="item-desc"><span data-lang="ru">Дополнительно к Keychain, ключ идентификации хранится и используется внутри аппаратного модуля Secure Enclave — изолированного чипа устройства. Приватный ключ физически не может быть извлечён даже при полном доступе к устройству.</span><span data-lang="en">In addition to the Keychain, the identity key is stored and used inside the Secure Enclave — an isolated hardware chip on the device. The private key cannot be physically extracted even with full device access.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">SE-ключ требует подтверждения присутствия пользователя</span><span data-lang="en">SE key requires user presence confirmation</span></div>
+                <div class="item-desc"><span data-lang="ru">Операции с приватным ключом Secure Enclave (расшифровка identity) защищены флагом <code>privateKeyUsage</code> — iOS требует подтверждение через Face ID, Touch ID или пасскод устройства. Форензик-инструмент не может запросить ключ без живого пользователя: биометрия проверяется внутри аппаратного чипа и не эмулируется программно.</span><span data-lang="en">Private key operations in the Secure Enclave (identity decryption) are protected by the <code>privateKeyUsage</code> flag — iOS requires confirmation via Face ID, Touch ID, or device passcode. A forensic tool cannot request the key without a live user: biometric verification happens inside the hardware chip and cannot be emulated in software.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Ключи не в базе данных и не в логах</span><span data-lang="en">Keys not in database or logs</span></div>
-                <div class="item-desc"><span data-lang="ru">Сессии зашифрованы AES-GCM, master key хранится в Keychain.</span><span data-lang="en">Sessions are encrypted with AES-GCM; master key is stored in Keychain.</span></div>
+                <div class="item-desc"><span data-lang="ru">Сессии зашифрованы AES-GCM. При включённой блокировке приложения ключ шифрования сессий производится от PIN-кода (см. выше), а не хранится независимо в Keychain.</span><span data-lang="en">Sessions are encrypted with AES-GCM. When app lock is enabled, the session encryption key is derived from the PIN (see above) rather than stored independently in the Keychain.</span></div>
             </div>
         </div>
         <div class="item">
@@ -386,6 +417,14 @@
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Безопасная переустановка</span><span data-lang="en">Safe reinstallation</span></div>
                 <div class="item-desc"><span data-lang="ru">Обнаружение orphaned Keychain → уведомление сервера → полная очистка данных.</span><span data-lang="en">Orphaned Keychain detection → server notification → full data wipe.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Список контактов пока не зашифрован PIN-ключом</span><span data-lang="en">Contact list not yet PIN-encrypted</span></div>
+                <div class="item-desc"><span data-lang="ru">Список контактов и профиль пользователя хранятся на устройстве без привязки к PIN-производному ключу (в отличие от сообщений, медиа и Signal-сессий). Содержимое переписки это не затрагивает. Известное направление для дальнейшей работы.</span><span data-lang="en">The contact list and user profile are stored on-device without being tied to the PIN-derived key (unlike messages, media, and Signal sessions). This does not affect conversation content. A known area for future work.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
             </div>
         </div>
     </div>
@@ -473,7 +512,14 @@
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">База данных зашифрована</span><span data-lang="en">Database is encrypted</span></div>
-                <div class="item-desc"><span data-lang="ru">SQLite хранит только зашифрованные блобы (AES-GCM). Ключ в Keychain. Метаданные: id, timestamp, sender/receiver.</span><span data-lang="en">SQLite stores only encrypted blobs (AES-GCM). Key in Keychain. Metadata: id, timestamp, sender/receiver.</span></div>
+                <div class="item-desc"><span data-lang="ru">SQLite хранит только зашифрованные блобы (AES-GCM). При включённой блокировке приложения ключ производится от PIN-кода и не существует без него (см. Блок 2).</span><span data-lang="en">SQLite stores only encrypted blobs (AES-GCM). When app lock is enabled, the key is derived from the PIN and does not exist without it (see Block 2).</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Медиа, аватары и документы зашифрованы на диске</span><span data-lang="en">Media, avatars, and documents encrypted at rest</span></div>
+                <div class="item-desc"><span data-lang="ru">Фото, видео, голосовые сообщения, документы и аватары шифруются (AES-GCM) тем же PIN-производным ключом перед записью на диск. Для воспроизведения (AVPlayer и т.п.) создаётся временная расшифрованная копия, которая удаляется при блокировке приложения.</span><span data-lang="en">Photos, videos, voice messages, documents, and avatars are encrypted (AES-GCM) with the same PIN-derived key before being written to disk. For playback (AVPlayer, etc.), a temporary decrypted copy is created and deleted when the app locks.</span></div>
             </div>
         </div>
         <div class="item">
@@ -517,6 +563,50 @@
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Аутентификация загрузки медиа</span><span data-lang="en">Media upload authentication</span></div>
                 <div class="item-desc"><span data-lang="ru">Upload принимается только от авторизованного пользователя с активным WebSocket сеансом. Download защищён 64-символьным SHA256 идентификатором + AES-GCM шифрованием контента.</span><span data-lang="en">Upload is only accepted from an authorised user with an active WebSocket session. Download is protected by a 64-char SHA256 identifier and AES-GCM content encryption.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calls -->
+    <div class="section-title">
+        <span data-lang="ru">Звонки — шифрование и защита</span>
+        <span data-lang="en">Calls — encryption and protection</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Аудио и видео зашифрованы DTLS-SRTP</span><span data-lang="en">Audio and video encrypted with DTLS-SRTP</span></div>
+                <div class="item-desc"><span data-lang="ru">WebRTC использует DTLS 1.2 + SRTP для шифрования медиапотока напрямую между устройствами. Сервер не проходит через медиапоток и не может его прослушать — только сигнализация (offer/answer) проходит через сервер, и она дополнительно зашифрована Double Ratchet E2E.</span><span data-lang="en">WebRTC uses DTLS 1.2 + SRTP to encrypt the media stream directly between devices. The server does not pass through the media stream and cannot listen to it — only signaling (offer/answer) passes through the server, and it is additionally encrypted with Double Ratchet E2E.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Сигнализация зашифрована — отдельный ключ на звонок</span><span data-lang="en">Signaling encrypted — separate key per call</span></div>
+                <div class="item-desc"><span data-lang="ru">SDP offer/answer и ICE-кандидаты шифруются AES-256-GCM ключом, уникальным для каждого звонка. Ключ производится через X25519 DH из identity-ключей обоих участников + случайный callToken. Сервер видит только зашифрованный payload — не может подменить SDP. Звонки от незарегистрированных контактов отклоняются автоматически.</span><span data-lang="en">SDP offer/answer and ICE candidates are encrypted with AES-256-GCM using a key unique to each call. The key is derived via X25519 DH from the identity keys of both parties + a random callToken. The server sees only the encrypted payload — it cannot substitute the SDP. Calls from unregistered contacts are automatically rejected.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Постоянный DTLS-сертификат в Keychain</span><span data-lang="en">Persistent DTLS certificate in Keychain</span></div>
+                <div class="item-desc"><span data-lang="ru">ECDSA-сертификат генерируется один раз и сохраняется в Keychain. Fingerprint стабилен между звонками — без этого TOFU-проверка невозможна (каждый звонок давал бы новый fingerprint и ложный MITM-алерт).</span><span data-lang="en">An ECDSA certificate is generated once and stored in the Keychain. The fingerprint is stable between calls — without this, TOFU verification is impossible (each call would produce a new fingerprint and a false MITM alert).</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">DTLS Fingerprint TOFU</div>
+                <div class="item-desc"><span data-lang="ru">При первом звонке с контактом приложение сохраняет DTLS fingerprint. При последующих звонках — сверяет. Несовпадение: звонок автоматически завершается с предупреждением.</span><span data-lang="en">On the first call with a contact, the app saves the DTLS fingerprint. On subsequent calls, it is verified. Mismatch: the call is automatically terminated with a warning.</span></div>
+                <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">P2P звонок через STUN, TURN как fallback</span><span data-lang="en">P2P call via STUN, TURN as fallback</span></div>
+                <div class="item-desc"><span data-lang="ru">При возможности медиапоток идёт напрямую между устройствами (P2P через STUN). TURN-сервер используется только при NAT, недоступном для прямого соединения — и в этом случае ретранслирует только зашифрованный SRTP-поток, который не может расшифровать.</span><span data-lang="en">When possible, the media stream goes directly between devices (P2P via STUN). The TURN server is used only when NAT blocks direct connection — and in that case it only relays the encrypted SRTP stream, which it cannot decrypt.</span></div>
             </div>
         </div>
     </div>
@@ -566,6 +656,13 @@
         <div class="item">
             <div class="item-icon">✅</div>
             <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Блокировка приложения PIN-кодом и тревожный код</span><span data-lang="en">App lock with PIN code and panic code</span></div>
+                <div class="item-desc"><span data-lang="ru">PIN-код не просто скрывает экран — он криптографически защищает данные (см. Блок 2 и Блок 5): без верного PIN ключ шифрования локальных данных не существует. Независим от пароля iOS. Тревожный код при вводе тихо и безвозвратно удаляет контакты, переписку и медиафайлы с устройства, сохраняя регистрацию аккаунта.</span><span data-lang="en">The PIN doesn't just hide a screen — it cryptographically protects the data itself (see Block 2 and Block 5): without the correct PIN, the local encryption key does not exist. Independent of the iOS passcode. Entering the panic code silently and irreversibly wipes contacts, chat history, and media files from the device while keeping the account registered.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Логи отключены в Release</span><span data-lang="en">Logs disabled in Release</span></div>
                 <div class="item-desc"><span data-lang="ru">Функция dlog обёрнута в #if DEBUG — компилятор полностью удаляет её в Production сборке.</span><span data-lang="en">The dlog function is wrapped in #if DEBUG — the compiler fully removes it in Production builds.</span></div>
             </div>
@@ -589,14 +686,6 @@
         <div class="item">
             <div class="item-icon">🔒</div>
             <div class="item-body">
-                <div class="item-title">DTLS Fingerprint TOFU</div>
-                <div class="item-desc"><span data-lang="ru">При первом звонке с контактом приложение сохраняет DTLS fingerprint. При последующих звонках — сверяет. Несовпадение: звонок автоматически завершается с предупреждением.</span><span data-lang="en">On the first call with a contact, the app saves the DTLS fingerprint. On subsequent calls, it is verified. Mismatch: the call is automatically terminated with a warning.</span></div>
-                <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
-            </div>
-        </div>
-        <div class="item">
-            <div class="item-icon">🔒</div>
-            <div class="item-body">
                 <div class="item-title"><span data-lang="ru">UI-алерты безопасности</span><span data-lang="en">Security UI alerts</span></div>
                 <div class="item-desc"><span data-lang="ru">Три независимых предупреждения: смена ключа безопасности, изменение отпечатка шифрования звонка, устаревший клиент при загрузке медиа.</span><span data-lang="en">Three independent warnings: security key change, call encryption fingerprint change, outdated client on media upload.</span></div>
                 <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
@@ -606,8 +695,8 @@
 
     <footer>
         <p>
-            <span data-lang="ru">HomeChat · <a href="privacy-policy.html">Политика конфиденциальности</a> · Обновлено: июнь 2026</span>
-            <span data-lang="en">HomeChat · <a href="privacy-policy.html">Privacy Policy</a> · Updated: June 2026</span>
+            <span data-lang="ru">HomeChat · <a href="privacy-policy.html">Политика конфиденциальности</a> · Обновлено: июль 2026</span>
+            <span data-lang="en">HomeChat · <a href="privacy-policy.html">Privacy Policy</a> · Updated: July 2026</span>
         </p>
     </footer>
 
@@ -620,6 +709,14 @@
             btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
         });
         document.documentElement.lang = lang;
+    }
+
+    function toggleCode(btn) {
+        const block = btn.nextElementSibling;
+        const open = block.classList.toggle('visible');
+        btn.classList.toggle('open', open);
+        btn.querySelector('.code-label-ru').textContent = open ? 'Скрыть код' : 'Показать код';
+        btn.querySelector('.code-label-en').textContent = open ? 'Hide code' : 'Show code';
     }
 </script>
 </body>
