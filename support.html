@@ -6,26 +6,22 @@
     <title>HomeChat — Поддержка / Support</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #f2f2f7;
             color: #1c1c1e;
             line-height: 1.6;
         }
-
         .container {
             max-width: 720px;
             margin: 0 auto;
             padding: 48px 24px 80px;
         }
-
         .lang-switcher {
             display: flex;
             justify-content: center;
             margin-bottom: 36px;
         }
-
         .lang-switcher-inner {
             display: inline-flex;
             background: #e5e5ea;
@@ -33,7 +29,6 @@
             padding: 3px;
             gap: 2px;
         }
-
         .lang-btn {
             background: none;
             border: none;
@@ -46,27 +41,22 @@
             transition: background 0.18s, color 0.18s;
             font-family: inherit;
         }
-
         .lang-btn.active {
             background: #ffffff;
             color: #1c1c1e;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
-
         header {
             text-align: center;
             margin-bottom: 48px;
         }
-
         .icon-link {
             display: inline-block;
             transition: transform 0.2s ease, opacity 0.2s ease;
             border-radius: 18px;
         }
-
         .icon-link:hover { transform: scale(1.05); opacity: 0.9; }
         .icon-link:active { transform: scale(0.95); }
-
         .icon {
             width: 80px;
             height: 80px;
@@ -74,22 +64,18 @@
             margin-bottom: 16px;
             display: block;
         }
-
         header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
         header p { color: #6e6e73; font-size: 15px; }
-
         .card {
             background: #ffffff;
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 12px;
         }
-
         .card h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: #1c1c1e; }
         .card p { font-size: 15px; color: #48484a; white-space: pre-line; text-align: justify; }
         .card a { color: #007aff; text-decoration: none; }
         .card a:hover { text-decoration: underline; }
-
         .contact-btn {
             display: inline-block;
             margin-top: 14px;
@@ -102,7 +88,6 @@
             text-decoration: none !important;
         }
         .contact-btn:hover { background: #0066d6; color: #ffffff !important; text-decoration: none !important; }
-
         .legal-card {
             background: #fffdf5;
             border: 2px solid #f5c542;
@@ -111,11 +96,8 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 12px rgba(245, 197, 66, 0.2);
         }
-
         .legal-card h2 { font-size: 17px; font-weight: 600; margin-bottom: 10px; color: #b8860b; }
         .legal-card p { font-size: 15px; color: #5a4a1a; white-space: pre-line; text-align: justify; }
-
-        /* ⚠️ Красный блок — важное предупреждение об удалении */
         .warning-card {
             background: #fff5f5;
             border: 2px solid #ff3b30;
@@ -124,34 +106,16 @@
             margin-bottom: 12px;
             box-shadow: 0 2px 12px rgba(255, 59, 48, 0.15);
         }
-
         .warning-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: #c0392b; }
         .warning-card p { font-size: 15px; color: #4a1a1a; white-space: pre-line; text-align: justify; }
-
         footer { text-align: center; margin-top: 32px; font-size: 13px; color: #aeaeb2; }
         footer a { color: #007aff; text-decoration: none; }
-
         [data-lang] { display: none; }
         .lang-ru [data-lang="ru"] { display: block; }
         .lang-en [data-lang="en"] { display: block; }
-
         span[data-lang] { display: none; }
         .lang-ru span[data-lang="ru"] { display: inline; }
         .lang-en span[data-lang="en"] { display: inline; }
-
-        .check { color: #34c759; font-weight: 600; }
-        .badge {
-            display: inline-block;
-            background: #e5e5ea;
-            color: #6e6e73;
-            font-size: 12px;
-            font-weight: 500;
-            padding: 2px 10px;
-            border-radius: 12px;
-            margin-left: 6px;
-        }
-        .badge-done { background: #e8f9ed; color: #1a8a3e; }
-        .feature-item { margin-bottom: 4px; }
     </style>
 </head>
 <body class="lang-ru">
@@ -243,7 +207,6 @@ Go to your profile and tap "Delete Account." This action is irreversible — all
         </div>
     </div>
 
-    <!-- ⚠️ ВАЖНОЕ ПРЕДУПРЕЖДЕНИЕ — выделено красным -->
     <div class="warning-card">
         <div data-lang="ru">
             <h2>⚠️ Перед удалением приложения</h2>
@@ -267,6 +230,25 @@ This is a technical iOS limitation — when an app is deleted, the system runs n
         </div>
     </div>
 
+    <div class="warning-card">
+        <div data-lang="ru">
+            <h2>⚠️ Тревожный код</h2>
+            <p>В настройках приложения, в разделе «Безопасность», можно включить собственную блокировку PIN-кодом — она работает независимо от пароля iOS и запрашивается при каждом открытии приложения. Это не просто экран доступа: PIN-код используется как основа для ключа шифрования ваших данных на устройстве — без него они физически не расшифровываются. При настройке также нужно задать тревожный код, отличный от обычного PIN.
+
+<strong>Введение тревожного кода повлечёт за собой безвозвратное удаление всей информации из приложения, включая все чаты, контакты, медиа, переписку и т.д.</strong>
+
+Ваш аккаунт при этом останется зарегистрированным, повторная регистрация не потребуется.</p>
+        </div>
+        <div data-lang="en">
+            <h2>⚠️ Panic Code</h2>
+            <p>In the app's settings, under "Security," you can turn on your own PIN lock — it works independently of your iOS passcode and is requested every time you open the app. This isn't just an access screen: the PIN is used as the basis for the encryption key that protects your data on the device — without it, that data cannot be decrypted. During setup you'll also need to set a panic code, different from your regular PIN.
+
+<strong>Entering the panic code will permanently delete all information from the app, including all chats, contacts, media, message history, and more.</strong>
+
+Your account will remain registered — no new registration will be required.</p>
+        </div>
+    </div>
+
     <div class="card">
         <div data-lang="ru">
             <h2>Важная информация</h2>
@@ -287,7 +269,7 @@ HomeChat использует зашифрованные VoIP-звонки че�
 К сожалению, перенос на другое устройство пока не предусмотрен по соображениям безопасности. Ваш аккаунт привязан к одному физическому устройству.</p>
 
             <p style="margin-top: 14px;"><strong>Может ли кто-то, зная мой ID, войти в мой аккаунт?</strong>
-Нет. ID — это просто адрес, по которому вас можно найти, но не ключ для входа. При каждом входе сервер отправляет приложению случайный одноразовый код, и приложение подписывает его криптографическим ключом, который был сгенерирован прямо на вашем устройстве при регистрации и хранится исключительно в защищённом хранилище (Keychain). Этот ключ никогда не покидает устройство — ни сервер, ни разработчик, никто другой не имеет к нему доступа. Человек без вашего физического устройства не сможет пройти эту проверку, даже зная ваш ID.</p>
+Нет. ID — это просто адрес, по которому вас можно найти, но не ключ для входа. При каждом входе сервер отправляет приложению случайный одноразовый код, и приложение подписывает его криптографическим ключом, который был сгенерирован прямо на вашем устройстве при регистрации. Этот ключ хранится в защищённом хранилище (Keychain) и дополнительно защищён аппаратным модулем Secure Enclave — отдельным изолированным чипом устройства, из которого ключ физически невозможно извлечь даже при полном доступе к телефону. Этот ключ никогда не покидает устройство — ни сервер, ни разработчик, никто другой не имеет к нему доступа. Человек без вашего физического устройства не сможет пройти эту проверку, даже зная ваш ID.</p>
         </div>
         <div data-lang="en">
             <h2>Important Information</h2>
@@ -308,7 +290,7 @@ You can sign out using the "Sign Out" button in your profile. Important: make su
 Unfortunately, transferring your account to another device is not currently supported for security reasons. Your account is tied to a single physical device.</p>
 
             <p style="margin-top: 14px;"><strong>Can someone access my account just by knowing my ID?</strong>
-No. Your ID is simply an address others can use to find you — it is not a login credential. Every time you sign in, the server sends the app a random one-time challenge, and the app signs it using a cryptographic key that was generated directly on your device at registration and stored exclusively in the secure system keychain. This key never leaves your device — the server, the developer, and anyone else has no access to it. Without your physical device, no one can pass this verification, even if they know your ID.</p>
+No. Your ID is simply an address others can use to find you — it is not a login credential. Every time you sign in, the server sends the app a random one-time challenge, and the app signs it using a cryptographic key that was generated directly on your device at registration. This key is stored in the secure system keychain and is additionally protected by the Secure Enclave — a separate, isolated hardware chip on the device that the key can never be physically extracted from, even with full access to the phone. This key never leaves your device — the server, the developer, and anyone else has no access to it. Without your physical device, no one can pass this verification, even if they know your ID.</p>
         </div>
     </div>
 
@@ -326,30 +308,15 @@ No. Your ID is simply an address others can use to find you — it is not a logi
     <div class="card">
         <div data-lang="ru">
             <h2>Безопасность и конфиденциальность</h2>
-            <p>Все сообщения, медиафайлы и звонки защищены сквозным шифрованием. Разработчик не имеет доступа к содержимому ваших переписок.
+            <p>Все сообщения, медиафайлы и звонки защищены сквозным шифрованием. Ни разработчик, ни кто-либо иной никогда не имеет доступа к содержимому ваших переписок.
 
 Подробнее — в <a href="https://ticketsnotificationstoyou.github.io/homechat-privacy/privacy-policy.html">Политике конфиденциальности</a>.</p>
         </div>
         <div data-lang="en">
             <h2>Security and Privacy</h2>
-            <p>All messages, media files, and calls are protected by end-to-end encryption. The developer has no access to the content of your conversations.
+            <p>All messages, media files, and calls are protected by end-to-end encryption. Neither the developer nor anyone else ever has access to the content of your conversations.
 
 Learn more in <a href="https://ticketsnotificationstoyou.github.io/homechat-privacy/privacy-policy.html">Privacy Policy</a>.</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div data-lang="ru">
-            <h2>Что планируется в следующих версиях</h2>
-            <p class="feature-item">✅ Поддержка английского языка <span class="badge badge-done">уже в версии 1.5</span></p>
-            <p class="feature-item">✅ Улучшение обработки статусов аккаунтов и добавление алертов <span class="badge badge-done">уже реализовано в версии 1.4</span></p>
-            <p class="feature-item">✅ Видеозвонки <span class="badge badge-done">реализовано в версии 1.6</span></p>
-        </div>
-        <div data-lang="en">
-            <h2>Coming in Future Versions</h2>
-            <p class="feature-item">✅ English language support <span class="badge badge-done">already in version 1.5</span></p>
-            <p class="feature-item">✅ Improved account status handling and additional alerts <span class="badge badge-done">already implemented in version 1.4</span></p>
-            <p class="feature-item">✅ Video calls <span class="badge badge-done">implemented in version 1.6</span></p>
         </div>
     </div>
 
