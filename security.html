@@ -555,7 +555,7 @@ sendToClient(recipient.ws, {
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Шифрование аватаров</span><span data-lang="en">Avatar encryption</span></div>
-                <div class="item-desc"><span data-lang="ru">Изображение профиля шифруется отдельным случайным ключом (AES-256-GCM), уникальным для каждого пользователя. Ключ передаётся только контактам, которые добавили пользователя.</span><span data-lang="en">The profile picture is encrypted with a separate random key (AES-256-GCM), unique to each user. The key is shared only with contacts who have added that user.</span></div>
+                <div class="item-desc"><span data-lang="ru">Изображение профиля шифруется отдельным случайным ключом (AES-256-GCM), уникальным для каждого пользователя. Сервер хранит зашифрованный файл и ключ к нему, а раздаёт ключ только контактам, которые добавили пользователя. <em>В отличие от переписки, аватары не защищены сквозным шифрованием: ключ проходит через сервер, поэтому сервер технически способен расшифровать изображение профиля. (Будет устранено в следующих релизах: ключ станет передаваться каждому контакту отдельно, зашифрованным в его криптографической сессии.)</em></span><span data-lang="en">The profile picture is encrypted with a separate random key (AES-256-GCM), unique to each user. The server stores both the encrypted file and its key, and releases the key only to contacts who have added that user. <em>Unlike messages, avatars are not end-to-end encrypted: the key passes through the server, so the server is technically able to decrypt a profile picture. (This will be addressed in a future release: the key will instead be delivered to each contact individually, encrypted within their cryptographic session.)</em></span></div>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать код</span>
@@ -574,13 +574,24 @@ sendToClient(recipient.ws, {
 }
 
 <span class="cm">// Шифрование перед отправкой на сервер — случайный IV на каждую загрузку</span>
-<span class="kw">func</span> <span class="fn">encryptAvatar</span>(_ imageData: <span class="tp">Data</span>) <span class="kw">throws</span> -> (encryptedData: <span class="tp">Data</span>, key: <span class="tp">Data</span>) {
+<span class="kw">func</span> <span class="fn">encryptAvatar</span>(_ imageData: <span class="tp">Data</span>) <span class="kw">throws</span> -> (encryptedData: <span class="tp">Data</span>, iv: <span class="tp">Data</span>, key: <span class="tp">Data</span>) {
     <span class="kw">let</span> key = <span class="fn">getOrCreateAvatarKey</span>()
-    <span class="kw">let</span> nonce = <span class="tp">AES.GCM.Nonce</span>()       <span class="cm">// случайный 96-bit nonce</span>
-    <span class="kw">let</span> sealed = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(imageData, using: <span class="tp">SymmetricKey</span>(data: key), nonce: nonce)
-    <span class="cm">// key передаётся вместе с зашифрованным blob'ом при update_avatar</span>
-    <span class="cm">// Сервер хранит blob + key, но раздаёт key только тем, кто добавил пользователя</span>
-    <span class="kw">return</span> (sealed.combined!, key)
+
+    <span class="cm">// 12-байтный IV (96 бит) из CSPRNG — новый на каждую загрузку</span>
+    <span class="kw">var</span> iv = <span class="tp">Data</span>(count: <span class="nm">12</span>)
+    <span class="kw">let</span> result = iv.<span class="fn">withUnsafeMutableBytes</span> { bytes <span class="kw">in</span>
+        <span class="fn">SecRandomCopyBytes</span>(kSecRandomDefault, <span class="nm">12</span>, bytes.baseAddress!)
+    }
+    <span class="kw">guard</span> result == errSecSuccess <span class="kw">else</span> { <span class="kw">throw</span> <span class="tp">KeychainError</span>.saveFailed(-<span class="nm">1</span>) }
+
+    <span class="kw">let</span> sealed = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(imageData,
+                                using: <span class="tp">SymmetricKey</span>(data: key),
+                                nonce: <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="tp">Nonce</span>(data: iv))
+
+    <span class="cm">// ⚠️ update_avatar отправляет на сервер ТРИ поля: avatarData, iv, avatarKey.</span>
+    <span class="cm">// key уходит вместе с blob'ом — сквозного шифрования для аватаров нет.</span>
+    <span class="cm">// Сервер раздаёт key только тем, кто добавил пользователя в контакты.</span>
+    <span class="kw">return</span> (sealed.combined!, iv, key)
 }</pre>
                 </div>
             </div>
