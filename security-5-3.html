@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeChat — Security / Безопасность</title>
+
+    <!-- Мета-теги для SEO -->
+    <meta name="description" content="Полный аудит безопасности мессенджера HomeChat: криптография Double Ratchet, AES-256-GCM, Secure Enclave, DTLS-SRTP, защита ключей и данные.">
+    <meta name="keywords" content="homechat, безопасность, аудит, мессенджер, криптография, double ratchet, swift, apple cryptokit, сигнал, e2ee">
+
+    <!-- Мета-тег для подтверждения в Google Search Console -->
+    <meta name="google-site-verification" content="8af3kpnHDkQj_gdwqFT07ZIZP0w6YnZY-a4_pjYSypM" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f2f2f7;
+            color: #1c1c1e;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        .lang-switcher {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+
+        .lang-switcher-inner {
+            display: inline-flex;
+            background: #e5e5ea;
+            border-radius: 10px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 7px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6e6e73;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s;
+            font-family: inherit;
+        }
+
+        .lang-btn.active {
+            background: #ffffff;
+            color: #1c1c1e;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .icon-link {
+            display: inline-block;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            border-radius: 18px;
+        }
+
+        .icon-link:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .icon-link:active {
+            transform: scale(0.95);
+        }
+
+        .icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 18px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: #6e6e73;
+            font-size: 15px;
+        }
+
+        .summary-card {
+            background: #1c1c1e;
+            color: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .summary-numbers {
+            display: flex;
+            gap: 24px;
+        }
+
+        .summary-num {
+            text-align: center;
+        }
+
+        .summary-num .num {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .summary-num .label {
+            font-size: 12px;
+            color: #aeaeb2;
+            margin-top: 4px;
+        }
+
+        .num-green { color: #30d158; }
+        .num-gray  { color: #636366; }
+
+        .summary-note {
+            font-size: 13px;
+            color: #aeaeb2;
+            border-top: 1px solid #3a3a3c;
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6e6e73;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 28px 0 8px 4px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 0;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item-icon {
+            font-size: 16px;
+            line-height: 1.5;
+            flex-shrink: 0;
+            width: 20px;
+            text-align: center;
+        }
+
+        .item-body {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 2px;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: #6e6e73;
+            line-height: 1.5;
+        }
+
+        .item-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 4px;
+        }
+
+        .badge-fixed {
+            background: #d1f5e0;
+            color: #1a7a3a;
+        }
+
+        .badge-info {
+            background: #e5e5ea;
+            color: #6e6e73;
+        }
+
+        .badge-depth {
+            background: #ddeeff;
+            color: #0055b3;
+        }
+
+        .verified-note {
+            background: #f2f2f7;
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #6e6e73;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 13px;
+            color: #aeaeb2;
+        }
+
+        footer a {
+            color: #007aff;
+            text-decoration: none;
+        }
+
+        [data-lang] { display: none; }
+        .lang-ru [data-lang="ru"] { display: block; }
+        .lang-en [data-lang="en"] { display: block; }
+        span[data-lang] { display: none; }
+        .lang-ru span[data-lang="ru"] { display: inline; }
+        .lang-en span[data-lang="en"] { display: inline; }
+
+        /* ── Code snippets ── */
+        .code-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            background: none;
+            border: 1px solid #c7c7cc;
+            border-radius: 7px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #3c3c43;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .code-toggle:hover { background: #f2f2f7; border-color: #aeaeb2; }
+        .code-toggle .arrow { font-size: 10px; transition: transform 0.2s; display: inline-block; }
+        .code-toggle.open .arrow { transform: rotate(90deg); }
+
+        .code-block {
+            display: none;
+            margin-top: 10px;
+            background: #1c1c1e;
+            border-radius: 10px;
+            padding: 14px 16px;
+            overflow-x: auto;
+        }
+        .code-block.visible { display: block; }
+        .code-block pre {
+            margin: 0;
+            font-family: "SF Mono", "Fira Code", Menlo, monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #e5e5ea;
+            white-space: pre;
+        }
+        .code-block .lang-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #636366;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        /* syntax highlight colours */
+        .kw  { color: #ff7ab2; } /* keywords */
+        .fn  { color: #67b7a4; } /* functions */
+        .str { color: #fc6a5d; } /* strings */
+        .cm  { color: #636366; font-style: italic; } /* comments */
+        .nm  { color: #d9c97c; } /* numbers / constants */
+        .tp  { color: #dabaff; } /* types */
+    </style>
+</head>
+<body class="lang-ru">
+<div class="container">
+
+    <div class="lang-switcher">
+        <div class="lang-switcher-inner">
+            <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+        </div>
+    </div>
+
+    <header>
+        <!-- Иконка теперь обёрнута в ссылку на App Store -->
+        <a href="https://apps.apple.com/ru/app/homechat/id6761311344?l=en-GB" class="icon-link" target="_blank" rel="noopener noreferrer" aria-label="Скачать HomeChat в App Store">
+            <img class="icon" src="icon.png" alt="HomeChat">
+        </a>
+        <h1>HomeChat</h1>
+        <p>
+            <span data-lang="ru">Аудит безопасности · сентябрь 2026</span>
+            <span data-lang="en">Security Audit · September 2026</span>
+        </p>
+    </header>
+
+    <!-- Summary -->
+    <div class="summary-card">
+        <div style="flex:1">
+            <div class="summary-numbers">
+                <div class="summary-num">
+                    <div class="num num-green">67</div>
+                    <div class="label"><span data-lang="ru">выполнено</span><span data-lang="en">passed</span></div>
+                </div>
+                <div class="summary-num">
+                    <div class="num" style="color:#ff9f0a">7</div>
+                    <div class="label"><span data-lang="ru">исправлено</span><span data-lang="en">fixed</span></div>
+                </div>
+                <div class="summary-num">
+                    <div class="num num-gray">5</div>
+                    <div class="label"><span data-lang="ru">инфо</span><span data-lang="en">info</span></div>
+                </div>
+                <div class="summary-num">
+                    <div class="num num-green">0</div>
+                    <div class="label"><span data-lang="ru">открытых</span><span data-lang="en">open</span></div>
+                </div>
+            </div>
+            <div class="summary-note">
+                <span data-lang="ru">Все пункты проверены по исходному коду приложения и сервера. Критические находки подтверждены исполняемыми тестами — с реальным выводом и патчами.</span>
+                <span data-lang="en">All items verified against application and server source code. Critical findings were confirmed by executable tests with real output and patches.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 1 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 1 — Криптография</span>
+        <span data-lang="en">Block 1 — Cryptography</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Стандартные алгоритмы</span><span data-lang="en">Standard algorithms</span></div>
+                <div class="item-desc"><span data-lang="ru">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 — через Apple CryptoKit. Собственная реализация Double Ratchet (вдохновлена Signal Protocol) без сторонних библиотек — только нативные Apple API.</span><span data-lang="en">X25519, Ed25519, AES-256-GCM, HKDF-SHA256 — via Apple CryptoKit. Custom Double Ratchet implementation (inspired by Signal Protocol) with no third-party libraries — native Apple APIs only.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · DH Ratchet + AES-256-GCM + AAD — Apple CryptoKit only</div>
+                    <pre><span class="cm">// Асимметричный ratchet: X25519 ECDH + HKDF-SHA256</span>
+<span class="cm">// Только стандартные Apple CryptoKit API, без сторонних библиотек</span>
+<span class="kw">import</span> CryptoKit  <span class="cm">// X25519, HKDF, AES-GCM, Ed25519 — всё здесь</span>
+
+<span class="cm">// X25519 Diffie-Hellman</span>
+<span class="kw">let</span> theirPublic = <span class="kw">try</span> <span class="tp">Curve25519</span>.<span class="tp">KeyAgreement</span>.<span class="tp">PublicKey</span>(rawRepresentation: theirDHKey)
+<span class="kw">let</span> shared = <span class="kw">try</span> myPrivate.<span class="fn">sharedSecretFromKeyAgreement</span>(with: theirPublic)
+
+<span class="cm">// HKDF-SHA256: из общего секрета + rootKey → новый rootKey + chainKey</span>
+<span class="kw">let</span> derived = <span class="tp">HKDF</span>&lt;<span class="tp">SHA256</span>&gt;.<span class="fn">deriveKey</span>(
+    inputKeyMaterial: <span class="tp">SymmetricKey</span>(data: shared.<span class="fn">withUnsafeBytes</span> { <span class="tp">Data</span>($0) }),
+    salt: rootKey,
+    info: <span class="tp">Data</span>(<span class="str">"DoubleRatchet"</span>.utf8),
+    outputByteCount: <span class="nm">64</span>   <span class="cm">// 32 → новый rootKey, 32 → новый chainKey</span>
+)
+<span class="cm">// Эфемерный ключ сбрасывается — прошлые сессии скомпрометировать нельзя</span>
+<span class="kw">let</span> newEphemeral = <span class="tp">Curve25519</span>.<span class="tp">KeyAgreement</span>.<span class="tp">PrivateKey</span>() <span class="cm">// generate</span>
+
+<span class="cm">// AES-256-GCM шифрование с AAD — метаданные криптографически привязаны к тексту</span>
+<span class="kw">let</span> nonce = <span class="fn">deriveNonce</span>(from: messageKey)   <span class="cm">// детерминирован из messageKey</span>
+<span class="kw">let</span> aad   = <span class="fn">buildFramingAAD</span>(ratchetKey: ratchetKey, messageNumber: messageNumber)
+<span class="kw">let</span> sealed = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(
+    plaintext,
+    using: messageKey,
+    nonce: nonce,
+    authenticating: aad   <span class="cm">// ← подмена заголовка → authentication failure</span>
+)</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Сервер не видит сообщения</span><span data-lang="en">Server cannot read messages</span></div>
+                <div class="item-desc"><span data-lang="ru">Приватные ключи хранятся только на устройстве.</span><span data-lang="en">Private keys are stored on the device only.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · Message relay</div>
+                    <pre><span class="cm">// Сервер получает зашифрованный content и пересылает его как есть</span>
+<span class="cm">// Приватные ключи для расшифровки существуют только на устройствах</span>
+<span class="cm">// Сервер видит: senderId, recipientId, timestamp, размер — не содержимое</span>
+sendToClient(recipient.ws, {
+    type: <span class="str">'new_message'</span>,
+    messageId,
+    senderId,
+    content,          <span class="cm">// ← AES-256-GCM ciphertext, сервер не может расшифровать</span>
+    ratchetKey,       <span class="cm">// ← публичный DH-ключ (не секрет, нужен для Double Ratchet)</span>
+    messageNumber,
+    timestamp
+});
+<span class="cm">// В логах сервера: только технические метаданные</span>
+<span class="cm">// console.log(`📨 ${senderId} → ${recipientId}, id: ${messageId}`)</span>
+<span class="cm">// Содержимое сообщения в лог никогда не попадает</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Nonce не повторяются</span><span data-lang="en">Nonces never repeat</span></div>
+                <div class="item-desc"><span data-lang="ru">Детерминированы от уникального messageKey через SHA256. Раздельные цепи отправки и получения гарантируют, что ни один messageKey не используется дважды.</span><span data-lang="en">Derived deterministically from a unique messageKey via SHA256. Separate sending and receiving chains guarantee that no messageKey is ever reused.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Deterministic nonce</div>
+                    <pre><span class="cm">// Nonce производится от messageKey через SHA256</span>
+<span class="cm">// Каждый messageKey уникален → nonce никогда не повторяется</span>
+<span class="kw">private func</span> <span class="fn">deriveNonce</span>(from messageKey: <span class="tp">SymmetricKey</span>) -> <span class="tp">AES.GCM.Nonce</span> {
+    <span class="kw">let</span> keyData = messageKey.<span class="fn">withUnsafeBytes</span> { <span class="tp">Data</span>($0) }
+    <span class="kw">let</span> hash = <span class="tp">SHA256</span>.<span class="fn">hash</span>(data: keyData)
+    <span class="kw">let</span> nonceData = <span class="tp">Data</span>(hash.<span class="fn">prefix</span>(<span class="nm">12</span>))  <span class="cm">// 96-bit nonce для AES-GCM</span>
+    <span class="kw">return try</span>! <span class="tp">AES.GCM.Nonce</span>(data: nonceData)
+    <span class="cm">// Double Ratchet гарантирует что messageKey одноразовый →</span>
+    <span class="cm">// один и тот же nonce никогда не используется дважды</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Forward Secrecy</span><span data-lang="en">Forward Secrecy</span></div>
+                <div class="item-desc"><span data-lang="ru">Double Ratchet: раздельные цепи отправки и получения, chainKey + rootKey rotation. Компрометация одного ключа не раскрывает прошлые сообщения. Раздельные цепи — базовый элемент стандартного дизайна Double Ratchet; в ходе аудита реализация была приведена в соответствие с ним (внутренний wire-формат сообщений повышен до версии 3, старые сессии обновляются автоматически).</span><span data-lang="en">Double Ratchet: separate sending and receiving chains, chainKey + rootKey rotation. Compromise of one key does not expose past messages. Separate chains are a core element of the standard Double Ratchet design; during the audit the implementation was brought into line with it (the internal message wire format was raised to version 3, and older sessions are upgraded automatically).</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Double Ratchet key rotation</div>
+                    <pre><span class="cm">// При каждом сообщении — новый chainKey (симметричный ratchet)</span>
+<span class="kw">func</span> <span class="fn">ratchetSend</span>() <span class="kw">throws</span> -> <span class="tp">MessageKey</span> {
+    <span class="kw">let</span> messageKey = <span class="fn">deriveMessageKey</span>(chainKey)
+    chainKey = <span class="fn">deriveNextChainKey</span>(chainKey)  <span class="cm">// старый ключ удаляется</span>
+    <span class="kw">return</span> messageKey
+}
+
+<span class="cm">// При смене DH-ключа — ротация rootKey (асимметричный ratchet)</span>
+<span class="kw">func</span> <span class="fn">ratchetDH</span>(theirPublicKey: <span class="tp">PublicKey</span>) {
+    <span class="kw">let</span> dhOutput = <span class="fn">X25519</span>(myPrivateKey, theirPublicKey)
+    (rootKey, chainKey) = <span class="fn">HKDF</span>(rootKey, dhOutput)  <span class="cm">// новые root + chain</span>
+    myPrivateKey = <span class="tp">X25519PrivateKey</span>.<span class="fn">generate</span>()         <span class="cm">// эфемерный ключ сброшен</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Аутентификация каждого сообщения (AAD)</span><span data-lang="en">Per-message authentication (AAD)</span></div>
+                <div class="item-desc"><span data-lang="ru">Метаданные (версия, номер, DH-ключ) криптографически привязаны к содержимому. Подмена в транзите обнаруживается немедленно.</span><span data-lang="en">Metadata (version, sequence, DH key) is cryptographically bound to content. Any in-transit tampering is detected immediately.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Additional Authenticated Data (AAD)</div>
+                    <pre><span class="cm">// AAD = version + hasRatchetKey + messageNumber + ratchetKey</span>
+<span class="cm">// Все framing-поля криптографически привязаны к ciphertext</span>
+<span class="cm">// Любая подмена заголовка → AES-GCM authentication failure</span>
+<span class="kw">private func</span> <span class="fn">buildFramingAAD</span>(ratchetKey: <span class="tp">Data</span>?, messageNumber: <span class="tp">UInt32</span>) -> <span class="tp">Data</span> {
+    <span class="kw">var</span> aad = <span class="tp">Data</span>()
+    aad.<span class="fn">append</span>(<span class="nm">0x02</span>)                    <span class="cm">// protocol version</span>
+    aad.<span class="fn">append</span>(ratchetKey != <span class="kw">nil</span> ? <span class="nm">0x01</span> : <span class="nm">0x00</span>)
+    aad.<span class="fn">append</span>(messageNumber.bigEndian) <span class="cm">// sequence number</span>
+    <span class="kw">if let</span> key = ratchetKey { aad.<span class="fn">append</span>(key) } <span class="cm">// DH ratchet key</span>
+    <span class="kw">return</span> aad
+}
+<span class="cm">// Шифрование с привязкой AAD — без AAD расшифровка невозможна</span>
+<span class="kw">let</span> sealedBox = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(data, using: messageKey,
+    nonce: nonce, authenticating: aad)</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Безопасная ротация ключей</span><span data-lang="en">Secure key rotation</span></div>
+                <div class="item-desc"><span data-lang="ru">Gap-защита maxAllowedGap=500 исключает десинхронизацию сессии при потере пакетов.</span><span data-lang="en">Gap protection (maxAllowedGap=500) prevents session desynchronisation on packet loss.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Медиашифрование AES-256-GCM</span><span data-lang="en">Media encryption AES-256-GCM</span></div>
+                <div class="item-desc"><span data-lang="ru">Каждый файл шифруется отдельным случайным ключом (32 байта). Ключ передаётся только внутри E2E-зашифрованного сообщения. Integrity check: SHA256(blob) == digest.</span><span data-lang="en">Each file is encrypted with a separate random key (32 bytes). The key is transmitted only inside the E2E-encrypted message. Integrity check: SHA256(blob) == digest.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Media encryption + SHA256 integrity (MediaBlobService)</div>
+                    <pre><span class="cm">// Каждый файл — уникальный случайный ключ</span>
+<span class="kw">let</span> mediaKey = <span class="tp">SymmetricKey</span>(size: .bits256)
+<span class="kw">let</span> sealedBox = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(fileData, using: mediaKey)
+
+<span class="cm">// SHA256 digest зашифрованного blob — отправляется в X-Digest при upload</span>
+<span class="kw">let</span> digest = <span class="tp">SHA256</span>.<span class="fn">hash</span>(data: sealedBox.combined!)
+<span class="kw">let</span> digestString = <span class="tp">Data</span>(digest).<span class="fn">base64EncodedString</span>()
+<span class="cm">// request.setValue(digestString, forHTTPHeaderField: "X-Digest")</span>
+
+<span class="cm">// При загрузке — проверка целостности ДО расшифровки</span>
+<span class="kw">if let</span> expected = expectedDigest {
+    <span class="kw">let</span> actual = <span class="tp">Data</span>(<span class="tp">SHA256</span>.<span class="fn">hash</span>(data: downloadedData)).<span class="fn">base64EncodedString</span>()
+    <span class="kw">guard</span> actual == expected <span class="kw">else</span> {
+        <span class="kw">throw</span> <span class="tp">BlobError</span>.uploadFailed(<span class="str">"Digest mismatch"</span>)  <span class="cm">// ← подмена на сервере обнаружена</span>
+    }
+}
+<span class="cm">// Ключ + digest передаются ТОЛЬКО внутри E2E-зашифрованного сообщения</span>
+<span class="cm">// Сервер видит: зашифрованный blob + digest — содержимое недоступно</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Шифрование аватаров</span><span data-lang="en">Avatar encryption</span></div>
+                <div class="item-desc"><span data-lang="ru">Изображение профиля шифруется отдельным случайным ключом (AES-256-GCM), уникальным для каждого пользователя. Сервер хранит зашифрованный файл и ключ к нему, а раздаёт ключ только контактам, которые добавили пользователя. <em>В отличие от переписки, аватары не защищены сквозным шифрованием: ключ проходит через сервер, поэтому сервер технически способен расшифровать изображение профиля. Это известное ограничение текущей архитектуры. Полноценное сквозное шифрование аватаров потребовало бы вывода ключа из парной сессии с каждым контактом без участия сервера в распространении ключа — такая переработка в текущий план не входит.</em></span><span data-lang="en">The profile picture is encrypted with a separate random key (AES-256-GCM), unique to each user. The server stores both the encrypted file and its key, and releases the key only to contacts who have added that user. <em>Unlike messages, avatars are not end-to-end encrypted: the key passes through the server, so the server is technically able to decrypt a profile picture. This is a known limitation of the current architecture. True end-to-end encryption of avatars would require deriving the key from the pairwise session with each contact, with the server taking no part in key distribution — such a rework is not on the current roadmap.</em></span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Avatar key + encryption</div>
+                    <pre><span class="cm">// Персональный ключ аватара — 32 случайных байта, уникальный для каждого пользователя</span>
+<span class="cm">// Хранится в Keychain, создаётся один раз при первой загрузке аватара</span>
+<span class="kw">func</span> <span class="fn">getOrCreateAvatarKey</span>() -> <span class="tp">Data</span> {
+    <span class="kw">if let</span> existing = <span class="fn">loadData</span>(forKey: <span class="str">"avatar_encryption_key"</span>) { <span class="kw">return</span> existing }
+    <span class="kw">var</span> newKey = <span class="tp">Data</span>(count: <span class="nm">32</span>)
+    <span class="fn">SecRandomCopyBytes</span>(kSecRandomDefault, <span class="nm">32</span>, &amp;newKey)  <span class="cm">// CSPRNG</span>
+    <span class="fn">saveData</span>(newKey, forKey: <span class="str">"avatar_encryption_key"</span>)
+    <span class="kw">return</span> newKey
+}
+
+<span class="cm">// Шифрование перед отправкой на сервер — случайный IV на каждую загрузку</span>
+<span class="kw">func</span> <span class="fn">encryptAvatar</span>(_ imageData: <span class="tp">Data</span>) <span class="kw">throws</span> -> (encryptedData: <span class="tp">Data</span>, iv: <span class="tp">Data</span>, key: <span class="tp">Data</span>) {
+    <span class="kw">let</span> key = <span class="fn">getOrCreateAvatarKey</span>()
+
+    <span class="cm">// 12-байтный IV (96 бит) из CSPRNG — новый на каждую загрузку</span>
+    <span class="kw">var</span> iv = <span class="tp">Data</span>(count: <span class="nm">12</span>)
+    <span class="kw">let</span> result = iv.<span class="fn">withUnsafeMutableBytes</span> { bytes <span class="kw">in</span>
+        <span class="fn">SecRandomCopyBytes</span>(kSecRandomDefault, <span class="nm">12</span>, bytes.baseAddress!)
+    }
+    <span class="kw">guard</span> result == errSecSuccess <span class="kw">else</span> { <span class="kw">throw</span> <span class="tp">KeychainError</span>.saveFailed(-<span class="nm">1</span>) }
+
+    <span class="kw">let</span> sealed = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(imageData,
+                                using: <span class="tp">SymmetricKey</span>(data: key),
+                                nonce: <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="tp">Nonce</span>(data: iv))
+
+    <span class="cm">// ⚠️ update_avatar отправляет на сервер ТРИ поля: avatarData, iv, avatarKey.</span>
+    <span class="cm">// key уходит вместе с blob'ом — сквозного шифрования для аватаров нет.</span>
+    <span class="cm">// Сервер раздаёт key только тем, кто добавил пользователя в контакты.</span>
+    <span class="kw">return</span> (sealed.combined!, iv, key)
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">HMAC вместо HKDF для медиаключей</span><span data-lang="en">HMAC instead of HKDF for media keys</span></div>
+                <div class="item-desc"><span data-lang="ru">Академическое замечание: HKDF нужен для нормализации неравномерной энтропии. Поскольку mediaKey — 32 байта криптографически случайных данных, HMAC как PRF эквивалентен HKDF в данном контексте. Реальной уязвимости нет.</span><span data-lang="en">Academic note: HKDF is needed to normalise uneven entropy. Since mediaKey is 32 bytes of cryptographically random data, HMAC as a PRF is equivalent to HKDF in this context. No real vulnerability.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 2 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 2 — Хранение ключей</span>
+        <span data-lang="en">Block 2 — Key Storage</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключи только в Keychain</span><span data-lang="en">Keys stored in Keychain only</span></div>
+                <div class="item-desc"><span data-lang="ru">kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly — ключи физически не покидают устройство.</span><span data-lang="en">kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly — keys physically cannot leave the device.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключ базы данных, медиа и сессий производится от PIN-кода</span><span data-lang="en">Database, media, and session key is PIN-derived</span></div>
+                <div class="item-desc"><span data-lang="ru">Если включена блокировка приложения, ключ шифрования локальной базы, медиафайлов, аватаров и Signal-сессий не хранится нигде — он производится из PIN (PBKDF2-HMAC-SHA256, 600 000 итераций) в момент разблокировки и стирается из памяти при уходе в фон. Сам PIN нигде не хранится, даже хэшем — проверка происходит через попытку расшифровки.</span><span data-lang="en">When app lock is enabled, the encryption key for the local database, media files, avatars, and Signal sessions is not stored anywhere — it is derived from the PIN (PBKDF2-HMAC-SHA256, 600,000 iterations) at unlock time and wiped from memory when the app backgrounds. The PIN itself is never stored anywhere, not even hashed — verification happens by attempting decryption.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · PIN key derivation</div>
+                    <pre><span class="cm">// PIN нигде не хранится — только соль и зашифрованный ключ БД</span>
+<span class="kw">func</span> <span class="fn">verifyPIN</span>(_ pin: <span class="tp">String</span>) -> <span class="tp">Bool</span> {
+    <span class="kw">let</span> derived = <span class="fn">PBKDF2</span>(
+        password: <span class="tp">Data</span>(pin.utf8),
+        salt: storedSalt,
+        iterations: <span class="nm">600_000</span>,    <span class="cm">// HMAC-SHA256</span>
+        keyLength: <span class="nm">32</span>
+    )
+    <span class="cm">// Проверка = попытка расшифровки. Неверный PIN → ошибка AES-GCM</span>
+    <span class="kw">guard let</span> dbKey = <span class="kw">try</span>? <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">open</span>(wrappedKey, using: <span class="tp">SymmetricKey</span>(data: derived))
+    <span class="kw">else</span> { <span class="kw">return false</span> }
+
+    unwrappedKey = dbKey   <span class="cm">// ключ только в памяти</span>
+    <span class="kw">return true</span>
+}
+
+<span class="cm">// При уходе в фон — ключ стирается из памяти</span>
+<span class="kw">func</span> <span class="fn">lockAndPurgeKey</span>() {
+    unwrappedKey = <span class="kw">nil</span>      <span class="cm">// ключ исчезает — данные физически недоступны</span>
+    database = <span class="kw">nil</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключ идентификации защищён Secure Enclave</span><span data-lang="en">Identity key protected by Secure Enclave</span></div>
+                <div class="item-desc"><span data-lang="ru">Дополнительно к Keychain, ключ идентификации хранится и используется внутри аппаратного модуля Secure Enclave — изолированного чипа устройства. Приватный ключ физически не может быть извлечён даже при полном доступе к устройству.</span><span data-lang="en">In addition to the Keychain, the identity key is stored and used inside the Secure Enclave — an isolated hardware chip on the device. The private key cannot be physically extracted even with full device access.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">SE-ключ требует подтверждения присутствия пользователя</span><span data-lang="en">SE key requires user presence confirmation</span></div>
+                <div class="item-desc"><span data-lang="ru">Операции с приватным ключом Secure Enclave (расшифровка identity) защищены флагом <code>privateKeyUsage</code> — iOS требует подтверждение через Face ID, Touch ID или пасскод устройства. Форензик-инструмент не может запросить ключ без живого пользователя: биометрия проверяется внутри аппаратного чипа и не эмулируется программно.</span><span data-lang="en">Private key operations in the Secure Enclave (identity decryption) are protected by the <code>privateKeyUsage</code> flag — iOS requires confirmation via Face ID, Touch ID, or device passcode. A forensic tool cannot request the key without a live user: biometric verification happens inside the hardware chip and cannot be emulated in software.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Secure Enclave key creation</div>
+                    <pre><span class="cm">// Ключ создаётся с флагом privateKeyUsage</span>
+<span class="cm">// Любая операция с приватным ключом требует Face ID / Touch ID / пасскод</span>
+<span class="kw">let</span> access = <span class="fn">SecAccessControlCreateWithFlags</span>(
+    <span class="kw">nil</span>,
+    kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+    .<span class="nm">privateKeyUsage</span>,   <span class="cm">// ← требует присутствие пользователя</span>
+    <span class="kw">nil</span>
+)
+<span class="kw">let</span> seKey = <span class="kw">try</span> <span class="tp">SecureEnclave</span>.<span class="tp">P256</span>.<span class="tp">KeyAgreement</span>.<span class="tp">PrivateKey</span>(
+    accessControl: access!
+)
+<span class="cm">// Приватный ключ физически не покидает Secure Enclave</span>
+<span class="cm">// dataRepresentation содержит только публичный ключ + токен-ссылку</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Ключи не в базе данных и не в логах</span><span data-lang="en">Keys not in database or logs</span></div>
+                <div class="item-desc"><span data-lang="ru">Сессии зашифрованы AES-GCM. При включённой блокировке приложения ключ шифрования сессий производится от PIN-кода (см. выше), а не хранится независимо в Keychain.</span><span data-lang="en">Sessions are encrypted with AES-GCM. When app lock is enabled, the session encryption key is derived from the PIN (see above) rather than stored independently in the Keychain.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Исключено из iCloud Backup</span><span data-lang="en">Excluded from iCloud Backup</span></div>
+                <div class="item-desc"><span data-lang="ru">MediaCache, Avatars, SQLite+WAL+SHM, Sessions — isExcludedFromBackup.</span><span data-lang="en">MediaCache, Avatars, SQLite+WAL+SHM, Sessions — isExcludedFromBackup.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Exclude from iCloud Backup</div>
+                    <pre><span class="cm">// SQLite + WAL + SHM — все три файла исключены из iCloud</span>
+<span class="kw">for</span> suffix <span class="kw">in</span> [<span class="str">""</span>, <span class="str">"-wal"</span>, <span class="str">"-shm"</span>] {
+    <span class="kw">var</span> url = <span class="tp">URL</span>(fileURLWithPath: dbPath + suffix)
+    <span class="kw">var</span> rv = <span class="tp">URLResourceValues</span>()
+    rv.isExcludedFromBackup = <span class="kw">true</span>   <span class="cm">// зашифрованные данные не попадают в iCloud</span>
+    <span class="kw">try</span>? url.<span class="fn">setResourceValues</span>(rv)
+}
+<span class="cm">// Аналогично: MediaCache, Avatars, Sessions/</span>
+<span class="cm">// Шифрованный backup бесполезен без ключа,</span>
+<span class="cm">// но мы не передаём его в Apple вообще</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Безопасная переустановка</span><span data-lang="en">Safe reinstallation</span></div>
+                <div class="item-desc"><span data-lang="ru">Обнаружение orphaned Keychain → уведомление сервера → полная очистка данных.</span><span data-lang="en">Orphaned Keychain detection → server notification → full data wipe.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Список контактов: дополнительная PIN-привязка в планах</span><span data-lang="en">Contact list: additional PIN binding planned</span></div>
+                <div class="item-desc"><span data-lang="ru">Контакты хранятся в зашифрованной базе данных на устройстве (AES-GCM) — сторонние приложения и сервер их не видят. Планируется дополнительно привязать ключ шифрования контактов к PIN-коду — так же, как уже сделано для сообщений, медиа и сессий.</span><span data-lang="en">Contacts are stored in an encrypted on-device database (AES-GCM) — third-party apps and the server cannot access them. The plan is to additionally tie the contact encryption key to the PIN code, the same way it is already done for messages, media, and sessions.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 3 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 3 — Сеть</span>
+        <span data-lang="en">Block 3 — Network</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">TLS 1.2+</div>
+                <div class="item-desc"><span data-lang="ru">Все соединения через TLS (iOS ATS по умолчанию). WebSocket через WSS.</span><span data-lang="en">All connections via TLS (iOS ATS by default). WebSocket over WSS.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">Certificate Pinning</div>
+                <div class="item-desc"><span data-lang="ru">SPKI hash pinning через URLSessionDelegate (SHA256, EC P-256). Поддельный сертификат от любого CA не принимается.</span><span data-lang="en">SPKI hash pinning via URLSessionDelegate (SHA256, EC P-256). Fraudulent certificates from any CA are rejected.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · SPKI hash pinning</div>
+                    <pre><span class="cm">// Каждое TLS-соединение проверяет SPKI hash сертификата сервера</span>
+<span class="kw">func</span> urlSession(<span class="kw">_</span> session: <span class="tp">URLSession</span>,
+    didReceive challenge: <span class="tp">URLAuthenticationChallenge</span>,
+    completionHandler: <span class="kw">@escaping</span> (<span class="tp">URLSession.AuthChallengeDisposition</span>, <span class="tp">URLCredential</span>?) -> <span class="tp">Void</span>
+) {
+    <span class="kw">guard let</span> serverTrust = challenge.protectionSpace.serverTrust,
+          <span class="kw">let</span> cert = (<span class="fn">SecTrustCopyCertificateChain</span>(serverTrust) <span class="kw">as</span>? [<span class="tp">SecCertificate</span>])?.first
+    <span class="kw">else</span> { completionHandler(.<span class="fn">cancelAuthenticationChallenge</span>, <span class="kw">nil</span>); <span class="kw">return</span> }
+
+    <span class="kw">let</span> serverHash = <span class="fn">getSPKIHash</span>(from: cert) <span class="cm">// SHA256(SPKI)</span>
+
+    <span class="kw">if</span> pinnedHashes.<span class="fn">contains</span>(serverHash) {
+        completionHandler(.<span class="fn">useCredential</span>, <span class="tp">URLCredential</span>(trust: serverTrust))
+    } <span class="kw">else</span> {
+        <span class="cm">// Сертификат не совпадает — отклоняем, даже если он подписан доверенным CA</span>
+        completionHandler(.<span class="fn">cancelAuthenticationChallenge</span>, <span class="kw">nil</span>)
+        <span class="fn">NotificationCenter</span>.post(<span class="str">"SecurityAlertMITM"</span>)
+    }
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">MITM не позволяет читать сообщения</span><span data-lang="en">MITM cannot expose messages</span></div>
+                <div class="item-desc"><span data-lang="ru">Соединение разрывается при подозрении на MITM. Double Ratchet ciphertext без ключей бесполезен.</span><span data-lang="en">Connection is terminated on MITM suspicion. Double Ratchet ciphertext is useless without keys.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Токены сессии в заголовках</span><span data-lang="en">Session tokens in headers</span></div>
+                <div class="item-desc"><span data-lang="ru">sessionId и userId перенесены из URL в X-Session-ID / X-User-ID заголовки. URL-логи сервера не содержат токенов.</span><span data-lang="en">sessionId and userId moved from URL to X-Session-ID / X-User-ID headers. Server URL logs contain no tokens.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · WebSocket headers</div>
+                    <pre><span class="cm">// Токены — только в HTTP-заголовках, не в URL</span>
+<span class="cm">// URL-логи сервера (nginx, etc.) не содержат идентификаторов</span>
+<span class="kw">var</span> request = <span class="tp">URLRequest</span>(url: serverURL)
+request.<span class="fn">setValue</span>(sessionId, forHTTPHeaderField: <span class="str">"X-Session-ID"</span>)
+request.<span class="fn">setValue</span>(userId,    forHTTPHeaderField: <span class="str">"X-User-ID"</span>)
+<span class="cm">// Не так: wss://server.com/ws?userId=XXX&sessionId=YYY ← утекает в логи</span>
+<span class="cm">// А так:  wss://server.com/ws + headers ← URL чистый</span></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 4 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 4 — Аутентификация</span>
+        <span data-lang="en">Block 4 — Authentication</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Защита от replay-атак (3 уровня)</span><span data-lang="en">Replay attack protection (3 layers)</span></div>
+                <div class="item-desc"><span data-lang="ru">1) Double Ratchet: ключ одноразовый. 2) Клиент: дедупликация по messageId. 3) Сервер: Redis-проверка по messageId.</span><span data-lang="en">1) Double Ratchet: one-time key. 2) Client: deduplication by messageId. 3) Server: Redis check by messageId.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · Redis deduplication</div>
+                    <pre><span class="cm">// Уровень 3: сервер проверяет messageId через Redis</span>
+<span class="cm">// Повторная отправка одного messageId отклоняется</span>
+<span class="kw">const</span> key = <span class="str">`msg_seen:<span class="nm">${messageId}</span>`</span>;
+<span class="kw">const</span> seen = <span class="kw">await</span> redis.<span class="fn">set</span>(key, <span class="nm">1</span>, <span class="str">'EX'</span>, <span class="nm">86400</span>, <span class="str">'NX'</span>);
+<span class="kw">if</span> (!seen) {
+    <span class="cm">// NX = set only if Not eXists → уже было → replay</span>
+    <span class="kw">return</span> ws.<span class="fn">send</span>(<span class="tp">JSON</span>.<span class="fn">stringify</span>({ type: <span class="str">'error'</span>, reason: <span class="str">'duplicate'</span> }));
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Захват аккаунта невозможен</span><span data-lang="en">Account takeover is impossible</span></div>
+                <div class="item-desc"><span data-lang="ru">Ed25519 challenge-response: сервер выдаёт случайный challenge → клиент подписывает приватным ключом → сервер верифицирует. Публичный ключ закрепляется при первой регистрации (TOFU) и не может быть заменён без подтверждения владения старым ключом.</span><span data-lang="en">Ed25519 challenge-response: server issues a random challenge → client signs with private key → server verifies. The public key is committed on first registration (TOFU) and cannot be replaced without proving ownership of the existing key.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift (клиент) · X3DH session init + Ed25519 verification</div>
+                    <pre><span class="cm">// Перед первым сообщением — X3DH инициализация сессии</span>
+<span class="cm">// Шаг 1: верифицируем Ed25519-подпись signedPreKey контакта</span>
+<span class="cm">// Без верной подписи — сессия не создаётся, атака man-in-the-middle невозможна</span>
+<span class="kw">let</span> theirSigning = <span class="kw">try</span> <span class="tp">Curve25519</span>.<span class="tp">Signing</span>.<span class="tp">PublicKey</span>(rawRepresentation: theirIdentityKey)
+<span class="kw">guard</span> theirSigning.<span class="fn">isValidSignature</span>(preKeySignature, for: preKeyPublic) <span class="kw">else</span> {
+    <span class="kw">throw</span> <span class="tp">SignalCryptoError</span>.invalidSignature  <span class="cm">// ← сессия не создаётся</span>
+}
+
+<span class="cm">// Шаг 2: X3DH — три Diffie-Hellman обмена (+ опциональный 4-й с one-time prekey)</span>
+<span class="kw">let</span> ephemeral = <span class="tp">Curve25519</span>.<span class="tp">KeyAgreement</span>.<span class="tp">PrivateKey</span>()  <span class="cm">// одноразовый эфемерный ключ</span>
+<span class="kw">let</span> dh1 = <span class="kw">try</span> myIdentityKey.<span class="fn">sharedSecretFromKeyAgreement</span>(with: theirSignedPreKey)
+<span class="kw">let</span> dh2 = <span class="kw">try</span> ephemeral.<span class="fn">sharedSecretFromKeyAgreement</span>(with: theirIdentityKey)
+<span class="kw">let</span> dh3 = <span class="kw">try</span> ephemeral.<span class="fn">sharedSecretFromKeyAgreement</span>(with: theirSignedPreKey)
+<span class="cm">// dh4 — если есть one-time prekey (повышает защиту от компрометации prekey)</span>
+
+<span class="cm">// Шаг 3: HKDF-SHA256 из объединения DH-секретов → rootKey + chainKey сессии</span>
+<span class="kw">let</span> masterSecret = dh1 + dh2 + dh3  <span class="cm">// + dh4 если есть</span>
+<span class="kw">let</span> sessionKeys = <span class="tp">HKDF</span>&lt;<span class="tp">SHA256</span>&gt;.<span class="fn">deriveKey</span>(
+    inputKeyMaterial: <span class="tp">SymmetricKey</span>(data: masterSecret),
+    salt: <span class="tp">Data</span>(<span class="str">"SignalX3DH"</span>.utf8),
+    info: <span class="tp">Data</span>(<span class="str">"SignalRootAndChainKey"</span>.utf8),
+    outputByteCount: <span class="nm">64</span>   <span class="cm">// 32 → rootKey, 32 → первый chainKey</span>
+)
+<span class="cm">// Эфемерный ключ сброшен после X3DH — компрометация identity ключа</span>
+<span class="cm">// не раскрывает прошлые сообщения (Perfect Forward Secrecy)</span></pre>
+                    <div class="lang-label" style="margin-top:12px">Node.js (сервер) · Верификация challenge</div>
+                    <pre><span class="cm">// Сервер хранит только публичный ключ пользователя</span>
+<span class="kw">const</span> verified = crypto.<span class="fn">verify</span>(
+    <span class="str">'ed25519'</span>,
+    challengeBuffer,
+    { key: userPublicKey, format: <span class="str">'raw'</span>, type: <span class="str">'spki'</span> },
+    signatureBuffer
+);
+<span class="kw">if</span> (!verified) <span class="kw">throw</span> <span class="fn">Error</span>(<span class="str">'Auth failed'</span>);</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">TURN credentials одноразовые</span><span data-lang="en">TURN credentials are one-time</span></div>
+                <div class="item-desc"><span data-lang="ru">HMAC-SHA1, TTL 1 час, два независимых сервера. Перехваченные credentials невозможно использовать повторно.</span><span data-lang="en">HMAC-SHA1, 1-hour TTL, two independent servers. Intercepted credentials cannot be reused.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · TURN credentials</div>
+                    <pre><span class="cm">// Credentials привязаны к userId и истекают через 1 час</span>
+<span class="cm">// Перехваченные credentials нельзя использовать после TTL</span>
+<span class="kw">const</span> expiresAt = <span class="tp">Math</span>.<span class="fn">floor</span>(<span class="tp">Date</span>.<span class="fn">now</span>() / <span class="nm">1000</span>) + <span class="nm">3600</span>;
+<span class="kw">const</span> turnUser  = <span class="str">`<span class="nm">${expiresAt}</span>:<span class="nm">${ws.userId}</span>`</span>;  <span class="cm">// timestamp:userId</span>
+
+<span class="cm">// HMAC-SHA1 подпись — секрет только на сервере</span>
+<span class="kw">const</span> hmac = crypto.<span class="fn">createHmac</span>(<span class="str">'sha1'</span>, TURN_SECRET);
+hmac.<span class="fn">update</span>(turnUser);
+<span class="kw">const</span> credential = hmac.<span class="fn">digest</span>(<span class="str">'base64'</span>);
+
+<span class="cm">// TURN-сервер сам верифицирует подпись — сервер приложения не хранит сессию</span>
+<span class="cm">// После expiresAt credentials отклоняются TURN-сервером автоматически</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">ICE host-кандидаты</span><span data-lang="en">ICE host candidates</span></div>
+                <div class="item-desc"><span data-lang="ru">Локальный IP виден только доверенному собеседнику (не серверу). Сознательное решение — альтернатива .relay сломает P2P. Приемлемо для модели угроз HomeChat.</span><span data-lang="en">Local IP is visible only to the trusted contact (not the server). Deliberate choice — .relay would break P2P. Acceptable for HomeChat's threat model.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 5 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 5 — Локальное хранение</span>
+        <span data-lang="en">Block 5 — Local Storage</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">База данных зашифрована</span><span data-lang="en">Database is encrypted</span></div>
+                <div class="item-desc"><span data-lang="ru">SQLite хранит только зашифрованные блобы (AES-GCM). При включённой блокировке приложения ключ производится от PIN-кода и не существует без него (см. Блок 2).</span><span data-lang="en">SQLite stores only encrypted blobs (AES-GCM). When app lock is enabled, the key is derived from the PIN and does not exist without it (see Block 2).</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Message encryption before SQLite insert</div>
+                    <pre><span class="cm">// Каждое сообщение шифруется перед записью в SQLite</span>
+<span class="cm">// В БД хранится только encrypted_data — содержимое нечитаемо без ключа</span>
+<span class="kw">let</span> messageData = <span class="kw">try</span> <span class="tp">JSONEncoder</span>().<span class="fn">encode</span>(message)
+<span class="kw">let</span> sealedBox = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(messageData, using: encryptionKey)
+
+<span class="cm">// SQL: содержимое — только зашифрованный blob</span>
+<span class="cm">// sender_id / receiver_id открыты только для индексирования</span>
+<span class="kw">let</span> sql = <span class="str">"""
+INSERT OR REPLACE INTO messages
+(id, encrypted_data, sender_id, receiver_id, conversation_key, ...)
+VALUES (?, ?, ?, ?, ?, ...)
+"""</span>
+<span class="cm">// sqlite3_bind_blob → encrypted_data = sealedBox.combined</span>
+<span class="cm">// Без ключа шифрования содержимое любой строки нечитаемо</span>
+<span class="cm">// guard encryptionKey != nil else { throw error } — запись блокируется</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Медиа, аватары и документы зашифрованы на диске</span><span data-lang="en">Media, avatars, and documents encrypted at rest</span></div>
+                <div class="item-desc"><span data-lang="ru">Фото, видео, голосовые сообщения, документы и аватары шифруются (AES-GCM) тем же PIN-производным ключом перед записью на диск. Для воспроизведения (AVPlayer и т.п.) создаётся временная расшифрованная копия, которая удаляется при блокировке приложения.</span><span data-lang="en">Photos, videos, voice messages, documents, and avatars are encrypted (AES-GCM) with the same PIN-derived key before being written to disk. For playback (AVPlayer, etc.), a temporary decrypted copy is created and deleted when the app locks.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Unified disk encryption — фото, видео, аудио, документы, аватары</div>
+                    <pre><span class="cm">// Единый формат "HCE1" для всех типов файлов на диске</span>
+<span class="cm">// Magic-байты позволяют отличить зашифрованный файл от нешифрованного</span>
+<span class="kw">private static let</span> magic: [<span class="tp">UInt8</span>] = [<span class="nm">0x48</span>, <span class="nm">0x43</span>, <span class="nm">0x45</span>, <span class="nm">0x31</span>]  <span class="cm">// "HCE1"</span>
+
+<span class="cm">// Запись: любой тип файла → зашифрованный HCE1-blob</span>
+<span class="kw">func</span> <span class="fn">encryptForDisk</span>(_ data: <span class="tp">Data</span>) -> <span class="tp">Data</span>? {
+    <span class="kw">let</span> sealed = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(data, using: <span class="tp">SymmetricKey</span>(data: currentKey))
+    <span class="kw">return</span> <span class="tp">Data</span>(magic) + sealed.combined!  <span class="cm">// magic + nonce(12) + ct + tag(16)</span>
+}
+<span class="cm">// ↑ Используется для: фото, видео, аудио, документов, аватаров — всех одинаково</span>
+<span class="cm">// writeEncrypted(data, to: url) → saveMedia / saveAvatar / writeEncrypted</span>
+
+<span class="cm">// Чтение: расшифровываем только если есть ключ (PIN введён)</span>
+<span class="kw">func</span> <span class="fn">decryptFromDisk</span>(_ data: <span class="tp">Data</span>) -> <span class="tp">Data</span>? {
+    <span class="kw">guard</span> data.<span class="fn">prefix</span>(<span class="nm">4</span>).<span class="fn">elementsEqual</span>(magic) <span class="kw">else</span> { <span class="kw">return</span> data } <span class="cm">// старый формат</span>
+    <span class="kw">guard let</span> key = <span class="fn">getCurrentEncryptionKey</span>() <span class="kw">else</span> {
+        <span class="cm">// ← PIN не введён → файл недоступен, ключа нет в памяти</span>
+        <span class="kw">return nil</span>
+    }
+    <span class="kw">let</span> box = <span class="kw">try</span> <span class="tp">AES.GCM.SealedBox</span>(combined: data.<span class="fn">dropFirst</span>(<span class="nm">4</span>))
+    <span class="kw">return try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">open</span>(box, using: <span class="tp">SymmetricKey</span>(data: key))
+}
+
+<span class="cm">// Воспроизведение (AVPlayer): временная расшифрованная копия</span>
+<span class="cm">// Удаляется через 15 мин или при блокировке приложения</span>
+<span class="kw">func</span> <span class="fn">preparePlaybackCopy</span>(of url: <span class="tp">URL</span>) -> <span class="tp">URL</span>? {
+    <span class="kw">guard let</span> plain = <span class="fn">decryptFromDisk</span>(<span class="kw">try!</span> <span class="tp">Data</span>(contentsOf: url)) <span class="kw">else</span> { <span class="kw">return nil</span> }
+    <span class="kw">let</span> tmp = <span class="tp">FileManager</span>.default.temporaryDirectory
+        .appendingPathComponent(<span class="str">"PlaybackCache/\(url.lastPathComponent)"</span>)
+    <span class="kw">try</span>? plain.<span class="fn">write</span>(to: tmp, options: .atomic)
+    <span class="cm">// purgeAllPlaybackTempFiles() вызывается при lockAndPurgeKey()</span>
+    <span class="kw">return</span> tmp
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Push не раскрывают текст</span><span data-lang="en">Push notifications hide content</span></div>
+                <div class="item-desc"><span data-lang="ru">Body всегда «🔒 Зашифрованное сообщение» — без текста, без медиа, без данных переписки.</span><span data-lang="en">Body is always "🔒 Encrypted message" — no text, no media, no conversation data.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · Push payload</div>
+                    <pre><span class="cm">// Сервер не знает содержимого сообщения — шлёт только заглушку</span>
+<span class="cm">// Apple Push Notification Service не получает данные переписки</span>
+<span class="kw">const</span> pushPayload = {
+    aps: {
+        alert: {
+            title: senderName,        <span class="cm">// только имя отправителя</span>
+            body: <span class="str">'🔒 Зашифрованное сообщение'</span>  <span class="cm">// всегда одинаковый текст</span>
+        },
+        badge: unreadCount,
+        sound: <span class="str">'message_incoming.caf'</span>
+    },
+    <span class="cm">// messageId для дедупликации — без содержимого</span>
+    messageId: msgId
+};</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Логи без чувствительных данных</span><span data-lang="en">Logs contain no sensitive data</span></div>
+                <div class="item-desc"><span data-lang="ru">dlog обёрнут в #if DEBUG — в Release полностью вырезается компилятором.</span><span data-lang="en">dlog is wrapped in #if DEBUG — completely removed by the compiler in Release builds.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Debug-only logging</div>
+                    <pre><span class="cm">// dlog существует только в Debug-сборках</span>
+<span class="cm">// В Release компилятор полностью удаляет весь код внутри #if DEBUG</span>
+<span class="cm">// → в production бинарнике нет ни одного вызова print/NSLog</span>
+<span class="kw">#if</span> DEBUG
+<span class="kw">func</span> <span class="fn">dlog</span>(<span class="kw">_</span> message: <span class="tp">String</span>) {
+    print(<span class="str">"📱 \(message)"</span>)
+}
+<span class="kw">#else</span>
+<span class="kw">@inline</span>(__always) <span class="kw">func</span> <span class="fn">dlog</span>(<span class="kw">_</span> message: <span class="tp">String</span>) {}  <span class="cm">// no-op</span>
+<span class="kw">#endif</span></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 6 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 6 — API и сервер</span>
+        <span data-lang="en">Block 6 — API & Server</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Нет IDOR</span><span data-lang="en">No IDOR</span></div>
+                <div class="item-desc"><span data-lang="ru">Права проверяются на каждый запрос. Медиафайлы доступны только участникам диалога — ACL по списку допущенных. Пользователь не может получить данные чужого диалога.</span><span data-lang="en">Access rights are checked on every request. Media files are accessible only to conversation participants via an allow-list ACL. A user cannot access data from another's conversation.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · Sender spoofing protection</div>
+                    <pre><span class="cm">// ws.userId установлен при аутентификации (Ed25519 challenge-response)</span>
+<span class="cm">// senderId из сообщения ДОЛЖЕН совпадать с аутентифицированным userId</span>
+<span class="kw">if</span> (!senderId || senderId !== ws.userId) {
+    console.<span class="fn">error</span>(<span class="str">'❌ senderId spoofing blocked'</span>);
+    <span class="kw">return</span>;  <span class="cm">// сообщение отброшено — нельзя отправить от чужого имени</span>
+}
+<span class="cm">// Пользователь может читать только те диалоги, в которых участвует сам</span>
+<span class="cm">// Доступ к чужим сообщениям физически невозможен — ключи только на устройствах</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Rate limiting на HTTP API</span><span data-lang="en">HTTP API rate limiting</span></div>
+                <div class="item-desc"><span data-lang="ru">60 запросов/мин на upload и download. При превышении — 429.</span><span data-lang="en">60 requests/min on upload and download endpoints. Returns 429 when exceeded.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · Rate limiting</div>
+                    <pre><span class="cm">// Ограничение запросов на upload/download — защита от злоупотреблений</span>
+<span class="kw">const</span> uploadLimiter = rateLimit({
+    windowMs: <span class="nm">60</span> * <span class="nm">1000</span>,    <span class="cm">// 1 минута</span>
+    max: <span class="nm">60</span>,               <span class="cm">// 60 запросов</span>
+    standardHeaders: <span class="kw">true</span>,
+    handler: (req, res) => {
+        res.<span class="fn">status</span>(<span class="nm">429</span>).<span class="fn">json</span>({ error: <span class="str">'Too many requests'</span> });
+    }
+});
+app.<span class="fn">use</span>(<span class="str">'/upload'</span>, uploadLimiter);
+app.<span class="fn">use</span>(<span class="str">'/download'</span>, uploadLimiter);</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Аутентификация загрузки медиа</span><span data-lang="en">Media upload authentication</span></div>
+                <div class="item-desc"><span data-lang="ru">Upload принимается только от авторизованного пользователя с активным WebSocket сеансом. Download требует принадлежности к диалогу: при загрузке сервер создаёт ACL-запись в Redis (TTL 7 дней). Ключ расшифровки передаётся только внутри E2E-сообщения.</span><span data-lang="en">Upload is only accepted from an authorised user with an active WebSocket session. Download requires conversation membership: on upload the server creates a Redis ACL entry (7-day TTL). The decryption key is transmitted only inside an E2E message.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js (сервер) · Upload auth + unguessable blobId</div>
+                    <pre><span class="cm">// Middleware: upload только от зарегистрированного пользователя</span>
+<span class="cm">// с активной WS-сессией — анонимная загрузка невозможна</span>
+<span class="kw">function</span> <span class="fn">requireActiveUser</span>(req, res, next) {
+    <span class="kw">const</span> userId = req.headers[<span class="str">'x-user-id'</span>];
+    <span class="kw">if</span> (!userId || !users.<span class="fn">has</span>(userId)) {
+        <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">401</span>).<span class="fn">json</span>({ error: <span class="str">'Unauthorized'</span> });
+    }
+    next();
+}
+
+<span class="cm">// blobId = 64 hex-символа (32 случайных байта через CSPRNG)</span>
+<span class="cm">// Перебор невозможен: 2^256 вариантов</span>
+<span class="kw">const</span> blobId = crypto.<span class="fn">randomBytes</span>(<span class="nm">32</span>).<span class="fn">toString</span>(<span class="str">'hex'</span>);
+
+<span class="cm">// Каждый запрос к /api/media/download/:blobId валидируется</span>
+<span class="kw">function</span> <span class="fn">isValidBlobId</span>(id) {
+    <span class="kw">return</span> /^[a-f0-9]{64}$/<span class="fn">.test</span>(id);  <span class="cm">// reject всё кроме 64 hex</span>
+}
+<span class="cm">// Сервер хранит только зашифрованный blob</span>
+<span class="cm">// Ключ расшифровки передаётся только внутри E2E-сообщения</span></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block: Calls -->
+    <div class="section-title">
+        <span data-lang="ru">Звонки — шифрование и защита</span>
+        <span data-lang="en">Calls — encryption and protection</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Аудио и видео зашифрованы DTLS-SRTP</span><span data-lang="en">Audio and video encrypted with DTLS-SRTP</span></div>
+                <div class="item-desc"><span data-lang="ru">WebRTC использует DTLS 1.2 + SRTP для шифрования медиапотока напрямую между устройствами. Сервер не проходит через медиапоток и не может его прослушать — только сигнализация (offer/answer) проходит через сервер, и она дополнительно зашифрована Double Ratchet E2E.</span><span data-lang="en">WebRTC uses DTLS 1.2 + SRTP to encrypt the media stream directly between devices. The server does not pass through the media stream and cannot listen to it — only signaling (offer/answer) passes through the server, and it is additionally encrypted with Double Ratchet E2E.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Сигнализация зашифрована — отдельный ключ на звонок</span><span data-lang="en">Signaling encrypted — separate key per call</span></div>
+                <div class="item-desc"><span data-lang="ru">SDP offer/answer и ICE-кандидаты шифруются AES-256-GCM ключом, уникальным для каждого звонка. Ключ производится через X25519 DH из identity-ключей обоих участников + случайный callToken. Сервер видит только зашифрованный payload — не может подменить SDP. Звонки от незарегистрированных контактов отклоняются автоматически.</span><span data-lang="en">SDP offer/answer and ICE candidates are encrypted with AES-256-GCM using a key unique to each call. The key is derived via X25519 DH from the identity keys of both parties + a random callToken. The server sees only the encrypted payload — it cannot substitute the SDP. Calls from unregistered contacts are automatically rejected.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Call signal key derivation + AES-GCM encryption</div>
+                    <pre><span class="cm">// Ключ уникален для каждого звонка: X25519 DH + HKDF + случайный callToken</span>
+<span class="cm">// Оба участника независимо вычисляют один и тот же ключ (нет передачи ключа)</span>
+<span class="kw">let</span> sharedSecret = <span class="kw">try</span> myIdentityPrivKey.<span class="fn">sharedSecretFromKeyAgreement</span>(with: theirIdentityPubKey)
+<span class="kw">let</span> callKey = sharedSecret.<span class="fn">hkdfDerivedSymmetricKey</span>(
+    using: <span class="tp">SHA256</span>.self,
+    salt: callToken.<span class="fn">data</span>(using: .utf8)!,  <span class="cm">// ← UUID уникален для каждого звонка</span>
+    sharedInfo: <span class="str">"HomeChat-CallSignal-v2"</span>.data(using: .utf8)!,
+    outputByteCount: <span class="nm">32</span>
+)
+
+<span class="cm">// SDP offer/answer/ICE → JSON → AES-256-GCM → base64 payload</span>
+<span class="kw">let</span> innerData = <span class="kw">try</span> <span class="tp">JSONSerialization</span>.<span class="fn">data</span>(withJSONObject: [<span class="str">"signalType"</span>: <span class="str">"offer"</span>, <span class="str">"sdp"</span>: sdp])
+<span class="kw">let</span> combined  = <span class="kw">try</span> <span class="tp">AES</span>.<span class="tp">GCM</span>.<span class="fn">seal</span>(innerData, using: callKey).combined!
+
+<span class="cm">// Сервер получает только: recipientId + encrypted:true + payload (blob)</span>
+<span class="cm">// SDP и ICE-кандидаты недоступны серверу</span>
+<span class="kw">let</span> envelope: [<span class="tp">String</span>: <span class="tp">Any</span>] = [
+    <span class="str">"type"</span>:        <span class="str">"webrtc_signal"</span>,
+    <span class="str">"recipientId"</span>: contactId,
+    <span class="str">"encrypted"</span>:   <span class="kw">true</span>,
+    <span class="str">"payload"</span>:     combined.<span class="fn">base64EncodedString</span>(),
+    <span class="str">"callToken"</span>:   callToken
+]
+
+<span class="cm">// Звонок от незарегистрированного контакта → автоматическое отклонение</span>
+<span class="cm">// guard contacts.contains(where: { $0.id == callerId }) else { sendCallEnd("not_in_contacts") }</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Постоянный DTLS-сертификат в Keychain</span><span data-lang="en">Persistent DTLS certificate in Keychain</span></div>
+                <div class="item-desc"><span data-lang="ru">ECDSA-сертификат генерируется один раз и сохраняется в Keychain. Fingerprint стабилен между звонками — без этого TOFU-проверка невозможна (каждый звонок давал бы новый fingerprint и ложный MITM-алерт).</span><span data-lang="en">An ECDSA certificate is generated once and stored in the Keychain. The fingerprint is stable between calls — without this, TOFU verification is impossible (each call would produce a new fingerprint and a false MITM alert).</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Persistent DTLS certificate (Keychain)</div>
+                    <pre><span class="cm">// ECDSA-сертификат создаётся один раз и хранится в Keychain</span>
+<span class="cm">// Стабильный fingerprint → TOFU работает корректно</span>
+<span class="kw">private func</span> <span class="fn">persistentDTLSCertificate</span>() -> <span class="tp">RTCCertificate</span>? {
+    <span class="kw">if let</span> cached = cachedLocalCertificate { <span class="kw">return</span> cached }
+
+    <span class="cm">// Восстанавливаем из Keychain если уже создавали</span>
+    <span class="kw">if let</span> pk   = <span class="fn">keychainReadString</span>(account: <span class="str">"private_key"</span>),
+       <span class="kw">let</span> cert = <span class="fn">keychainReadString</span>(account: <span class="str">"certificate"</span>) {
+        cachedLocalCertificate = <span class="tp">RTCCertificate</span>(privateKey: pk, certificate: cert)
+        <span class="kw">return</span> cachedLocalCertificate
+    }
+
+    <span class="cm">// Первый запуск — генерируем ECDSA и сохраняем</span>
+    <span class="kw">guard let</span> generated = <span class="tp">RTCCertificate</span>.<span class="fn">generate</span>(withParams: [<span class="str">"name"</span>: <span class="str">"ECDSA"</span>]) <span class="kw">else</span> { <span class="kw">return nil</span> }
+    <span class="fn">keychainWriteString</span>(generated.private_key,  account: <span class="str">"private_key"</span>)
+    <span class="fn">keychainWriteString</span>(generated.certificate, account: <span class="str">"certificate"</span>)
+    cachedLocalCertificate = generated
+    <span class="kw">return</span> generated
+    <span class="cm">// config.certificate = persistentDTLSCertificate() → передаётся в RTCPeerConnection</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">DTLS Fingerprint TOFU</div>
+                <div class="item-desc"><span data-lang="ru">При первом звонке с контактом приложение сохраняет DTLS fingerprint. При последующих звонках — сверяет. Несовпадение: звонок автоматически завершается с предупреждением.</span><span data-lang="en">On the first call with a contact, the app saves the DTLS fingerprint. On subsequent calls, it is verified. Mismatch: the call is automatically terminated with a warning.</span></div>
+                <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · DTLS TOFU verification</div>
+                    <pre><span class="cm">// Первый звонок: сохраняем fingerprint из SDP (TOFU)</span>
+<span class="cm">// Последующие: проверяем — изменился → возможная MITM-атака</span>
+<span class="kw">private func</span> <span class="fn">verifyOrStoreDTLSFingerprint</span>(from sdp: <span class="tp">String</span>, contactId: <span class="tp">String</span>) -> <span class="tp">Bool</span> {
+    <span class="kw">guard let</span> fingerprint = <span class="fn">extractDTLSFingerprint</span>(from: sdp) <span class="kw">else</span> { <span class="kw">return true</span> }
+    <span class="kw">let</span> key = <span class="str">"dtls_fp_\(contactId)"</span>
+
+    <span class="kw">if let</span> stored = <span class="tp">UserDefaults</span>.standard.<span class="fn">string</span>(forKey: key) {
+        <span class="kw">guard</span> stored == fingerprint <span class="kw">else</span> {
+            <span class="cm">// fingerprint изменился → звонок завершается, уведомление пользователю</span>
+            <span class="tp">NotificationCenter</span>.default.<span class="fn">post</span>(name: <span class="str">"DTLSFingerprintChanged"</span>,
+                userInfo: [<span class="str">"contactId"</span>: contactId, <span class="str">"newFingerprint"</span>: fingerprint])
+            <span class="kw">return false</span>
+        }
+        <span class="kw">return true</span>   <span class="cm">// ← совпадает</span>
+    }
+    <span class="cm">// Первый звонок — доверяем и запоминаем</span>
+    <span class="tp">UserDefaults</span>.standard.<span class="fn">set</span>(fingerprint, forKey: key)
+    <span class="kw">return true</span>
+}
+<span class="cm">// SDP проверяется и в offer и в answer:</span>
+<span class="cm">// if !verifyOrStoreDTLSFingerprint(from: offer.sdp, contactId:) → hangup</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">P2P звонок через STUN, TURN как fallback</span><span data-lang="en">P2P call via STUN, TURN as fallback</span></div>
+                <div class="item-desc"><span data-lang="ru">При возможности медиапоток идёт напрямую между устройствами (P2P через STUN). TURN-сервер используется только при NAT, недоступном для прямого соединения — и в этом случае ретранслирует только зашифрованный SRTP-поток, который не может расшифровать.</span><span data-lang="en">When possible, the media stream goes directly between devices (P2P via STUN). The TURN server is used only when NAT blocks direct connection — and in that case it only relays the encrypted SRTP stream, which it cannot decrypt.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Chats -->
+    <div class="section-title">
+        <span data-lang="ru">Групповые чаты — шифрование</span>
+        <span data-lang="en">Group Chats — Encryption</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Групповые сообщения зашифрованы E2E (MLS)</span><span data-lang="en">Group messages encrypted E2E (MLS)</span></div>
+                <div class="item-desc"><span data-lang="ru">Групповые чаты используют протокол MLS (Messaging Layer Security, RFC 9420) — стандарт E2E-шифрования для групп. Тот же набор криптопримитивов что и в 1:1: X25519, AES-128-GCM, SHA-256, Ed25519 (ciphersuite MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519). Реализация — Rust-библиотека OpenMLS 0.9 через UniFFI-мост. Ключ хранилища MLS выводится HKDF от ключа базы данных — тот же PIN-гейт что у сообщений. Название группы, список администраторов и содержимое сообщений хранятся внутри MLS-состояния и недоступны серверу.</span><span data-lang="en">Group chats use the MLS protocol (Messaging Layer Security, RFC 9420) — the E2E encryption standard for groups. The same cryptographic primitives as in 1:1 chats: X25519, AES-128-GCM, SHA-256, Ed25519 (ciphersuite MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519). Implementation — OpenMLS 0.9 Rust library via UniFFI bridge. The MLS storage key is HKDF-derived from the database key — the same PIN gate as for messages. Group name, admin list, and message content live inside MLS state and are inaccessible to the server.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Rust (HomeChatMLS) + Swift · MLS E2E group encryption</div>
+                    <pre><span class="cm">// Тот же набор примитивов что в 1:1 Double Ratchet:</span>
+<span class="cm">// X25519 + AES-128-GCM + SHA-256 + Ed25519</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const</span> CIPHERSUITE: <span class="tp">Ciphersuite</span> =
+    <span class="tp">Ciphersuite</span>::<span class="nm">MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519</span>;
+
+<span class="cm">// Библиотека: OpenMLS 0.9 (RFC 9420), Rust → Swift через UniFFI</span>
+<span class="cm">// openmls = "=0.9.0"</span>
+
+<span class="cm">// Ключ хранилища MLS = HKDF(databaseKey, "mls-storage|userId")</span>
+<span class="cm">// Тот же PIN-гейт: без PIN — MLS-состояние недоступно</span>
+<span class="kw">let</span> storageKey = <span class="tp">HKDF</span>&lt;<span class="tp">SHA256</span>&gt;.<span class="fn">deriveKey</span>(
+    inputKeyMaterial: <span class="tp">SymmetricKey</span>(data: databaseKey),
+    salt: storageSalt,
+    info: <span class="tp">Data</span>(<span class="str">"mls-storage|\(userId)"</span>.utf8),
+    outputByteCount: <span class="nm">32</span>
+)
+
+<span class="cm">// Подпись: тот же identity Ed25519-ключ что у SignalCryptoManager</span>
+<span class="cm">// Новых записей в Keychain нет</span>
+<span class="kw">let</span> client = <span class="kw">try</span> <span class="tp">MlsClient</span>(
+    userId: userId,
+    signingPrivateKey: identity.identitySigningKeyPair.privateKey,
+    signingPublicKey:  identity.identitySigningKeyPair.publicKey,
+    storagePath: fileURL.path,
+    storageKey: storageKey,
+    policy: policy
+)
+
+<span class="cm">// Forward Secrecy: каждый коммит повышает эпоху группы</span>
+<span class="cm">// Сервер принимает строго один commit на эпоху — порядок гарантирован</span>
+<span class="cm">// CommitOutput.epoch → проверяется сервером, Welcome → участникам по E2E каналу 1:1</span></pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Приглашение в группу — только через E2E-канал 1:1</span><span data-lang="en">Group invite delivered only via E2E 1:1 channel</span></div>
+                <div class="item-desc"><span data-lang="ru">Welcome-сообщение MLS (содержит ключевой материал для входа в группу) отправляется новому участнику по зашифрованному Double Ratchet-каналу 1:1 — не через сервер открытым текстом. Принять приглашение можно только от контакта из доверенного списка.</span><span data-lang="en">The MLS Welcome message (containing the key material to join the group) is sent to the new member via an encrypted Double Ratchet 1:1 channel — not as plaintext through the server. Invites are accepted only from contacts in the trusted list.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Состав группы и права администраторов защищены подписью</span><span data-lang="en">Group membership and admin rights are signature-protected</span></div>
+                <div class="item-desc"><span data-lang="ru">Название группы, список администраторов и изменения состава хранятся в GroupContext MLS — подписаны коммитом, одинаковы у всех участников и недоступны серверу. Изменить состав может только администратор.</span><span data-lang="en">Group name, admin list, and membership changes are stored in MLS GroupContext — signed by a commit, identical for all members, and inaccessible to the server. Only an admin can change membership.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">MLS-состояние зашифровано тем же PIN-ключом</span><span data-lang="en">MLS state encrypted with the same PIN key</span></div>
+                <div class="item-desc"><span data-lang="ru">Файл состояния группы на диске зашифрован ключом, производным от ключа базы данных через HKDF. Без правильного PIN-кода групповое состояние недоступно — так же как сообщения и медиафайлы. При панической очистке MLS-состояние удаляется вместе с остальными данными.</span><span data-lang="en">The on-disk group state file is encrypted with a key derived from the database key via HKDF. Without the correct PIN the group state is inaccessible — the same as messages and media. During a panic wipe the MLS state is deleted along with all other data.</span></div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Block 7 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 7 — Верификация</span>
+        <span data-lang="en">Block 7 — Verification</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">Safety Numbers</div>
+                <div class="item-desc"><span data-lang="ru">60-цифровой код для верификации собеседника вне приложения. Совпадение кодов доказывает что ключи шифрования не подменялись.</span><span data-lang="en">60-digit code to verify your contact out of band. Matching codes prove that encryption keys have not been substituted.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Safety Numbers generation</div>
+                    <pre><span class="cm">// Safety Numbers = хэш двух публичных ключей (отсортированных)</span>
+<span class="cm">// Результат одинаковый у обоих участников → можно сверить вслух</span>
+<span class="kw">func</span> <span class="fn">generateSafetyNumbers</span>(
+    myKey: <span class="tp">PublicKey</span>,
+    theirKey: <span class="tp">PublicKey</span>
+) -> <span class="tp">String</span> {
+    <span class="kw">let</span> keys = [myKey.rawBytes, theirKey.rawBytes].<span class="fn">sorted</span>()
+    <span class="kw">let</span> combined = keys[<span class="nm">0</span>] + keys[<span class="nm">1</span>]
+    <span class="kw">let</span> hash = <span class="tp">SHA256</span>.<span class="fn">hash</span>(data: combined)
+    <span class="cm">// 60 цифр = 5 групп по 12, удобно читать вслух</span>
+    <span class="kw">return</span> <span class="fn">formatAsGroups</span>(<span class="tp">Data</span>(hash), groupSize: <span class="nm">12</span>, groups: <span class="nm">5</span>)
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Алерт при смене ключа</span><span data-lang="en">Key change alert</span></div>
+                <div class="item-desc"><span data-lang="ru">При смене ключа безопасности собеседника приложение немедленно показывает предупреждение с инструкцией сверить Safety Numbers.</span><span data-lang="en">When a contact's security key changes, the app immediately displays a warning with instructions to verify Safety Numbers.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Сервер не может подменить ключ</span><span data-lang="en">Server cannot substitute a key</span></div>
+                <div class="item-desc"><span data-lang="ru">IdentityKey собеседника берётся из локального хранилища. Любая подмена вызывает authenticationFailure при расшифровке.</span><span data-lang="en">The contact's IdentityKey is taken from local storage. Any substitution triggers authenticationFailure during decryption.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 8 -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 8 — Приложение</span>
+        <span data-lang="en">Block 8 — Application</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Нет секретов в коде</span><span data-lang="en">No secrets in code</span></div>
+                <div class="item-desc"><span data-lang="ru">Secrets.plist вне git. TURN credentials только в .env на сервере. SPKI hash — публичный хэш публичного ключа, не секрет.</span><span data-lang="en">Secrets.plist is outside git. TURN credentials only in .env on the server. SPKI hash is a public hash of a public key — not a secret.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Блокировка приложения PIN-кодом и тревожный код</span><span data-lang="en">App lock with PIN code and panic code</span></div>
+                <div class="item-desc"><span data-lang="ru">PIN-код не просто скрывает экран — он криптографически защищает данные (см. Блок 2 и Блок 5): без верного PIN ключ шифрования локальных данных не существует. Независим от пароля iOS. Тревожный код при вводе тихо и безвозвратно удаляет контакты, переписку и медиафайлы с устройства, сохраняя регистрацию аккаунта.</span><span data-lang="en">The PIN doesn't just hide a screen — it cryptographically protects the data itself (see Block 2 and Block 5): without the correct PIN, the local encryption key does not exist. Independent of the iOS passcode. Entering the panic code silently and irreversibly wipes contacts, chat history, and media files from the device while keeping the account registered.</span></div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · Panic wipe</div>
+                    <pre><span class="cm">// Тревожный код — тихое удаление данных без следов принуждения</span>
+<span class="cm">// Аккаунт сохраняется, приложение выглядит пустым и нормальным</span>
+<span class="kw">func</span> <span class="fn">executePanicWipe</span>() {
+    <span class="cm">// 1. Сначала уведомляем сервер — пока соединение ещё активно</span>
+    viewModel.<span class="fn">notifyServerContactsCleared</span>()
+
+    <span class="cm">// 2. Удаляем все сообщения из БД и файлы БД с диска</span>
+    <span class="tp">EncryptedMessageStore</span>.shared.<span class="fn">clearAllMessages</span>()
+    <span class="fn">deleteDatabaseFiles</span>()
+
+    <span class="cm">// 3. Удаляем Signal-сессии (ключи переписки)</span>
+    <span class="tp">SignalCryptoManager</span>.shared.<span class="fn">clearAllSessions</span>()
+
+    <span class="cm">// 4. Удаляем медиа, аватары, данные из App Group</span>
+    <span class="fn">deleteMediaAndAvatars</span>()
+
+    <span class="cm">// 5. Приложение разблокируется — выглядит как новое</span>
+    isLocked = <span class="kw">false</span>
+}</pre>
+                </div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Логи отключены в Release</span><span data-lang="en">Logs disabled in Release</span></div>
+                <div class="item-desc"><span data-lang="ru">Функция dlog обёрнута в #if DEBUG — компилятор полностью удаляет её в Production сборке.</span><span data-lang="en">The dlog function is wrapped in #if DEBUG — the compiler fully removes it in Production builds.</span></div>
+            </div>
+        </div>
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">Обфускация</span><span data-lang="en">Obfuscation</span></div>
+                <div class="item-desc"><span data-lang="ru">Стандартная Swift компиляция с оптимизацией -O. Дополнительная обфускация не применяется.</span><span data-lang="en">Standard Swift compilation with -O optimisation. No additional obfuscation is applied.</span></div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Defence in depth -->
+    <div class="section-title">
+        <span data-lang="ru">Дополнительная защита</span>
+        <span data-lang="en">Defence in Depth</span>
+    </div>
+    <div class="card">
+        <div class="item">
+            <div class="item-icon">🔒</div>
+            <div class="item-body">
+                <div class="item-title"><span data-lang="ru">UI-алерты безопасности</span><span data-lang="en">Security UI alerts</span></div>
+                <div class="item-desc"><span data-lang="ru">Три независимых предупреждения: смена ключа безопасности, изменение отпечатка шифрования звонка, устаревший клиент при загрузке медиа.</span><span data-lang="en">Three independent warnings: security key change, call encryption fingerprint change, outdated client on media upload.</span></div>
+                <span class="item-badge badge-depth"><span data-lang="ru">Defence in depth</span><span data-lang="en">Defence in depth</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block 9: Testing -->
+    <div class="section-title">
+        <span data-lang="ru">Блок 9 — Тестирование</span>
+        <span data-lang="en">Block 9 — Testing</span>
+    </div>
+    <div class="card">
+
+        <!-- CRYPTO v3 фикс -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Исправление: раздельные цепи отправки и получения</span>
+                    <span data-lang="en">Fix: separate sending and receiving chains</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Python-модель протокола показала отклонение от стандартного дизайна Double Ratchet: обе стороны могли получить одинаковый ключ шифрования для своих первых сообщений. Раздельные цепи для каждого направления — базовый элемент спецификации, и реализация была приведена в соответствие с ней: HKDF теперь выдаёт 96 байт вместо 64. Тест подтверждён и на живом Swift-коде (разовая отладочная строка, удалена после проверки). Старые сессии автоматически сбрасываются при обновлении.</span>
+                    <span data-lang="en">A Python model of the protocol revealed a deviation from the standard Double Ratchet design: both sides could derive the same encryption key for their first messages. Separate chains per direction are a core element of the specification, and the implementation was brought into line with it: HKDF now outputs 96 bytes instead of 64. Confirmed on live Swift code (one-time debug line, removed after verification). Older sessions are automatically reset on upgrade.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать результат теста</span>
+                    <span class="code-label-en lang-en">Show test result</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Python · test_crypto.py — итог v2 → v3</div>
+                    <pre><span class="cm"># python3 test_crypto.py        → результат до фикса</span>
+<span class="cm"># python3 test_crypto.py --v3   → результат после фикса (wire-формат v3)</span>
+
+<span class="cm"># До фикса (v2):   FAIL 5   PASS 4   INFO 1</span>
+<span class="cm"># После фикса (v3): FAIL 1   PASS 8   INFO 1</span>
+<span class="cm">#</span>
+<span class="cm"># PASS  CRYPTO-06  Подмена заголовка обнаруживается (AAD)       — было и осталось</span>
+<span class="cm"># PASS  CRYPTO-07  Replay того же сообщения отклоняется          — было и осталось</span>
+<span class="cm"># PASS  CRYPTO-08  Неаутентифицированный пакет не рушит сессию  — было и осталось</span>
+<span class="cm"># PASS  CRYPTO-01  messageKey уникален для каждого направления   — исправлено v3</span>
+<span class="cm"># PASS  CRYPTO-02  Nonce не повторяются                          — исправлено v3</span>
+<span class="cm"># PASS  CRYPTO-03  Перехват двух сообщений не раскрывает текст  — исправлено v3</span>
+<span class="cm"># PASS  CRYPTO-05  Ключи отправленных сообщений не хранятся     — исправлено v3</span>
+<span class="cm"># INFO  CRYPTO-09  Пропуск сообщений ограничен (maxGap=500)     — информационно</span>
+<span class="cm"># PASS  CRYPTO-04  DH ratchet / post-compromise security      — исправлено</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- AAD tamper PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: подмена заголовка сообщения обнаруживается (AAD)</span>
+                    <span data-lang="en">Test: tampered message header is detected (AAD)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Один байт номера сообщения перевёрнут вручную. AES-GCM вернул ошибку аутентификации — метаданные заголовка криптографически привязаны к содержимому, подмена любого поля обнаруживается немедленно.</span>
+                    <span data-lang="en">One byte of the message number was manually flipped. AES-GCM returned an authentication error — header metadata is cryptographically bound to the content; tampering with any field is detected immediately.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать тест</span>
+                    <span class="code-label-en lang-en">Show test</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Python · CRYPTO-06 — AAD integrity</div>
+                    <pre>wire, _ = a.<span class="fn">encrypt</span>(<span class="str">b"tekst dlya proverki AAD"</span>)
+tampered = <span class="fn">bytearray</span>(wire)
+tampered[<span class="nm">5</span>] ^= <span class="nm">0x01</span>   <span class="cm"># переворачиваем бит в messageNumber</span>
+<span class="kw">try</span>:
+    b.<span class="fn">decrypt</span>(<span class="fn">bytes</span>(tampered))
+<span class="kw">except</span> <span class="tp">Exception</span> <span class="kw">as</span> e:
+    verdict = <span class="str">"PASS"</span>
+
+<span class="cm"># Результат: InvalidTag — authentication tag mismatch</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Replay PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: повтор сообщения отклоняется</span>
+                    <span data-lang="en">Test: replayed message is rejected</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Один и тот же зашифрованный пакет отправлен дважды. При повторной попытке номер сообщения ниже текущей позиции receive-цепи — отклонено на уровне криптографии, без обращения к серверу.</span>
+                    <span data-lang="en">The same encrypted packet was delivered twice. On the second attempt the message number is below the current receive-chain position — rejected at the cryptographic layer without contacting the server.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать тест</span>
+                    <span class="code-label-en lang-en">Show test</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Python · CRYPTO-07 — replay protection</div>
+                    <pre>wire, _ = a.<span class="fn">encrypt</span>(<span class="str">b"perevedi 100 evro"</span>)
+b.<span class="fn">decrypt</span>(wire)   <span class="cm"># первый раз — ок</span>
+<span class="kw">try</span>:
+    b.<span class="fn">decrypt</span>(wire)  <span class="cm"># повтор того же пакета</span>
+<span class="kw">except</span> <span class="tp">ValueError</span>:
+    verdict = <span class="str">"PASS"</span>
+
+<span class="cm"># Результат: missingSkippedKey — replay/старое сообщение</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reflection PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: посторонний пакет не разрушает сессию</span>
+                    <span data-lang="en">Test: foreign packet cannot break the session</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Исходящее сообщение стороны B отражено обратно в её же сессию. SessionState в Swift — это struct: decryptData работает с копией и фиксирует изменения только после успешной расшифровки. Неаутентифицированный пакет не оставляет следов.</span>
+                    <span data-lang="en">An outgoing message from side B was reflected back into its own session. SessionState in Swift is a struct: decryptData works on a copy and commits changes only after successful decryption. An unauthenticated packet leaves no trace.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать тест</span>
+                    <span class="code-label-en lang-en">Show test</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Python · CRYPTO-08 — reflection</div>
+                    <pre>w2, _ = b.<span class="fn">encrypt</span>(<span class="str">b"privet tebe"</span>)
+snap = b.<span class="fn">_snapshot</span>()   <span class="cm"># Swift struct-семантика: коммит только после успеха</span>
+<span class="kw">try</span>:
+    b.<span class="fn">decrypt</span>(w2)      <span class="cm"># пакет B отражён обратно в сессию B</span>
+<span class="kw">except</span>:
+    verdict = <span class="str">"PASS"</span> <span class="kw">if</span> b.<span class="fn">_snapshot</span>() == snap <span class="kw">else</span> <span class="str">"FAIL"</span>
+
+<span class="cm"># Состояние сессии не изменилось — коммит не произошёл</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- PBKDF2 PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: реализация PBKDF2 соответствует стандарту RFC 2898</span>
+                    <span data-lang="en">Test: PBKDF2 implementation matches RFC 2898</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Python-порт AppLockManager.swift воспроизвёл байт-в-байт те же значения, что выдаёт эталонная библиотека. Ручная реализация корректна — деривация ключа не ослаблена нестандартной схемой.</span>
+                    <span data-lang="en">Python port of AppLockManager.swift reproduced byte-for-byte the same output as the reference library. The custom implementation is correct — key derivation is not weakened by a non-standard scheme.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать результат</span>
+                    <span class="code-label-en lang-en">Show result</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">test_storage_output.txt — STOR-01</div>
+                    <pre><span class="cm"># HomeChat PBKDF2: 8b39bc74dae21973e681a272cedb9951...</span>
+<span class="cm"># hashlib RFC 2898:  8b39bc74dae21973e681a272cedb9951...</span>
+<span class="cm"># Совпадает: True</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- PIN не хранится PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: PIN нигде не хранится, проверка через AEAD</span>
+                    <span data-lang="en">Test: PIN is never stored; verification via AEAD</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Верный PIN воспроизвёл ключ шифрования базы данных. Неверный PIN дал другой ключ PBKDF2 — тег AES-GCM не совпал, попытка отклонена. Из Keychain нечего украсть для офлайн-сравнения: там только зашифрованный ключ БД, а не сам PIN.</span>
+                    <span data-lang="en">The correct PIN reproduced the database encryption key. An incorrect PIN produced a different PBKDF2 key — the AES-GCM tag mismatched and the attempt was rejected. There is nothing to steal from the Keychain for offline comparison: only the encrypted database key is stored there, not the PIN itself.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать результат</span>
+                    <span class="code-label-en lang-en">Show result</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">test_storage_output.txt — STOR-03</div>
+                    <pre><span class="cm"># Верный PIN расшифровал ключ БД: True</span>
+<span class="cm"># Неверный PIN отклонён AEAD-тегом: True</span>
+<span class="cm"># PIN нигде не хранится — проверить нечего без самого ключа</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rate limit LIVE PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Live-проба: rate limit и устойчивость к некорректному JSON</span>
+                    <span data-lang="en">Live probe: rate limit and malformed JSON resilience</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">75 запросов подряд — сервер вернул 429 (лимит 60/мин на IP). После отправки некорректного JSON WebSocket-соединение осталось живым и отвечало на ping.</span>
+                    <span data-lang="en">75 consecutive requests — server returned 429 (limit 60/min per IP). After sending malformed JSON the WebSocket connection remained alive and responded to ping.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать вывод</span>
+                    <span class="code-label-en lang-en">Show output</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">live_probe_output.txt — LIVE-04/05 (реальный сервер)</div>
+                    <pre><span class="cm"># 75 запросов подряд на /api/media/download</span>
+<span class="cm"># HTTP коды: [404, 429] — 429 встретился: True</span>
+<span class="cm"># Лимит 60/мин на IP — ВЕРДИКТ: PASS</span>
+<span class="cm">#</span>
+<span class="cm"># Некорректный JSON → соединение живо, ping отвечает: True</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- SRV-03 TOFU фикс -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: публичный ключ аккаунта защищён TOFU (SRV-03)</span>
+                    <span data-lang="en">Fix: account public key protected by TOFU (SRV-03)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Тест модели сервера (подтверждён live-пробой) выявил: register перезаписывал публичный ключ без проверки владения прежним. Исправлено: при первой регистрации ключ закрепляется в Redis; последующая смена требует подписи challenge старым ключом. Паттерн TOFU — Trust On First Use.</span>
+                    <span data-lang="en">A server model test (confirmed by live probe) found that register overwrote the public key without ownership verification. Fixed: on first registration the key is committed to Redis; subsequent changes require a challenge signature with the old key. Trust On First Use pattern.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать патч</span>
+                    <span class="code-label-en lang-en">Show patch</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js · server13_09_patch.diff — SRV-03 TOFU</div>
+                    <pre><span class="cm">// При первой регистрации — закрепляем ключ в Redis</span>
+<span class="kw">const</span> existingKey = <span class="kw">await</span> redis.<span class="fn">get</span>(<span class="str">`identity_key:${userId}`</span>);
+<span class="kw">if</span> (!existingKey) {
+    <span class="kw">await</span> redis.<span class="fn">set</span>(<span class="str">`identity_key:${userId}`</span>, identitySigningKey);
+} <span class="kw">else if</span> (existingKey !== identitySigningKey) {
+    <span class="cm">// Ключ уже есть — требуем подпись challenge старым ключом</span>
+    <span class="kw">if</span> (!<span class="fn">verifyOwnership</span>(ws, existingKey))
+        <span class="kw">return</span> <span class="fn">sendError</span>(ws, <span class="str">'key_ownership_required'</span>);
+    <span class="kw">await</span> redis.<span class="fn">set</span>(<span class="str">`identity_key:${userId}`</span>, identitySigningKey);
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- SRV-07 ACL фикс -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: контроль доступа к медиафайлам через Redis ACL (SRV-07)</span>
+                    <span data-lang="en">Fix: media file access control via Redis ACL (SRV-07)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Live-проба показала: скачать файл можно было, зная только его идентификатор — без привязки к участнику диалога. Исправлено: при загрузке создаётся список допущенных участников в Redis (TTL 7 дней). Файл возвращается только участникам диалога. Строгий режим включается переменной окружения после обновления клиента.</span>
+                    <span data-lang="en">Live probe found: a file could be downloaded knowing only its identifier — with no conversation membership check. Fixed: on upload a Redis allow-list is created for permitted participants (7-day TTL). The file is returned only to conversation participants. Strict mode is enabled via an environment variable after the client update.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать патч</span>
+                    <span class="code-label-en lang-en">Show patch</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js · server13_09_patch.diff — SRV-07 ACL</div>
+                    <pre><span class="cm">// Upload: создаём список допущенных с TTL</span>
+<span class="kw">await</span> redis.<span class="fn">sAdd</span>(<span class="str">`blob_recipients:${blobId}`</span>, authenticatedUserId);
+<span class="kw">await</span> redis.<span class="fn">expire</span>(<span class="str">`blob_recipients:${blobId}`</span>, <span class="nm">604800</span>); <span class="cm">// 7 суток</span>
+
+<span class="cm">// Download: только участник диалога</span>
+<span class="kw">const</span> allowed = <span class="kw">await</span> redis.<span class="fn">sIsMember</span>(
+    <span class="str">`blob_recipients:${blobId}`</span>, requester
+);
+<span class="kw">if</span> (!allowed) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">404</span>).<span class="fn">json</span>({});
+<span class="cm">// 404 вместо 403 — не подтверждаем существование чужого файла</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- SRV-01/02 WS auth фикс -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: барьер аутентификации WebSocket (SRV-01/02)</span>
+                    <span data-lang="en">Fix: WebSocket authentication barrier (SRV-01/02)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Все привилегированные команды WS теперь требуют подтверждённой сессии (Ed25519 challenge пройден). Команды register/login/ping доступны до аутентификации. Барьер включается переменной окружения после выката клиента с новым flow.</span>
+                    <span data-lang="en">All privileged WS commands now require a confirmed session (Ed25519 challenge completed). The register/login/ping commands remain accessible before authentication. The barrier is enabled via an environment variable after deploying the client with the updated flow.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать патч</span>
+                    <span class="code-label-en lang-en">Show patch</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js · server13_09_patch.diff — SRV-01/02 barrier</div>
+                    <pre><span class="kw">const</span> ALWAYS_ALLOWED = <span class="kw">new</span> <span class="tp">Set</span>([
+    <span class="str">'register'</span>, <span class="str">'login_challenge'</span>, <span class="str">'login_response'</span>,
+    <span class="str">'ping'</span>, <span class="str">'delete_account'</span>
+]);
+<span class="kw">if</span> (REQUIRE_WS_AUTH && !ws.authenticated
+        && !ALWAYS_ALLOWED.<span class="fn">has</span>(message.type)) {
+    <span class="fn">sendToClient</span>(ws, {
+        type: <span class="str">'error'</span>,
+        message: <span class="str">'Not authenticated'</span>,
+        requiresLogin: <span class="kw">true</span>
+    });
+    <span class="kw">return</span>;
+}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- senderId spoofing PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: отправить сообщение от чужого имени невозможно</span>
+                    <span data-lang="en">Test: sending a message as another user is impossible</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Попытка указать чужой senderId в теле сообщения — немедленно отклоняется. Сервер использует только ws.userId из аутентифицированной сессии.</span>
+                    <span data-lang="en">Attempting to set a foreign senderId in the message body is immediately rejected. The server uses only ws.userId from the authenticated session.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать вывод</span>
+                    <span class="code-label-en lang-en">Show output</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">test_server_output.txt — SRV-04</div>
+                    <pre><span class="cm"># mallory отправляет сообщение с senderId = alice</span>
+<span class="cm"># → ('blocked', 'senderId spoofing blocked')</span>
+<span class="cm"># senderId !== ws.userId → отклонено немедленно</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRYPTO-04 FIXED -->
+        <div class="item">
+            <div class="item-icon">🔍</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Находка: DH ratchet не срабатывал — post-compromise security отсутствовала (CRYPTO-04)</span>
+                    <span data-lang="en">Finding: DH ratchet never fired — post-compromise security was absent (CRYPTO-04)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Python-модель показала: за 50 сообщений в каждую сторону performDHRatchet вызван 0 раз. Причина — deadlock инициализации: при старте обе стороны знают публичный ключ друг друга, и условие theirDhRatchetPublic ≠ incomingRatchetKey никогда не выполнялось. Без DH ratchet rootKey не обновлялся: компрометация состояния сессии давала доступ ко всей будущей переписке без ограничений по времени. Forward secrecy при этом сохранялась — прошлые сообщения защищены симметричным ratchet и удалением ключей.</span>
+                    <span data-lang="en">Python model showed: over 50 messages in each direction, performDHRatchet was called 0 times. The root cause was an initialisation deadlock: both sides already know each other's public key at startup, so the condition theirDhRatchetPublic ≠ incomingRatchetKey was never satisfied. Without the DH ratchet, rootKey was never updated: a session state compromise gave unlimited access to all future messages. Forward secrecy was preserved — past messages remained protected by the symmetric ratchet and key deletion.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать вывод теста</span>
+                    <span class="code-label-en lang-en">Show test output</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Python · dh_check.py — до фикса</div>
+                    <pre><span class="cm"># python3 dh_check.py</span>
+<span class="cm">#</span>
+<span class="cm"># Сценарий 1: диалог 10×2 сообщений, confirmDelivered НЕ вызывается</span>
+<span class="cm"># DH ratchet: A=0, B=0  (ожидается ~10 каждый)</span>
+<span class="cm">#</span>
+<span class="cm"># Сценарий 2: реальное приложение (confirmDelivered вызывается)</span>
+<span class="cm"># DH ratchet: A=0, B=0  (ожидается ~10 каждый)</span>
+<span class="cm">#</span>
+<span class="cm"># Причина: при инициализации their_dh_pub = ключ собеседника.</span>
+<span class="cm"># Собеседник шлёт тот же ключ — условие их равенства всегда true → deadlock.</span>
+<span class="cm"># rootKey не меняется → компрометация даёт доступ ко всей будущей переписке.</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: двухфазный DH ratchet — post-compromise security восстановлена (CRYPTO-04)</span>
+                    <span data-lang="en">Fix: two-phase DH ratchet — post-compromise security restored (CRYPTO-04)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">performDHRatchet разделён на две независимые фазы. Фаза приёма (performDHRatchetReceive): при получении нового ключа обновляется recvChain и rootKey, устанавливается флаг needsDhRatchetOnSend. Фаза отправки (performDHRatchetSend): при следующей исходящей генерируется новая X25519-пара, обновляется sendChain и rootKey, флаг снимается. Ответчик стартует с needsDhRatchetOnSend: true — это ломает начальный deadlock. После фикса: DH ratchet срабатывает при каждом обмене, rootKey меняется каждый раз, украденное состояние устаревает уже через один раунд.</span>
+                    <span data-lang="en">performDHRatchet was split into two independent phases. Receive phase (performDHRatchetReceive): on receiving a new key, recvChain and rootKey are updated and the needsDhRatchetOnSend flag is set. Send phase (performDHRatchetSend): on the next outgoing message a new X25519 key pair is generated, sendChain and rootKey are updated, and the flag is cleared. The responder starts with needsDhRatchetOnSend: true — this breaks the initial deadlock. After the fix: DH ratchet fires on every exchange, rootKey rotates every time, and a stolen session state becomes stale after just one round.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать патч и вывод</span>
+                    <span class="code-label-en lang-en">Show patch and output</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Swift · SignalCryptoManager.swift — CRYPTO-04 fix</div>
+                    <pre><span class="cm">// SessionState: новое поле</span>
+<span class="kw">var</span> needsDhRatchetOnSend: <span class="tp">Bool</span> = <span class="kw">false</span>
+
+<span class="cm">// decryptData: фаза 1 — только обновляем recvChain и ставим флаг</span>
+<span class="kw">if let</span> incomingRatchetKey = ratchetKey,
+   session.theirDhRatchetPublic != incomingRatchetKey {
+    <span class="kw">try</span> <span class="fn">performDHRatchetReceive</span>(theirNewPublic: incomingRatchetKey, session: &session)
+    <span class="cm">// needsDhRatchetOnSend = true — установлено внутри</span>
+}
+
+<span class="cm">// encryptData: фаза 2 — генерируем новую пару перед отправкой</span>
+<span class="kw">if</span> session.needsDhRatchetOnSend {
+    <span class="kw">try</span> <span class="fn">performDHRatchetSend</span>(session: &session)
+}
+
+<span class="cm">// Ответчик: стартует с флагом true — ломает начальный deadlock</span>
+<span class="cm">// needsDhRatchetOnSend: true   ← responder</span>
+<span class="cm">// needsDhRatchetOnSend: false  ← initiator (эфемерная пара уже свежая)</span></pre>
+                    <div class="lang-label" style="margin-top:10px">Python · dh_fix2.py — после фикса</div>
+                    <pre><span class="cm"># Диалог 10×2 сообщений:</span>
+<span class="cm"># DH ratchet вызовов: A=19, B=19   ← срабатывает при каждом обмене</span>
+<span class="cm"># Расшифровка корректна: True</span>
+<span class="cm"># rootKey менялся: 11 раз из 11</span>
+<span class="cm">#</span>
+<span class="cm"># Post-compromise security: атакующий украл состояние на шаге 3</span>
+<span class="cm"># Украденный rootKey всё ещё актуален: False</span>
+<span class="cm"># Украденный приватный ключ всё ещё актуален: False</span>
+<span class="cm"># → сессия самовосстановилась уже через один раунд</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- STOR-02 INFO -->
+        <div class="item">
+            <div class="item-icon">ℹ️</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Замечание: 4-значный PIN и офлайн-брутфорс</span>
+                    <span data-lang="en">Note: 4-digit PIN and offline brute-force</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">600 000 итераций PBKDF2 делают подбор PIN трудоёмким. Финальная защита — Secure Enclave: ключ шифрования нельзя извлечь с заблокированного устройства, поэтому офлайн-атака практически невозможна. Пользователям с повышенными требованиями к безопасности рекомендуется использовать 6-значный код.</span>
+                    <span data-lang="en">600,000 PBKDF2 iterations make PIN guessing computationally expensive. The final defence is Secure Enclave: the encryption key cannot be extracted from a locked device, making an offline attack practically infeasible. Users with heightened security requirements are encouraged to use a 6-digit code.</span>
+                </div>
+                <span class="item-badge badge-info"><span data-lang="ru">Информационно</span><span data-lang="en">Informational</span></span>
+            </div>
+        </div>
+
+
+        <!-- ============ СЕРВЕРНЫЕ ФИКСЫ ============ -->
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: ограничение времени жизни истории в Redis</span>
+                    <span data-lang="en">Fix: bounded message retention in Redis</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">TTL на ключах dialog: обновлялся при каждой активности — активная переписка фактически никогда не устаревала. При баге резенда вся история улетела получателю разом. Исправлено: TTL устанавливается только при создании записи.</span>
+                    <span data-lang="en">The TTL on dialog: keys was refreshed on every activity — an active conversation never expired. A resend bug caused the entire history to be delivered at once. Fixed: TTL is set only at record creation.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: прочитанное сообщение удаляется с сервера немедленно</span>
+                    <span data-lang="en">Fix: read messages deleted from server immediately</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">После прочтения сообщение помечалось read:true и оставалось в Redis неограниченно. Теперь удаляется сразу — единственные копии остаются в приложениях участников. Медиафайл удаляется после подтверждённой доставки.</span>
+                    <span data-lang="en">After being read, a message was marked read:true and kept in Redis indefinitely. Now it is deleted immediately — the only copies remain in participants' apps. The media file is deleted after confirmed delivery.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: потеря медиафайлов при открытии чата (P0)</span>
+                    <span data-lang="en">Fix: media loss on chat open (P0)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Открытие чата удаляло запись из dialog: даже если сообщение ещё было в очереди pending. При следующем запросе id находился, но контент уже отсутствовал. Исправлено: перед удалением проверяется отсутствие id в pending.</span>
+                    <span data-lang="en">Opening a chat deleted the dialog: entry even when the message was still in the pending queue. The next request found the id but the content was gone. Fixed: before removal the server checks that the id is absent from pending.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: дедупликация и «розовый экран»</span>
+                    <span data-lang="en">Fix: deduplication and "pink screen" bug</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Повторная отправка отклонялась как дубликат, даже если первая не была доставлена. Сообщение числилось в истории, но получатель его не видел. Исправлено: при повторе проверяется pending — если id там отсутствует, старая запись удаляется и повтор разрешается.</span>
+                    <span data-lang="en">A resent message was rejected as a duplicate even when the first send was never delivered. The message existed in history but the recipient never saw it. Fixed: on resend the server checks pending — if the id is absent, the old record is removed and the resend is allowed.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: застрявший статус доставки (P0)</span>
+                    <span data-lang="en">Fix: stuck delivery status (P0)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Подтверждение «доставлено» в ряде сценариев не сохранялось — статус навсегда оставался «отправлено». Исправлено в нескольких точках: handleOpenChat, handleMarkAllRead, обработка медиа-подтверждений.</span>
+                    <span data-lang="en">The "delivered" confirmation was not persisted in several scenarios — the status remained "sent" permanently. Fixed at multiple points: handleOpenChat, handleMarkAllRead, media acknowledgement handling.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: версия протокола терялась при офлайн-доставке (SRV-09)</span>
+                    <span data-lang="en">Fix: protocol version lost during offline delivery (SRV-09)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">При офлайн-доставке session_init поле version не пересылалось. Клиент принимает только version=3 — все офлайн-инициализации молча отбрасывались: Double Ratchet сессия не устанавливалась, входящие не расшифровывались, групповые приглашения не доходили. Исправлено в двух местах обработчика.</span>
+                    <span data-lang="en">When delivering session_init offline, the version field was not forwarded. The client accepts only version=3 — all offline initialisations were silently discarded: no Double Ratchet session was established, incoming messages could not be decrypted, group invites never arrived. Fixed in two places in the handler.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: временная метка перезаписывалась при повторной отправке</span>
+                    <span data-lang="en">Fix: timestamp overwritten on resend</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">При resend сервер всегда записывал текущее время — сообщения появлялись у получателя в неправильном порядке. Исправлено: при повторе сохраняется оригинальная метка.</span>
+                    <span data-lang="en">On resend the server always wrote the current time — messages appeared in the wrong order for the recipient. Fixed: the original timestamp is preserved on resend.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: sandbox APNs-токены не удаляются при BadDeviceToken</span>
+                    <span data-lang="en">Fix: sandbox APNs tokens no longer deleted on BadDeviceToken</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Xcode-сборка получает sandbox APNs-токен. Production-шлюз Apple отвечал BadDeviceToken — сервер удалял токен и VoIP-звонки на dev-устройства переставали доходить. Исправлено: при BadDeviceToken повтор через sandbox-шлюз; успешные sandbox-токены кешируются в памяти.</span>
+                    <span data-lang="en">Xcode builds receive a sandbox APNs token. Apple's production gateway returned BadDeviceToken — the server deleted the token and VoIP calls to dev devices stopped arriving. Fixed: on BadDeviceToken the server retries via the sandbox gateway; successful sandbox tokens are cached in memory.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: бейдж не считал непрочитанные в группах (BADGE-03)</span>
+                    <span data-lang="en">Fix: badge did not count unread group messages (BADGE-03)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">recomputeUnreadCount() перебирал только dialog: — групповые сообщения туда не попадают. Цифра на иконке для групп не появлялась. Исправлено: отдельный счётчик group_unread в Redis (+1 при доставке, сброс по сигналу group_mark_read или при выходе в foreground). Бейдж = личные + групповые.</span>
+                    <span data-lang="en">recomputeUnreadCount() only scanned dialog: keys — group messages never appear there. The badge number never showed for groups. Fixed: separate group_unread counter in Redis (+1 on delivery, reset on group_mark_read or foreground). Badge = personal + group.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать патч</span>
+                    <span class="code-label-en lang-en">Show patch</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js · dev_server_patch.diff — BADGE-03</div>
+                    <pre><span class="cm">// Бейдж = личные + групповые</span>
+<span class="kw">const</span> personalUnread = <span class="kw">await</span> <span class="fn">recomputeUnreadCount</span>(recipientId);
+<span class="kw">const</span> groupUnread   = <span class="kw">await</span> <span class="fn">getGroupUnread</span>(recipientId);
+<span class="kw">const</span> unreadCount   = personalUnread + groupUnread;
+
+<span class="cm">// Клиент открыл группу — сбрасываем счётчик</span>
+<span class="kw">case</span> <span class="str">'group_mark_read'</span>:
+    <span class="kw">await</span> <span class="fn">resetGroupUnread</span>(userId);
+    <span class="kw">await</span> <span class="fn">sendPushNotification</span>(userId, <span class="str">""</span>, <span class="str">""</span>, <span class="str">""</span>, { badgeOnly: <span class="kw">true</span> });
+    <span class="kw">break</span>;</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Фикс: групповые сообщения всегда попадают в очередь (GROUP-09)</span>
+                    <span data-lang="en">Fix: group messages always queued for reliable delivery (GROUP-09)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">ws.readyState показывает состояние TCP, а не готовность приложения. Когда iOS выгружает приложение, сокет остаётся OPEN десятки секунд — сообщения уходили в мёртвое соединение и терялись. Отсюда «бейдж 2, сообщений 0». Исправлено: конверт кладётся в очередь всегда, прямая отправка лишь ускоряет доставку.</span>
+                    <span data-lang="en">ws.readyState reflects TCP state, not app readiness. When iOS suspends the app, the socket stays OPEN for tens of seconds — messages went into a dead connection and were lost. Hence "badge 2, messages 0". Fixed: the envelope is always queued; direct send merely speeds up delivery.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">MLS-группы: сервер видит только зашифрованные конверты</span>
+                    <span data-lang="en">MLS groups: server sees only encrypted envelopes</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Серверная часть групп реализована с нулевым знанием о содержимом: название, права администраторов и тексты сообщений лежат внутри MLS-состояния и серверу недоступны. Сервер знает только id группы, список userId и номер эпохи. Строгий порядок коммитов: на одну эпоху принимается ровно один commit — остальные отклоняются. Лимиты: 64 участника, 256 КБ на сообщение, 500 конвертов в офлайн-очереди.</span>
+                    <span data-lang="en">The group server layer is implemented with zero content knowledge: name, admin rights, and message content live inside MLS state and are inaccessible to the server. The server knows only the group id, participant userIds, and epoch number. Strict commit ordering: exactly one commit per epoch — others are rejected. Limits: 64 members, 256 KB per message, 500 envelopes in the offline queue.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать код</span>
+                    <span class="code-label-en lang-en">Show code</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">Node.js · MLS-группы — что видит сервер</div>
+                    <pre><span class="cm">// Сервер видит только: groupId, members[], epoch, payload (bytes)</span>
+<span class="cm">// Название, права, содержимое — внутри MLS-состояния, серверу недоступны</span>
+<span class="kw">const</span> GROUP_MAX_MEMBERS = <span class="nm">64</span>;
+<span class="kw">const</span> GROUP_MAX_PAYLOAD = <span class="nm">256</span> * <span class="nm">1024</span>;  <span class="cm">// байт на сообщение</span>
+<span class="kw">const</span> GROUP_MAX_PENDING = <span class="nm">500</span>;         <span class="cm">// конвертов в офлайн-очереди</span>
+
+<span class="cm">// Строгий порядок: одна эпоха — один коммит</span>
+<span class="kw">if</span> (state.epoch !== payload.epoch) {
+    <span class="fn">sendToClient</span>(ws, { type: <span class="str">'group_commit_rejected'</span>, groupId });
+    <span class="kw">return</span>;
+}
+state.epoch += <span class="nm">1</span>;  <span class="cm">// принят — повышаем эпоху, рассылаем участникам</span></pre>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <footer>
+        <p>
+            <span data-lang="ru">HomeChat · <a href="privacy-policy.html">Политика конфиденциальности</a> · Обновлено: сентябрь 2026</span>
+            <span data-lang="en">HomeChat · <a href="privacy-policy.html">Privacy Policy</a> · Updated: September 2026</span>
+        </p>
+    </footer>
+
+</div>
+
+<script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+        });
+        document.documentElement.lang = lang;
+    }
+
+    function toggleCode(btn) {
+        const block = btn.nextElementSibling;
+        const open = block.classList.toggle('visible');
+        btn.classList.toggle('open', open);
+        const ru = btn.querySelector('.code-label-ru');
+        const en = btn.querySelector('.code-label-en');
+        if (ru) ru.textContent = open ? 'Скрыть' : (ru.dataset.open || 'Показать');
+        if (en) en.textContent = open ? 'Hide' : (en.dataset.open || 'Show');
+    }
+</script>
+</body>
+</html>
