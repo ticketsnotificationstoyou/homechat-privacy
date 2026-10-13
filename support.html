@@ -66,6 +66,16 @@
         }
         header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
         header p { color: #6e6e73; font-size: 15px; }
+        .version-badge {
+            display: inline-block;
+            margin-top: 10px;
+            background: #e5e5ea;
+            color: #48484a;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 20px;
+        }
         .card {
             background: #ffffff;
             border-radius: 16px;
@@ -137,6 +147,10 @@
             <span data-lang="ru">Поддержка</span>
             <span data-lang="en">Support</span>
         </p>
+        <div class="version-badge">
+            <span data-lang="ru">Версия приложения 2.2</span>
+            <span data-lang="en">App version 2.2</span>
+        </div>
     </header>
 
     <div class="card">
@@ -208,6 +222,17 @@ Go to your profile and tap "Delete Account." This action is irreversible — all
 <strong>Server storage:</strong> as soon as a file is fully delivered to you (the download completes), the server deletes its copy — typically within a minute. The 7-day period is a maximum only for files that were never successfully delivered (for example, if you were offline for a long time); if delivery never happens, the file is automatically deleted after 7 days.
 
 To keep a file in the app permanently, tap the save button directly in the chat — a green checkmark will appear on the file. Saved files remain in the chat permanently.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Встроенный прокси-туннель</h2>
+            <p>Имеется собственный встроенный Прокси туннель. При недоступности прямого соединения приложение использует внутренний защищённый маршрут до собственного сервера HomeChat. Не затрагивает другие приложения и не является системным VPN. Включается и выключается вручную в одно касание.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Built-in Proxy Tunnel</h2>
+            <p>HomeChat includes its own built-in proxy tunnel. When a direct connection is unavailable, the app uses an internal secure route to its own HomeChat server. It does not affect other apps and is not a system-wide VPN. It can be turned on and off manually with a single tap.</p>
         </div>
     </div>
 
