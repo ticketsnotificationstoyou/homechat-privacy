@@ -48,7 +48,7 @@
         }
         header {
             text-align: center;
-            margin-bottom: 48px;
+            margin-bottom: 32px;
         }
         .icon-link {
             display: inline-block;
@@ -76,6 +76,37 @@
             padding: 5px 14px;
             border-radius: 20px;
         }
+        .critical-card {
+            background: #fff0f0;
+            border: 3px solid #ff3b30;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(255, 59, 48, 0.25);
+        }
+        .critical-card h2 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 14px;
+            color: #c0392b;
+            text-align: center;
+        }
+        .critical-card .version-line {
+            font-size: 17px;
+            font-weight: 700;
+            color: #c0392b;
+            text-align: center;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid #ffb3b3;
+        }
+        .critical-card p {
+            font-size: 15px;
+            color: #4a1a1a;
+            white-space: pre-line;
+            text-align: justify;
+        }
+        .critical-card p + p { margin-top: 12px; }
         .card {
             background: #ffffff;
             border-radius: 16px;
@@ -148,10 +179,25 @@
             <span data-lang="en">Support</span>
         </p>
         <div class="version-badge">
-            <span data-lang="ru">Версия приложения 2.2</span>
-            <span data-lang="en">App version 2.2</span>
+            <span data-lang="ru">Версия приложения 3.0</span>
+            <span data-lang="en">App version 3.0</span>
         </div>
     </header>
+
+    <div class="critical-card">
+        <div data-lang="ru">
+            <h2>⚠️ Важно!</h2>
+            <div class="version-line">Версия приложения 3.0</div>
+            <p>В соответствии с изменениями усиления архитектуры безопасности версия 3.0 не поддерживает версии 2.2! Они несовместимы. Обновите приложение!</p>
+            <p>Версии приложений 2.2 сами по себе пока поддерживаются. С 01 ноября 2026 года поддержка версий 2.2 и ниже прекратится, и сервер перейдёт на поддержку исключительно версий 3.0 и выше.</p>
+        </div>
+        <div data-lang="en">
+            <h2>⚠️ Important!</h2>
+            <div class="version-line">App version 3.0</div>
+            <p>Due to security architecture enhancements, version 3.0 does not support version 2.2! They are incompatible. Please update the app!</p>
+            <p>Version 2.2 apps are still supported for now. Starting November 1, 2026, support for version 2.2 and below will end, and the server will support only version 3.0 and above.</p>
+        </div>
+    </div>
 
     <div class="card">
         <div data-lang="ru">
@@ -169,11 +215,33 @@
     <div class="card">
         <div data-lang="ru">
             <h2>Для кого предназначен HomeChat</h2>
-            <p>HomeChat — приватный мессенджер для общения один на один между лично знакомыми людьми: семьёй, близкими друзьями и т.д. Приложение поддерживает текстовые и аудиосообщения, отправку фото, видео, видео-кружков, документов, аудиофайлов, кастомных стикеров, а также голосовые и видеозвонки. Групповые чаты, публичные каналы и общение с незнакомцами НЕ поддерживаются. Все контакты добавляются только вручную по уникальному ID или QR-коду.</p>
+            <p>HomeChat — приватный мессенджер для общения один на один между лично знакомыми людьми: семьёй, близкими друзьями и т.д. Приложение поддерживает текстовые и аудиосообщения, отправку фото, видео, видео-кружков, документов, аудиофайлов, кастомных стикеров, а также голосовые и видеозвонки. Все контакты добавляются только вручную по уникальному ID или QR-коду.</p>
         </div>
         <div data-lang="en">
             <h2>Who HomeChat Is For</h2>
-            <p>HomeChat is a private messenger for one-on-one conversations between people who know each other personally — family and close friends, etc. The app supports text and voice messages, photo, video, video circles, document, and audio file sharing, custom stickers, and voice and video calls. Group chats, public channels, and communication with strangers are NOT supported. All contacts are added manually using a unique ID or QR code.</p>
+            <p>HomeChat is a private messenger for one-on-one conversations between people who know each other personally — family and close friends, etc. The app supports text and voice messages, photo, video, video circles, document, and audio file sharing, custom stickers, and voice and video calls. All contacts are added manually using a unique ID or QR code.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Групповые чаты</h2>
+            <p>Создавайте защищённые групповые чаты из доверенных контактов, которых вы ранее уже добавили себе для общения. Никто не может добавить вас без вашего согласия — приглашения принимаются вручную и приходят только от ваших контактов. Тот, кто создаёт группу, является её Администратором, управляет составом группы и рассылает приглашения. Удаление группы и выход из неё осуществляются в одно касание.</p>
+        </div>
+        <div data-lang="en">
+            <h2>Group Chats</h2>
+            <p>Create secure group chats from trusted contacts you have already added for communication. No one can add you without your consent — invitations are accepted manually and come only from your contacts. The person who creates a group becomes its Administrator, manages group membership, and sends invitations. Deleting a group and leaving it are done with a single tap.</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div data-lang="ru">
+            <h2>Новые языки</h2>
+            <p>HomeChat теперь доступен на 14 дополнительных языках: английский, немецкий, французский, испанский, итальянский, португальский (Бразилия), японский, корейский, китайский (упрощённый), хинди, турецкий, индонезийский, персидский.</p>
+        </div>
+        <div data-lang="en">
+            <h2>New Languages</h2>
+            <p>HomeChat is now available in 14 additional languages: English, German, French, Spanish, Italian, Portuguese (Brazil), Japanese, Korean, Chinese (Simplified), Hindi, Turkish, Indonesian, Persian.</p>
         </div>
     </div>
 
@@ -228,11 +296,41 @@ To keep a file in the app permanently, tap the save button directly in the chat 
     <div class="card">
         <div data-lang="ru">
             <h2>Встроенный прокси-туннель</h2>
-            <p>Имеется собственный встроенный Прокси туннель. При недоступности прямого соединения приложение использует внутренний защищённый маршрут до собственного сервера HomeChat. Не затрагивает другие приложения и не является системным VPN. Включается и выключается вручную в одно касание.</p>
+            <p>HomeChat включает дополнительный резервный механизм подключения, который помогает приложению связаться со своим собственным сервером, когда прямое WebSocket-соединение заблокировано. Он не затрагивает никакие другие приложения на устройстве.
+
+<strong>Где найти:</strong>
+1. Откройте приложение
+2. Перейдите в раздел «Настройки» → «Туннель»
+3. Найдите переключатель «Туннель»
+Скриншот этого переключателя включён в описание приложения.
+
+<strong>Состояние по умолчанию:</strong> ВЫКЛ. Пользователь должен включить его вручную.
+
+<strong>Когда включён:</strong>
+Внутри процесса приложения запускается локальный SOCKS5-прокси (127.0.0.1:10808). Он применяется ТОЛЬКО к собственному URLSession приложения HomeChat через стандартный API Apple — connectionProxyDictionary.
+
+Резервный маршрут настраивается сервером HomeChat во время работы и хранится локально на устройстве. Он направляет трафик только к собственной инфраструктуре HomeChat (серверу приложения и его релейным узлам). Никакой сторонний трафик через него не проходит, и маршрут нельзя изменить из интерфейса.
+
+Единственная цель этого резервного механизма — сохранить доступность основных функций приложения (сообщений, медиа и звонков) для пользователя, когда прямое соединение с сервером HomeChat невозможно. Это не инструмент для обхода сетевых ограничений в целом, и он не предоставляет доступ к каким-либо сервисам, кроме самого HomeChat.</p>
         </div>
         <div data-lang="en">
             <h2>Built-in Proxy Tunnel</h2>
-            <p>HomeChat includes its own built-in proxy tunnel. When a direct connection is unavailable, the app uses an internal secure route to its own HomeChat server. It does not affect other apps and is not a system-wide VPN. It can be turned on and off manually with a single tap.</p>
+            <p>HomeChat includes an optional connectivity fallback that helps the app reach its own server when the direct WebSocket connection is blocked. It does not affect any other app on the device.
+
+<strong>Where to find it:</strong>
+1. Open the app
+2. Go to the Settings tab → Tunnel
+3. Find the toggle labeled "Tunnel"
+A screenshot of this toggle is included in the app.
+
+<strong>Default state:</strong> OFF. The user must turn it on manually.
+
+<strong>When ON:</strong>
+A local SOCKS5 proxy (127.0.0.1:10808) runs inside the app process. It is applied ONLY to HomeChat's own URLSession via Apple's standard connectionProxyDictionary API.
+
+The fallback route is configured by HomeChat's server at runtime and stored locally on the device. It routes traffic only to HomeChat's own infrastructure (the app's server and its relay endpoints). No third-party traffic is routed through it, and the route cannot be modified from the UI.
+
+The sole purpose of this fallback is to keep the app's core functionality — messaging, media, and calls — available to the user when the direct connection to HomeChat's server is not possible. It is not a tool for bypassing network restrictions in general, and it does not provide access to any service other than HomeChat itself.</p>
         </div>
     </div>
 
@@ -289,7 +387,7 @@ Your account will remain registered — no new registration will be required.</p
 HomeChat использует зашифрованные VoIP-звонки через интернет. Доступны аудио- и видеозвонки. Для входящих звонков приложение не должно быть открыто — уведомление придёт даже когда телефон заблокирован. Во время разговора нельзя отправить видео-кружок.</p>
 
             <p style="margin-top: 14px;"><strong>Можно ли создать групповой чат?</strong>
-Нет. HomeChat поддерживает только переписку один на один. Групповые чаты, каналы и публичные пространства не предусмотрены.</p>
+Да. HomeChat поддерживает защищённые групповые чаты из ваших доверенных контактов. Подробности — в разделе «Групповые чаты» выше.</p>
 
             <p style="margin-top: 14px;"><strong>Что будет, если выйти из аккаунта?</strong>
 Вы можете выйти из аккаунта через кнопку «Выйти из аккаунта» в профиле. Важно: заранее сохраните ваш уникальный ID — без него вернуться в свой аккаунт не получится.</p>
@@ -310,7 +408,7 @@ Check your internet connection. Try force-closing the app (swipe it up from the 
 HomeChat uses encrypted VoIP calls over the internet. Both audio and video calls are supported. For incoming calls, the app doesn't need to be open — you'll receive a notification even when your phone is locked. Sending a video circle during a call is not supported.</p>
 
             <p style="margin-top: 14px;"><strong>Can I create a group chat?</strong>
-No. HomeChat supports only one-on-one conversations. Group chats, channels, and public spaces are not available.</p>
+Yes. HomeChat supports secure group chats made up of your trusted contacts. See the "Group Chats" section above for details.</p>
 
             <p style="margin-top: 14px;"><strong>What happens if I sign out of my account?</strong>
 You can sign out using the "Sign Out" button in your profile. Important: make sure to save your unique ID beforehand — without it, you won't be able to return to your account.</p>
