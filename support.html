@@ -304,14 +304,7 @@ To keep a file in the app permanently, tap the save button directly in the chat 
 3. Найдите переключатель «Туннель»
 Скриншот этого переключателя включён в описание приложения.
 
-<strong>Состояние по умолчанию:</strong> ВЫКЛ. Пользователь должен включить его вручную.
-
-<strong>Когда включён:</strong>
-Внутри процесса приложения запускается локальный SOCKS5-прокси (127.0.0.1:10808). Он применяется ТОЛЬКО к собственному URLSession приложения HomeChat через стандартный API Apple — connectionProxyDictionary.
-
-Резервный маршрут настраивается сервером HomeChat во время работы и хранится локально на устройстве. Он направляет трафик только к собственной инфраструктуре HomeChat (серверу приложения и его релейным узлам). Никакой сторонний трафик через него не проходит, и маршрут нельзя изменить из интерфейса.
-
-Единственная цель этого резервного механизма — сохранить доступность основных функций приложения (сообщений, медиа и звонков) для пользователя, когда прямое соединение с сервером HomeChat невозможно. Это не инструмент для обхода сетевых ограничений в целом, и он не предоставляет доступ к каким-либо сервисам, кроме самого HomeChat.</p>
+<strong>Состояние по умолчанию:</strong> ВЫКЛ. Пользователь должен включить его вручную.</p>
         </div>
         <div data-lang="en">
             <h2>Built-in Proxy Tunnel</h2>
@@ -323,14 +316,7 @@ To keep a file in the app permanently, tap the save button directly in the chat 
 3. Find the toggle labeled "Tunnel"
 A screenshot of this toggle is included in the app.
 
-<strong>Default state:</strong> OFF. The user must turn it on manually.
-
-<strong>When ON:</strong>
-A local SOCKS5 proxy (127.0.0.1:10808) runs inside the app process. It is applied ONLY to HomeChat's own URLSession via Apple's standard connectionProxyDictionary API.
-
-The fallback route is configured by HomeChat's server at runtime and stored locally on the device. It routes traffic only to HomeChat's own infrastructure (the app's server and its relay endpoints). No third-party traffic is routed through it, and the route cannot be modified from the UI.
-
-The sole purpose of this fallback is to keep the app's core functionality — messaging, media, and calls — available to the user when the direct connection to HomeChat's server is not possible. It is not a tool for bypassing network restrictions in general, and it does not provide access to any service other than HomeChat itself.</p>
+<strong>Default state:</strong> OFF. The user must turn it on manually.</p>
         </div>
     </div>
 
