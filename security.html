@@ -422,7 +422,7 @@
         <div style="flex:1">
             <div class="summary-numbers">
                 <div class="summary-num">
-                    <div class="num num-green">67</div>
+                    <div class="num num-green">68</div>
                     <div class="label"><span data-lang="ru">выполнено</span><span data-lang="en">passed</span></div>
                 </div>
                 <div class="summary-num">
@@ -439,8 +439,8 @@
                 </div>
             </div>
             <div class="summary-note">
-                <span data-lang="ru">Все пункты проверены по исходному коду приложения и сервера. Критические находки подтверждены исполняемыми тестами — с реальным выводом и патчами.</span>
-                <span data-lang="en">All items verified against application and server source code. Critical findings were confirmed by executable tests with real output and patches.</span>
+                <span data-lang="ru">Все пункты проверены по исходному коду приложения и сервера. Критические находки подтверждены исполняемыми тестами — с реальным выводом и патчами. Обновлено 23.10.2026: включён контроль доступа к медиафайлам (SRV-07); 22.10.2026 — проверка входа по WebSocket.</span>
+                <span data-lang="en">All items verified against application and server source code. Critical findings were confirmed by executable tests with real output and patches. Updated 23.10.2026: media file access control (SRV-07) enabled; 22.10.2026: WebSocket login verification.</span>
             </div>
         </div>
     </div>
@@ -944,7 +944,7 @@ request.<span class="fn">setValue</span>(userId,    forHTTPHeaderField: <span cl
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Захват аккаунта невозможен</span><span data-lang="en">Account takeover is impossible</span></div>
-                <div class="item-desc"><span data-lang="ru">Ed25519 challenge-response: сервер выдаёт случайный challenge → клиент подписывает приватным ключом → сервер верифицирует. Публичный ключ закрепляется при первой регистрации (TOFU) и не может быть заменён без подтверждения владения старым ключом.</span><span data-lang="en">Ed25519 challenge-response: server issues a random challenge → client signs with private key → server verifies. The public key is committed on first registration (TOFU) and cannot be replaced without proving ownership of the existing key.</span></div>
+                <div class="item-desc"><span data-lang="ru">Ed25519 challenge-response: сервер выдаёт случайный challenge → клиент подписывает приватным ключом → сервер верифицирует. Публичный ключ закрепляется при первой регистрации (TOFU) и не может быть заменён без подтверждения владения старым ключом. С 22.10.2026 в новых версиях приложения сервер не выполняет никаких команд, пока соединение не подтвердило вход этим ключом, а удалить аккаунт при переустановке можно только после входа старым ключом.</span><span data-lang="en">Ed25519 challenge-response: server issues a random challenge → client signs with private key → server verifies. The public key is committed on first registration (TOFU) and cannot be replaced without proving ownership of the existing key. Since 22.10.2026, for new app versions the server executes no commands until the connection has logged in with this key, and an account can be deleted on reinstall only after logging in with the old key.</span></div>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать код</span>
@@ -992,8 +992,8 @@ request.<span class="fn">setValue</span>(userId,    forHTTPHeaderField: <span cl
         <div class="item">
             <div class="item-icon">✅</div>
             <div class="item-body">
-                <div class="item-title"><span data-lang="ru">TURN credentials одноразовые</span><span data-lang="en">TURN credentials are one-time</span></div>
-                <div class="item-desc"><span data-lang="ru">HMAC-SHA1, TTL 1 час, два независимых сервера. Перехваченные credentials невозможно использовать повторно.</span><span data-lang="en">HMAC-SHA1, 1-hour TTL, two independent servers. Intercepted credentials cannot be reused.</span></div>
+                <div class="item-title"><span data-lang="ru">TURN credentials с коротким сроком жизни</span><span data-lang="en">Short-lived TURN credentials</span></div>
+                <div class="item-desc"><span data-lang="ru">HMAC-SHA1, TTL 1 час, два независимых сервера. По истечении часа credentials недействительны. В новых версиях приложения выдаются только после входа ключом устройства.</span><span data-lang="en">HMAC-SHA1, 1-hour TTL, two independent servers. Credentials become invalid after one hour. For new app versions they are issued only after logging in with the device key.</span></div>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать код</span>
@@ -1175,8 +1175,8 @@ VALUES (?, ?, ?, ?, ?, ...)
         <div class="item">
             <div class="item-icon">✅</div>
             <div class="item-body">
-                <div class="item-title"><span data-lang="ru">Нет IDOR</span><span data-lang="en">No IDOR</span></div>
-                <div class="item-desc"><span data-lang="ru">Права проверяются на каждый запрос. Медиафайлы доступны только участникам диалога — ACL по списку допущенных. Пользователь не может получить данные чужого диалога.</span><span data-lang="en">Access rights are checked on every request. Media files are accessible only to conversation participants via an allow-list ACL. A user cannot access data from another's conversation.</span></div>
+                <div class="item-title"><span data-lang="ru">IDOR: сообщения и медиа — только своим</span><span data-lang="en">IDOR: messages and media for participants only</span></div>
+                <div class="item-desc"><span data-lang="ru">Сообщение принимается только от имени userId соединения, а в новых версиях приложения этот userId подтверждён входом ключом устройства. С 23.10.2026 медиафайл новых версий приложения сервер отдаёт только отправителю и получателю или участникам группы (SRV-07), чужой запрос получает 404. Идентификатор файла — 256 случайных бит, сам файл зашифрован AES-256-GCM, ключ есть только в E2E-сообщении.</span><span data-lang="en">A message is accepted only on behalf of the connection's userId, and for new app versions that userId is confirmed by a login with the device key. Since 23.10.2026 the server serves media from new app versions only to the sender and recipient or to group members (SRV-07); anyone else gets 404. The file identifier is 256 random bits, the file itself is AES-256-GCM encrypted, and the key exists only inside an E2E message.</span></div>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать код</span>
@@ -1191,7 +1191,12 @@ VALUES (?, ?, ?, ?, ?, ...)
     <span class="kw">return</span>;  <span class="cm">// сообщение отброшено — нельзя отправить от чужого имени</span>
 }
 <span class="cm">// Пользователь может читать только те диалоги, в которых участвует сам</span>
-<span class="cm">// Доступ к чужим сообщениям физически невозможен — ключи только на устройствах</span></pre>
+<span class="cm">// Доступ к чужим сообщениям физически невозможен — ключи только на устройствах</span>
+
+<span class="cm">// SRV-07 (23.10.2026): медиа — только отправителю, получателю или участникам группы</span>
+<span class="kw">if</span> (!(<span class="kw">await</span> <span class="fn">blobAccessAllowed</span>(blobId, req.mediaUserId))) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">404</span>).<span class="fn">json</span>({ error: <span class="str">'BLOB not found'</span> });
+}</pre>
                 </div>
             </div>
         </div>
@@ -1199,7 +1204,7 @@ VALUES (?, ?, ?, ?, ?, ...)
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title"><span data-lang="ru">Rate limiting на HTTP API</span><span data-lang="en">HTTP API rate limiting</span></div>
-                <div class="item-desc"><span data-lang="ru">60 запросов/мин на upload и download. При превышении — 429.</span><span data-lang="en">60 requests/min on upload and download endpoints. Returns 429 when exceeded.</span></div>
+                <div class="item-desc"><span data-lang="ru">60 запросов/мин с одного IP на upload и download. При превышении — 429. С 22.10.2026 лимит считается по реальному IP клиента за прокси nginx (раньше все запросы попадали в один общий счётчик).</span><span data-lang="en">60 requests/min per IP on upload and download endpoints. Returns 429 when exceeded. Since 22.10.2026 the limit is counted by the real client IP behind the nginx proxy (previously all requests shared one counter).</span></div>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать код</span>
@@ -1224,15 +1229,15 @@ app.<span class="fn">use</span>(<span class="str">'/download'</span>, uploadLimi
         <div class="item">
             <div class="item-icon">✅</div>
             <div class="item-body">
-                <div class="item-title"><span data-lang="ru">Аутентификация загрузки медиа</span><span data-lang="en">Media upload authentication</span></div>
-                <div class="item-desc"><span data-lang="ru">Upload принимается только от авторизованного пользователя с активным WebSocket сеансом. Download требует принадлежности к диалогу: при загрузке сервер создаёт ACL-запись в Redis (TTL 7 дней). Ключ расшифровки передаётся только внутри E2E-сообщения.</span><span data-lang="en">Upload is only accepted from an authorised user with an active WebSocket session. Download requires conversation membership: on upload the server creates a Redis ACL entry (7-day TTL). The decryption key is transmitted only inside an E2E message.</span></div>
+                <div class="item-title"><span data-lang="ru">Загрузка и скачивание медиа</span><span data-lang="en">Media upload and download</span></div>
+                <div class="item-desc"><span data-lang="ru">Новые версии приложения после входа ключом получают медиа-токен (HMAC, 24 ч) и прикладывают его к загрузке, скачиванию и удалению. Скачать файл могут только отправитель и получатель или участники группы, удалить — только загрузивший (SRV-07). blobId — 256 случайных бит. Ключ расшифровки передаётся только внутри E2E-сообщения, поэтому без него файл бесполезен.</span><span data-lang="en">After a key login, new app versions get a media token (HMAC, 24 h) and attach it to upload, download and delete. Only the sender and recipient or group members can download a file, and only the uploader can delete it (SRV-07). The blobId is 256 random bits. The decryption key is sent only inside an E2E message, so the file is useless without it.</span></div>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать код</span>
                     <span class="code-label-en lang-en">Show code</span>
                 </button>
                 <div class="code-block">
-                    <div class="lang-label">Node.js (сервер) · Upload auth + unguessable blobId</div>
+                    <div class="lang-label">Node.js (сервер) · Upload auth + media token (SRV-07) + unguessable blobId</div>
                     <pre><span class="cm">// Middleware: upload только от зарегистрированного пользователя</span>
 <span class="cm">// с активной WS-сессией — анонимная загрузка невозможна</span>
 <span class="kw">function</span> <span class="fn">requireActiveUser</span>(req, res, next) {
@@ -1242,6 +1247,23 @@ app.<span class="fn">use</span>(<span class="str">'/download'</span>, uploadLimi
     }
     next();
 }
+
+<span class="cm">// SRV-07 (23.10.2026): кто спрашивает — по медиа-токену (HMAC, 24 ч)</span>
+<span class="kw">async function</span> <span class="fn">requireMediaIdentity</span>(req, res, next) {
+    <span class="kw">const</span> tok = req.headers[<span class="str">'x-media-token'</span>];
+    <span class="kw">const</span> claimed = req.headers[<span class="str">'x-user-id'</span>];
+    <span class="kw">if</span> (tok) {
+        <span class="kw">const</span> uid = <span class="fn">mediaTokenVerify</span>(tok);  <span class="cm">// подпись + срок</span>
+        <span class="kw">if</span> (!uid || (claimed &amp;&amp; claimed !== uid)) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">401</span>).<span class="fn">json</span>({});
+        req.mediaUserId = uid;
+        <span class="kw">return</span> <span class="fn">next</span>();
+    }
+    <span class="cm">// аккаунт уже получал токен → без токена отказ</span>
+    <span class="kw">if</span> (<span class="kw">await</span> redis.<span class="fn">exists</span>(<span class="str">`media_token_seen:${claimed}`</span>)) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">401</span>).<span class="fn">json</span>({});
+    req.mediaUserId = claimed;  <span class="cm">// старые версии приложения</span>
+    <span class="fn">next</span>();
+}
+<span class="cm">// upload / download / info / delete: requireMediaIdentity + ACL файла</span>
 
 <span class="cm">// blobId = 64 hex-символа (32 случайных байта через CSPRNG)</span>
 <span class="cm">// Перебор невозможен: 2^256 вариантов</span>
@@ -1860,30 +1882,40 @@ snap = b.<span class="fn">_snapshot</span>()   <span class="cm"># Swift struct-�
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title">
-                    <span data-lang="ru">Фикс: контроль доступа к медиафайлам через Redis ACL (SRV-07)</span>
-                    <span data-lang="en">Fix: media file access control via Redis ACL (SRV-07)</span>
+                    <span data-lang="ru">Фикс: контроль доступа к медиафайлам (SRV-07) — включён 23.10.2026</span>
+                    <span data-lang="en">Fix: media file access control (SRV-07) — enabled 23.10.2026</span>
                 </div>
                 <div class="item-desc">
-                    <span data-lang="ru">Live-проба показала: скачать файл можно было, зная только его идентификатор — без привязки к участнику диалога. Исправлено: при загрузке создаётся список допущенных участников в Redis (TTL 7 дней). Файл возвращается только участникам диалога. Строгий режим включается переменной окружения после обновления клиента.</span>
-                    <span data-lang="en">Live probe found: a file could be downloaded knowing only its identifier — with no conversation membership check. Fixed: on upload a Redis allow-list is created for permitted participants (7-day TTL). The file is returned only to conversation participants. Strict mode is enabled via an environment variable after the client update.</span>
+                    <span data-lang="ru">Раньше файл можно было скачать, зная только его идентификатор. Исправлено вместе с клиентами. Новые версии iOS и Android после входа ключом получают по WebSocket медиа-токен: подпись HMAC-SHA256, срок 24 часа. Токен прикладывается к загрузке, скачиванию и удалению. При загрузке клиент сообщает получателя или группу, и сервер записывает список доступа к файлу. Скачать файл могут только отправитель и получатель или участники группы, удалить — только загрузивший. На чужой запрос сервер отвечает 404 и не подтверждает, что файл существует. После первого токена запросы к медиа от имени этого аккаунта без токена отклоняются. Проверено на рабочем сервере: фото и видео доходят между новыми версиями и от новой к старой, а пять запросов постороннего получили отказ (подробности — в блоке 9). Старые версии приложения работают как раньше, без этой защиты, до обновления.</span>
+                    <span data-lang="en">Previously a file could be downloaded knowing only its identifier. Fixed together with the clients. After a key login, new iOS and Android versions get a media token over WebSocket: an HMAC-SHA256 signature valid for 24 hours. The token is attached to upload, download and delete. On upload the client names the recipient or group, and the server records the file's access list. Only the sender and recipient or group members can download the file, and only the uploader can delete it. Anyone else gets 404, so the server does not confirm the file exists. Once an account has received a token, its media requests without a token are rejected. Verified on the production server: photos and video go through between new versions and from new to old, and five requests by an outsider were refused (details in Block 9). Older app versions keep working as before, without this protection, until updated.</span>
                 </div>
+                <span class="item-badge badge-fixed"><span data-lang="ru">Исправлено 23.10.2026</span><span data-lang="en">Fixed 23.10.2026</span></span>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать патч</span>
                     <span class="code-label-en lang-en">Show patch</span>
                 </button>
                 <div class="code-block">
-                    <div class="lang-label">Node.js · server13_09_patch.diff — SRV-07 ACL</div>
-                    <pre><span class="cm">// Upload: создаём список допущенных с TTL</span>
-<span class="kw">await</span> redis.<span class="fn">sAdd</span>(<span class="str">`blob_recipients:${blobId}`</span>, authenticatedUserId);
-<span class="kw">await</span> redis.<span class="fn">expire</span>(<span class="str">`blob_recipients:${blobId}`</span>, <span class="nm">604800</span>); <span class="cm">// 7 суток</span>
+                    <div class="lang-label">Node.js · server.js (23.10.2026) — SRV-07 media ACL</div>
+                    <pre><span class="cm">// Медиа-токен выдаётся только соединению, вошедшему ключом устройства</span>
+<span class="kw">function</span> <span class="fn">mediaTokenIssue</span>(userId) {
+    <span class="kw">const</span> exp = Date.<span class="fn">now</span>() + MEDIA_TOKEN_TTL_MS;  <span class="cm">// 24 ч</span>
+    <span class="kw">const</span> body = <span class="str">`${b64url(userId)}.${exp}`</span>;
+    <span class="kw">const</span> sig = crypto.<span class="fn">createHmac</span>(<span class="str">'sha256'</span>, MEDIA_TOKEN_SECRET).<span class="fn">update</span>(body).<span class="fn">digest</span>(<span class="str">'base64url'</span>);
+    <span class="kw">return</span> { token: <span class="str">`mt1.${body}.${sig}`</span>, expiresAtMs: exp };
+}
 
-<span class="cm">// Download: только участник диалога</span>
-<span class="kw">const</span> allowed = <span class="kw">await</span> redis.<span class="fn">sIsMember</span>(
-    <span class="str">`blob_recipients:${blobId}`</span>, requester
-);
-<span class="kw">if</span> (!allowed) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">404</span>).<span class="fn">json</span>({});
-<span class="cm">// 404 вместо 403 — не подтверждаем существование чужого файла</span></pre>
+<span class="cm">// Upload: список доступа к файлу</span>
+<span class="kw">const</span> acl = { o: req.authenticatedUserId, r: [] };
+<span class="kw">if</span> (rcpt &amp;&amp; rcpt !== acl.o) acl.r.<span class="fn">push</span>(rcpt);          <span class="cm">// X-Recipient-ID</span>
+<span class="kw">if</span> (st.members.<span class="fn">includes</span>(acl.o)) acl.g = gid;           <span class="cm">// X-Group-ID</span>
+<span class="kw">await</span> redis.<span class="fn">set</span>(<span class="str">`blob_acl:${blobId}`</span>, JSON.<span class="fn">stringify</span>(acl), { EX: ttl });
+
+<span class="cm">// Download / info: только свои, иначе 404</span>
+<span class="kw">if</span> (acl.o === userId || acl.r.<span class="fn">includes</span>(userId)) <span class="kw">return true</span>;
+<span class="kw">if</span> (acl.g) <span class="kw">return</span> group.members.<span class="fn">includes</span>(userId);
+<span class="kw">if</span> (!allowed) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="nm">404</span>).<span class="fn">json</span>({ error: <span class="str">'BLOB not found'</span> });
+<span class="cm">// Delete — только загрузивший (acl.o)</span></pre>
                 </div>
             </div>
         </div>
@@ -1893,33 +1925,36 @@ snap = b.<span class="fn">_snapshot</span>()   <span class="cm"># Swift struct-�
             <div class="item-icon">✅</div>
             <div class="item-body">
                 <div class="item-title">
-                    <span data-lang="ru">Фикс: барьер аутентификации WebSocket (SRV-01/02)</span>
-                    <span data-lang="en">Fix: WebSocket authentication barrier (SRV-01/02)</span>
+                    <span data-lang="ru">Фикс: барьер аутентификации WebSocket (SRV-01/02) — включён 22.10.2026</span>
+                    <span data-lang="en">Fix: WebSocket authentication barrier (SRV-01/02) — enabled 22.10.2026</span>
                 </div>
                 <div class="item-desc">
-                    <span data-lang="ru">Все привилегированные команды WS теперь требуют подтверждённой сессии (Ed25519 challenge пройден). Команды register/login/ping доступны до аутентификации. Барьер включается переменной окружения после выката клиента с новым flow.</span>
-                    <span data-lang="en">All privileged WS commands now require a confirmed session (Ed25519 challenge completed). The register/login/ping commands remain accessible before authentication. The barrier is enabled via an environment variable after deploying the client with the updated flow.</span>
+                    <span data-lang="ru">Сверка 22.10.2026 показала, что патч сентября был выключен флагом и на рабочий сервер не попал: соединение могло назваться чужим userId. Исправлено вместе с клиентами. Новые версии iOS и Android до входа отправляют только register и login, остальное ждёт в очереди до подписи Ed25519 challenge. После первого такого входа аккаунт навсегда помечается на сервере. Для помеченного аккаунта сервер до входа принимает только register, login_challenge, login_response и ping, на всё остальное отвечает requiresLogin. Новое соединение не вытесняет рабочее, пока не вошло ключом, а удаление аккаунта при переустановке требует входа старым ключом. Проверено на рабочем сервере: подключение под чужим userId без ключа получает отказ. Старые версии приложения работают как раньше, без этой защиты, до обновления.</span>
+                    <span data-lang="en">The 22.10.2026 review found that the September patch was disabled by a flag and never reached the production server: a connection could claim someone else's userId. Fixed together with the clients. New iOS and Android versions send only register and login before logging in; everything else waits in a queue until the Ed25519 challenge is signed. After the first such login the account is permanently marked on the server. For a marked account the server accepts only register, login_challenge, login_response and ping before login and answers everything else with requiresLogin. A new connection cannot displace a live one until it logs in with the key, and deleting the account on reinstall requires logging in with the old key. Verified on the production server: a connection under someone else's userId without the key is refused. Older app versions keep working as before, without this protection, until updated.</span>
                 </div>
+                <span class="item-badge badge-fixed"><span data-lang="ru">Исправлено 22.10.2026</span><span data-lang="en">Fixed 22.10.2026</span></span>
                 <button class="code-toggle" onclick="toggleCode(this)">
                     <span class="arrow">▶</span>
                     <span class="code-label-ru lang-ru">Показать патч</span>
                     <span class="code-label-en lang-en">Show patch</span>
                 </button>
                 <div class="code-block">
-                    <div class="lang-label">Node.js · server13_09_patch.diff — SRV-01/02 barrier</div>
-                    <pre><span class="kw">const</span> ALWAYS_ALLOWED = <span class="kw">new</span> <span class="tp">Set</span>([
-    <span class="str">'register'</span>, <span class="str">'login_challenge'</span>, <span class="str">'login_response'</span>,
-    <span class="str">'ping'</span>, <span class="str">'delete_account'</span>
+                    <div class="lang-label">Node.js · server.js (22.10.2026) — WSAUTH2 barrier</div>
+                    <pre><span class="kw">const</span> WSAUTH_ALWAYS_ALLOWED = <span class="kw">new</span> <span class="tp">Set</span>([
+    <span class="str">'register'</span>, <span class="str">'login_challenge'</span>, <span class="str">'login_response'</span>, <span class="str">'ping'</span>
 ]);
-<span class="kw">if</span> (REQUIRE_WS_AUTH && !ws.authenticated
-        && !ALWAYS_ALLOWED.<span class="fn">has</span>(message.type)) {
+<span class="cm">// Аккаунт помечен после первого входа ключом (Redis wsauth_strict:&lt;id&gt;)</span>
+<span class="kw">if</span> (<span class="kw">await</span> <span class="fn">isStrict</span>(userId) &amp;&amp; ws.authUserId !== userId
+        &amp;&amp; !WSAUTH_ALWAYS_ALLOWED.<span class="fn">has</span>(message.type)) {
     <span class="fn">sendToClient</span>(ws, {
         type: <span class="str">'error'</span>,
         message: <span class="str">'Not authenticated'</span>,
-        requiresLogin: <span class="kw">true</span>
+        requiresLogin: <span class="kw">true</span>,
+        rejectedType: message.type
     });
     <span class="kw">return</span>;
-}</pre>
+}
+<span class="cm">// ws.authUserId выставляется только после проверки подписи Ed25519 challenge</span></pre>
                 </div>
             </div>
         </div>
@@ -1946,6 +1981,44 @@ snap = b.<span class="fn">_snapshot</span>()   <span class="cm"># Swift struct-�
                     <pre><span class="cm"># mallory отправляет сообщение с senderId = alice</span>
 <span class="cm"># → ('blocked', 'senderId spoofing blocked')</span>
 <span class="cm"># senderId !== ws.userId → отклонено немедленно</span>
+<span class="cm"># ВЕРДИКТ: PASS</span></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- SRV-07 media ACL test PASS -->
+        <div class="item">
+            <div class="item-icon">✅</div>
+            <div class="item-body">
+                <div class="item-title">
+                    <span data-lang="ru">Тест: посторонний не получит чужой медиафайл (SRV-07)</span>
+                    <span data-lang="en">Test: an outsider cannot get someone else's media file (SRV-07)</span>
+                </div>
+                <div class="item-desc">
+                    <span data-lang="ru">Проверено на рабочем сервере 23.10.2026 на реальном файле из переписки Android → iPhone. Пять запросов постороннего: без заголовков, с чужим ID, с ID владельца без токена, с поддельным токеном и попытка удалить. Все пять отклонены (404 или 401), в журнале сервера — записи об отказе. Те же фото и видео между новыми версиями, а также от новой к старой, доставлены и открыты; старые версии работают без отказов.</span>
+                    <span data-lang="en">Verified on the production server on 23.10.2026 with a real file from an Android → iPhone chat. Five outsider requests: no headers, someone else's ID, the owner's ID without a token, a forged token, and a delete attempt. All five were refused (404 or 401), and the server log shows the refusals. The same photos and video between new versions, and from new to old, were delivered and opened; older versions work with no refusals.</span>
+                </div>
+                <button class="code-toggle" onclick="toggleCode(this)">
+                    <span class="arrow">▶</span>
+                    <span class="code-label-ru lang-ru">Показать вывод</span>
+                    <span class="code-label-en lang-en">Show output</span>
+                </button>
+                <div class="code-block">
+                    <div class="lang-label">mediaacl_selftest_94.sh — SRV-07</div>
+                    <pre><span class="cm"># Чужой файл: o = владелец (Android), r = [получатель (iOS)]</span>
+<span class="cm"># bash mediaacl_selftest_94.sh   (рабочий сервер, 23.10.2026)</span>
+1) без заголовков (ждём 404): <span class="nm">404</span>
+2) чужой ID (ждём 404): <span class="nm">404</span>
+3) подделка ID владельца без токена (ждём 401): <span class="nm">401</span>
+4) поддельный токен (ждём 401): <span class="nm">401</span>
+5) удалить чужой (ждём 404): <span class="nm">404</span>
+<span class="cm"># лог сервера: ⛔ SRV07 … нет доступа / медиа без токена — отклонено</span>
+<span class="cm">#</span>
+<span class="cm"># Совместимость (реальные устройства):</span>
+<span class="cm"># новый iOS → новый Android: фото 1,9 МБ — доставлено, прочитано</span>
+<span class="cm"># новый Android → новый iOS: видео 8,2 МБ — digest OK</span>
+<span class="cm"># новый Android → старый iPhone: фото скачано</span>
+<span class="cm"># старые версии: загрузка/скачивание 200, отказов 0</span>
 <span class="cm"># ВЕРДИКТ: PASS</span></pre>
                 </div>
             </div>
@@ -2077,8 +2150,8 @@ snap = b.<span class="fn">_snapshot</span>()   <span class="cm"># Swift struct-�
                     <span data-lang="en">Fix: read messages deleted from server immediately</span>
                 </div>
                 <div class="item-desc">
-                    <span data-lang="ru">После прочтения сообщение помечалось read:true и оставалось в Redis неограниченно. Теперь удаляется сразу — единственные копии остаются в приложениях участников. Медиафайл удаляется после подтверждённой доставки.</span>
-                    <span data-lang="en">After being read, a message was marked read:true and kept in Redis indefinitely. Now it is deleted immediately — the only copies remain in participants' apps. The media file is deleted after confirmed delivery.</span>
+                    <span data-lang="ru">После прочтения сообщение помечалось read:true и оставалось в Redis неограниченно. Теперь удаляется сразу — единственные копии остаются в приложениях участников. Медиафайлы удаляются с сервера автоматически не позже чем через 7 дней.</span>
+                    <span data-lang="en">After being read, a message was marked read:true and kept in Redis indefinitely. Now it is deleted immediately — the only copies remain in participants' apps. Media files are deleted from the server automatically within 7 days.</span>
                 </div>
             </div>
         </div>
@@ -2248,7 +2321,6 @@ state.epoch += <span class="nm">1</span>;  <span class="cm">// принят — 
         </div>
 
     </div>
-
 
     <footer>
         <p>
